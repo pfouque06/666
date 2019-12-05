@@ -268,7 +268,7 @@ public class Table {
 	}
 
 	// display
-	String getColoredTable(boolean pToBet) {
+	String getTable(boolean pToBet, boolean pColorMode) {
 		String str = "", value = "", onValue = "", offValue = "", betValue="";
 		NumberFormat format = new DecimalFormat("00");
 		int i = 0, occ;
@@ -276,16 +276,25 @@ public class Table {
 			int j = 0;
 			while (j < 6) {
 				value = format.format(table_value[i][j]);
-				onValue = colorText.BLACK + value + colorText.RESET;
-				offValue = colorText.RED + value + colorText.RESET;
-				betValue = colorText.GREEN_BOLD + value + colorText.RESET;
+				
+				onValue = ( pColorMode ? colorText.BLACK + value + colorText.RESET : value );
+				onValue = " " + onValue + " ";
+				
+				offValue = ( pColorMode ? colorText.RED + value + colorText.RESET : "--" );
+				offValue = " " + offValue + " ";
+				
+				betValue = ( pColorMode ? colorText.GREEN_BOLD + value + colorText.RESET : value );
+				betValue = "[" + betValue + "]";
+
 				occ = table_occurence[i][j];
+
 				if (occ > 0)
-					str += " " + (pToBet ? offValue : offValue);
+					str += (pToBet ? offValue : onValue);
 				else if (occ < 0)
-					str += "[" + (pToBet ? betValue : betValue) + "]";
+					str += (pToBet ? betValue : betValue);
 				else
-					str += " " + (pToBet ? value : value);
+					str += (pToBet ? onValue : " -- ");
+				
 				str += (j == 5 ? "\n" : "\t");
 				j++;
 			}
@@ -294,41 +303,19 @@ public class Table {
 		return str;
 	}
 
-	String getTable(boolean pToBet) {
-		String str = "", value = "", onValue = "", offValue = "", betValue="";
-		NumberFormat format = new DecimalFormat("00");
-		int i = 0, occ;
-		while (i < 6) {
-			int j = 0;
-			while (j < 6) {
-				value = format.format(table_value[i][j]);
-				occ = table_occurence[i][j];
-				onValue = " " + value + " ";
-				offValue = " -- ";
-				//offValue = "<" + value + ">";
-				betValue = "[" + value + "]";
-				if (occ > 0)
-					str += (pToBet ? offValue : value);
-				else if (occ < 0)
-					str += (pToBet ? betValue : "--");
-				else
-					str += (pToBet ? onValue : "--");
-				str += (j == 5 ? "\n" : "\t");
-				j++;
-			}
-			i++;
-		}
-		return str;
+	public String toString(boolean pColor) {
+		return getTable(false, pColor); // bet OFF
 	}
-
+	
 	public String toString() {
-		return getTable(false);
-		// return getColoredTable(false);
+		return getTable(false, true); // bet OFF / colorMode ON
+	}
+
+	public String betToString(boolean pColor) {
+		return getTable(true, pColor); // bet ON
 	}
 
 	public String betToString() {
-		return getTable(true);
-		// return getColoredTable(true);
+		return getTable(true, true); // bet ON / colorMode ON
 	}
-
 }
