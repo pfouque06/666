@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
+
 public class Table {
 	static int[][] table_value = { { 28, 4, 3, 31, 35, 10 }, { 36, 18, 21, 24, 11, 1 }, { 7, 23, 12, 17, 22, 30 },
 			{ 8, 13, 26, 19, 16, 29 }, { 5, 20, 15, 14, 25, 32 }, { 27, 33, 34, 6, 2, 9 } };
@@ -268,13 +269,14 @@ public class Table {
 
 	// display
 	String getColoredTable(boolean pToBet) {
-		String str = "", value = "", offValue = "", betValue="";
+		String str = "", value = "", onValue = "", offValue = "", betValue="";
 		NumberFormat format = new DecimalFormat("00");
 		int i = 0, occ;
 		while (i < 6) {
 			int j = 0;
 			while (j < 6) {
 				value = format.format(table_value[i][j]);
+				onValue = colorText.BLACK + value + colorText.RESET;
 				offValue = colorText.RED + value + colorText.RESET;
 				betValue = colorText.GREEN_BOLD + value + colorText.RESET;
 				occ = table_occurence[i][j];
@@ -293,7 +295,7 @@ public class Table {
 	}
 
 	String getTable(boolean pToBet) {
-		String str = "", value = "";
+		String str = "", value = "", onValue = "", offValue = "", betValue="";
 		NumberFormat format = new DecimalFormat("00");
 		int i = 0, occ;
 		while (i < 6) {
@@ -301,12 +303,16 @@ public class Table {
 			while (j < 6) {
 				value = format.format(table_value[i][j]);
 				occ = table_occurence[i][j];
+				onValue = " " + value + " ";
+				offValue = " -- ";
+				//offValue = "<" + value + ">";
+				betValue = "[" + value + "]";
 				if (occ > 0)
-					str += (pToBet ? "--" : value);
+					str += (pToBet ? offValue : value);
 				else if (occ < 0)
-					str += (pToBet ? value + ":" + occ : value);
+					str += (pToBet ? betValue : "--");
 				else
-					str += (pToBet ? value : "--");
+					str += (pToBet ? onValue : "--");
 				str += (j == 5 ? "\n" : "\t");
 				j++;
 			}
@@ -316,12 +322,12 @@ public class Table {
 	}
 
 	public String toString() {
-		return getColoredTable(false);
+		return getTable(false);
 		// return getColoredTable(false);
 	}
 
 	public String betToString() {
-		return getColoredTable(true);
+		return getTable(true);
 		// return getColoredTable(true);
 	}
 
