@@ -10,7 +10,7 @@ public class Main {
 	// get global variables :
 	// betMax, gainMax, phaseMax, toursMax, jetonLimite
 	public static boolean colorMode=true;
-	public static int betMax, gainMax, phaseMax, toursMax, jetonLimite=250;
+	public static int betMax=0, gainMax=0, phaseMax=0, toursMax=0, jetonLimite=250;
 
 	public static boolean argOpt(String[] pArgs) {
 		String buffer="";
@@ -23,6 +23,7 @@ public class Main {
 			}
 			else if ("--mono".equals(pArgs[i]) || "-m".equals(pArgs[i])) {
 				colorMode = false; // toggle
+				System.out.println("colorMode="+colorMode);
 			}
 			else if ("--bet".equals(pArgs[i]) || "-b".equals(pArgs[i])) {
 				if (i == pArgs.length - 1) {
@@ -37,6 +38,22 @@ public class Main {
 					return false;
 				}
 				betMax=Integer.valueOf(buffer);
+				System.out.println("betMax="+betMax);
+			}
+			else if ("--jetons".equals(pArgs[i]) || "-j".equals(pArgs[i])) {
+				if (i == pArgs.length - 1) {
+					System.err.println("Error: missing argument for " + pArgs[i]);
+					//usage(System.err);
+					return false;
+				}
+				buffer=pArgs[++i];
+				if ( ! buffer.matches("\\d+")) {
+					System.err.println("Error: argument for " + buffer + " must be a number");
+					//usage(System.err);
+					return false;
+				}
+				jetonLimite=Integer.valueOf(buffer);
+				System.out.println("jetonMax="+jetonLimite);
 			}
 			//			else if ("--file".equals(pArgs[i]) || "-f".equals(pArgs[i])) {
 			//				if (i == pArgs.length - 1) {
@@ -47,39 +64,29 @@ public class Main {
 			//				file = new File(pArgs[++i]);
 			//			}
 		}
-		if (! colorMode) System.out.println("colorMode="+colorMode);
-		if (betMax != 0) System.out.println("betMax="+betMax);
 		return true;
 	}
 
 	private static void usage(PrintStream ps) {
 		ps.println("Usage: myapp [-x|--flag] --count=NUM --file=FILE");
 		ps.println("Options:");
-		ps.println("	-m, --mono		Set monocolor mode (color mode par default");
-		ps.println("	-b, --bet		maximum bets allowed per tour");
-		ps.println("	-h, --help		Prints this help message and exits");
+		ps.println("	-m, --mono				Set monocolor mode (color mode par default");
+		ps.println("	-b, --bet <betMax>		maximum bets allowed per tour");
+		ps.println("	-j, --jetons <jetonMax>	maximum bets allowed per tour");
+		ps.println("	-h, --help				Prints this help message and exits");
 		// -t	<tours>		1 tour = 1'30, 10 tours = 15', 40 tours = 1h 60, tours = 1h30, 80 tours 2h
 		// -g	<gain>		arrêt de partie une fois <gain> atteint
-		// -j	<jetons>	arrêt de partie une fois <jetons> misés par phase (250 par default)
 		// -p	<phase>		arrêt de partie une fois <phase> phases finalisées
 	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		Table table = new Table();
-		Scanner sc = new Scanner(System.in);
-
 		// parse agrs
-		if( ! argOpt(args) ) {
-			sc.close();
-			return;
-		};
-		if (! colorMode) System.out.println("colorMode="+colorMode);
-		if (betMax != 0) System.out.println("betMax="+betMax);
+		if( ! argOpt(args) ) return;
 
-
-		//sc.nextLine();
+		Table table = new Table(betMax);
+		Scanner sc = new Scanner(System.in);
 		int roulette=0;
 		int phase=0;
 		int tours=0, toursTotal=0;
