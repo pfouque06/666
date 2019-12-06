@@ -8,9 +8,9 @@ import java.util.concurrent.TimeUnit;
 public class Main {
 
 	// get global variables :
-	// betMax, gainMax, phaseMax, toursMax, jetonLimite
+	// betMax, jetonLimite, gainMax, phaseMax, toursMax
 	public static boolean colorMode=true;
-	public static int betMax=0, gainMax=0, phaseMax=0, toursMax=0, jetonLimite=250;
+	public static int betMax=0, jetonLimite=250, gainMax=0, phaseMax=0, toursMax=0;
 
 	public static boolean argOpt(String[] pArgs) {
 		String buffer="";
@@ -21,10 +21,14 @@ public class Main {
 				usage(System.out); // use STDOUT when help is requested
 				return false;
 			}
+
+			// set colorMode flag
 			else if ("--mono".equals(pArgs[i]) || "-m".equals(pArgs[i])) {
 				colorMode = false; // toggle
 				System.out.println("colorMode="+colorMode);
 			}
+
+			// set betMax
 			else if ("--bet".equals(pArgs[i]) || "-b".equals(pArgs[i])) {
 				if (i == pArgs.length - 1) {
 					System.err.println("Error: missing argument for " + pArgs[i]);
@@ -40,6 +44,8 @@ public class Main {
 				betMax=Integer.valueOf(buffer);
 				System.out.println("betMax="+betMax);
 			}
+
+			// set jetonMax
 			else if ("--jetons".equals(pArgs[i]) || "-j".equals(pArgs[i])) {
 				if (i == pArgs.length - 1) {
 					System.err.println("Error: missing argument for " + pArgs[i]);
@@ -55,6 +61,58 @@ public class Main {
 				jetonLimite=Integer.valueOf(buffer);
 				System.out.println("jetonMax="+jetonLimite);
 			}
+
+			// set gainMax
+			else if ("--gain".equals(pArgs[i]) || "-g".equals(pArgs[i])) {
+				if (i == pArgs.length - 1) {
+					System.err.println("Error: missing argument for " + pArgs[i]);
+					//usage(System.err);
+					return false;
+				}
+				buffer=pArgs[++i];
+				if ( ! buffer.matches("\\d+")) {
+					System.err.println("Error: argument for " + buffer + " must be a number");
+					//usage(System.err);
+					return false;
+				}
+				gainMax=Integer.valueOf(buffer);
+				System.out.println("gainMax="+gainMax);
+			}
+
+			// set phaseMax
+			else if ("--phase".equals(pArgs[i]) || "-p".equals(pArgs[i])) {
+				if (i == pArgs.length - 1) {
+					System.err.println("Error: missing argument for " + pArgs[i]);
+					//usage(System.err);
+					return false;
+				}
+				buffer=pArgs[++i];
+				if ( ! buffer.matches("\\d+")) {
+					System.err.println("Error: argument for " + buffer + " must be a number");
+					//usage(System.err);
+					return false;
+				}
+				phaseMax=Integer.valueOf(buffer);
+				System.out.println("phaseMax="+phaseMax);
+			}
+
+			// set toursMax
+			else if ("--tours".equals(pArgs[i]) || "-t".equals(pArgs[i])) {
+				if (i == pArgs.length - 1) {
+					System.err.println("Error: missing argument for " + pArgs[i]);
+					//usage(System.err);
+					return false;
+				}
+				buffer=pArgs[++i];
+				if ( ! buffer.matches("\\d+")) {
+					System.err.println("Error: argument for " + buffer + " must be a number");
+					//usage(System.err);
+					return false;
+				}
+				toursMax=Integer.valueOf(buffer);
+				System.out.println("toursMax="+toursMax);
+			}
+
 			//			else if ("--file".equals(pArgs[i]) || "-f".equals(pArgs[i])) {
 			//				if (i == pArgs.length - 1) {
 			//					System.err.println("Error: missing argument for " + pArgs[i]);
@@ -70,13 +128,13 @@ public class Main {
 	private static void usage(PrintStream ps) {
 		ps.println("Usage: myapp [-x|--flag] --count=NUM --file=FILE");
 		ps.println("Options:");
-		ps.println("	-m, --mono				Set monocolor mode (color mode par default");
-		ps.println("	-b, --bet <betMax>		maximum bets allowed per tour");
-		ps.println("	-j, --jetons <jetonMax>	maximum bets allowed per tour");
+		ps.println("	-m, --mono				set monocolor mode (color mode par default");
+		ps.println("	-b, --bet <betMax>		set maximum bets allowed per tour");
+		ps.println("	-j, --jetons <jetonMax>	set maximum jeton before alerting per phase");
+		ps.println("	-g, --gain <gainMax>	set maximum total gain before quit game");
+		ps.println("	-p, --phase <phaseMax>	set maximum phase before quit game");
+		ps.println("	-t, --tours <toursMax>	set maximum total tours before quit game");
 		ps.println("	-h, --help				Prints this help message and exits");
-		// -t	<tours>		1 tour = 1'30, 10 tours = 15', 40 tours = 1h 60, tours = 1h30, 80 tours 2h
-		// -g	<gain>		arrêt de partie une fois <gain> atteint
-		// -p	<phase>		arrêt de partie une fois <phase> phases finalisées
 	}
 
 	public static void main(String[] args) {
@@ -118,15 +176,23 @@ public class Main {
 			System.out.print("Gains: "+ _gains_ +" | ");
 			System.out.print(bets);
 
+			// ---------------------
+			// exit conditions check
+			// ---------------------
+
 			// check if table is full (all values are completed)
-			if ( table.isFull() ) {
+			// gainMax, phaseMax, toursMax
+			if ( table.isFull() 
+					|| ( gainMax != 0 ? gainTotal >= gainMax : false )
+					|| ( phaseMax != 0 ? phase >= phaseMax : false )
+					|| ( toursMax != 0 && tours == 0 ? toursTotal >= toursMax : false ) ) {
 				System.out.println();
 				System.out.println(c_black_bold + "Game is over" + c_reset);
 				System.out.println("--- later featuren: reset old stored value until next bet suggestion");
 				sc.close();
 				return;
 			}
-
+			
 			// check if mise total > limite de jeton : 250 jetons
 			//if ( (jetons + nbrMise) > (jetonLimite + gainTotal) ) {
 			//			if ( (jetons + nbrMise) > jetonLimite ) {
