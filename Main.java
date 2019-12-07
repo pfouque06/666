@@ -8,9 +8,9 @@ import java.util.concurrent.TimeUnit;
 public class Main {
 
 	// get global variables :
-	// betMax, jetonLimite, gainMax, phaseMax, toursMax
-	public static boolean colorMode=true;
-	public static int betMax=0, jetonLimite=250, gainMax=0, phaseMax=0, toursMax=0;
+	// betMax, jetonLimite, wallet, gainMax, phaseMax, toursMax
+	public static boolean colorMode=true, auto=false;
+	public static int betMax=0, jetonLimite=0, wallet=250, gainMax=0, phaseMax=0, toursMax=0;
 
 	public static boolean argOpt(String[] pArgs) {
 		String buffer="";
@@ -26,6 +26,12 @@ public class Main {
 			else if ("--mono".equals(pArgs[i]) || "-m".equals(pArgs[i])) {
 				colorMode = false; // toggle
 				System.out.println("colorMode="+colorMode);
+			}
+
+			// set auto flag
+			else if ("--auto".equals(pArgs[i]) || "-a".equals(pArgs[i])) {
+				auto = true; // toggle
+				System.out.println("auto="+auto);
 			}
 
 			// set betMax
@@ -113,6 +119,23 @@ public class Main {
 				System.out.println("toursMax="+toursMax);
 			}
 
+			// set wallet
+			else if ("--wallet".equals(pArgs[i]) || "-w".equals(pArgs[i])) {
+				if (i == pArgs.length - 1) {
+					System.err.println("Error: missing argument for " + pArgs[i]);
+					//usage(System.err);
+					return false;
+				}
+				buffer=pArgs[++i];
+				if ( ! buffer.matches("\\d+")) {
+					System.err.println("Error: argument for " + buffer + " must be a number");
+					//usage(System.err);
+					return false;
+				}
+				wallet=Integer.valueOf(buffer);
+				System.out.println("wallet="+wallet);
+			}
+
 			//			else if ("--file".equals(pArgs[i]) || "-f".equals(pArgs[i])) {
 			//				if (i == pArgs.length - 1) {
 			//					System.err.println("Error: missing argument for " + pArgs[i]);
@@ -129,11 +152,14 @@ public class Main {
 		ps.println("Usage: myapp [-x|--flag] --count=NUM --file=FILE");
 		ps.println("Options:");
 		ps.println("	-m, --mono				set monocolor mode (color mode par default");
+		ps.println("	-a, --auto				set auto mode with random roulette");
 		ps.println("	-b, --bet <betMax>		set maximum bets allowed per tour");
 		ps.println("	-j, --jetons <jetonMax>	set maximum jeton before alerting per phase");
 		ps.println("	-g, --gain <gainMax>	set maximum total gain before quit game");
 		ps.println("	-p, --phase <phaseMax>	set maximum phase before quit game");
 		ps.println("	-t, --tours <toursMax>	set maximum total tours before quit game");
+		ps.println("	-w, --wallet <jetons>	set jetons in wallet");
+		ps.println(;)
 		ps.println("	-h, --help				Prints this help message and exits");
 	}
 
@@ -152,13 +178,13 @@ public class Main {
 		int gain=0, gainTotal=0;
 		// get global variables :
 		// betMax, gainMax, phaseMax, toursMax, jetonLimite
-		String _tours_="  0/  0", _jetons_="  0/  0", _jetonsMax_="", _gains_="  0/  0", bets="", winFront="", winBack="" , input = "";
+		String _phase_=" 0", _tours_="  0/  0", _jetons_="  0/  0", _jetonsMax_="", _gains_="  0/  0", bets="", winFront="", winBack="" , input = "";
 		String c_black_bold = ( colorMode ? colorText.BLACK_BOLD : "[[");
-		String c_red_bold = ( colorMode ? colorText.RED_BOLD : "[[");
 		String c_red_background = ( colorMode ? colorText.RED_BACKGROUND + colorText.WHITE_BOLD : "[[");
-		String c_green_bold = ( colorMode ? colorText.GREEN_BOLD : "[[");
 		String c_green_background = ( colorMode ? colorText.GREEN_BACKGROUND + colorText.WHITE_BOLD : "[[");
 		String c_reset = ( colorMode ? colorText.RESET : "]]");
+		//String c_red_bold = ( colorMode ? colorText.RED_BOLD : "[[");
+		//String c_green_bold = ( colorMode ? colorText.GREEN_BOLD : "[[");
 
 		while (true) {
 			//display Table 
@@ -170,7 +196,7 @@ public class Main {
 
 			// display Global Status
 			System.out.println();
-			System.out.print("Phase: " + String.format("%2s", phase) + " | ");
+			System.out.print("Phase: " + _phase_ + " | ");
 			System.out.print("Tour: " + _tours_ + " | ");
 			System.out.print("Jetons: "+ _jetons_ +" | ");
 			System.out.print("Gains: "+ _gains_ +" | ");
@@ -184,15 +210,28 @@ public class Main {
 			// gainMax, phaseMax, toursMax
 			if ( table.isFull() 
 					|| ( gainMax != 0 ? gainTotal >= gainMax : false )
-					|| ( phaseMax != 0 ? phase >= phaseMax : false )
+					|| ( phaseMax != 0 && tours == 0 ? phase >= phaseMax : false )
 					|| ( toursMax != 0 && tours == 0 ? toursTotal >= toursMax : false ) ) {
 				System.out.println();
 				System.out.println(c_black_bold + "Game is over" + c_reset);
-				System.out.println("--- later featuren: reset old stored value until next bet suggestion");
+				System.out.println("--- later feature: reset old stored value until next bet suggestion");
 				sc.close();
 				return;
 			}
-			
+
+			// Check Jetons limites
+			if ( jetonLimite != 0 && jetons >= jetonLimite ) {
+				System.out.println();
+				System.out.println(c_black_bold + "Game is over" + c_reset);
+				System.out.print("--> " + c_red_background + "WALLET LIMITE REACHED !!!!!" + c_reset);
+				gainTotal -= jetons;
+				if ( gainTotal >= 0 )
+					System.out.println("--> Gains: "+ c_green_background + String.format("%3s", gainTotal) + c_reset);
+				else
+					System.out.println("--> Gains: "+ c_red_background + String.format("%3s", gainTotal) + c_reset);
+				return;
+			}
+
 			// check if mise total > limite de jeton : 250 jetons
 			//if ( (jetons + nbrMise) > (jetonLimite + gainTotal) ) {
 			//			if ( (jetons + nbrMise) > jetonLimite ) {
@@ -207,14 +246,21 @@ public class Main {
 			do {
 				do {
 					System.out.println();
-					System.out.print("--> Roulette [num/(r)andom/(q)uit]: ");
-					input=sc.nextLine();
-					if (input.matches("q")) {
+					System.out.print("--> Roulette [num|(r)andom|(a)uto|(q)uit]: ");
+					if (auto) input="r";
+					else {
+						input=sc.nextLine();
+						if (input.matches("\\d+")) break;
+						input = ( input.isEmpty() ? "r" : input.substring(0, 1));
+					}
+					switch (input) {
+					case "q" :
 						System.out.println("\nExiting...");
 						sc.close();
 						return;
-					}
-					if (input.matches("r") || input.isBlank()) {
+					case "a" :
+						auto = true;
+					case "r" :
 						//System.out.print("get Random Roulette...");
 						roulette = new Random().nextInt(37);
 						int delay=0; // 0.1sec per delay
@@ -224,25 +270,27 @@ public class Main {
 							catch (InterruptedException e) { /* empty */ } //e.printStackTrace();
 							//System.out.print(".");
 						};
-						//System.out.println("  ["+roulette+"]");
 						input = String.valueOf(roulette);
+						//System.out.println("  ["+input+"]");
+						break;
 					}
-				} while ( ! input.matches("\\d+"));
+				} while (! input.matches("\\d+"));
 				roulette = Integer.valueOf(input);
 			} while ( roulette > 36);
 
-			// increments counters and set display
+			// increments phase, counters and set display
 			if ( tours == 0 ) phase++;
 			tours++;
 			toursTotal++;
 			jetons+=nbrMise;
 			jetonsMax=(jetons > jetonsMax ? jetons : jetonsMax);
+			_phase_ = String.format("%2s", phase);
 			_tours_ = String.format("%3s", tours) + "/" + String.format("%3s", toursTotal);
 			_jetons_ = String.format("%3s", jetons);
 			_jetonsMax_ = String.format("%3s", jetonsMax);
-			if (jetonLimite != 0 ) {
-				_jetons_ = ( ( jetons > jetonLimite) ? c_red_background + _jetons_ + c_reset : _jetons_);
-				_jetonsMax_ = ( ( jetonsMax > jetonLimite) ? c_red_background + _jetonsMax_ + c_reset : _jetonsMax_);
+			if (wallet != 0 ) {
+				_jetons_ = ( ( jetons > wallet) ? c_red_background + _jetons_ + c_reset : _jetons_);
+				_jetonsMax_ = ( ( jetonsMax > wallet) ? c_red_background + _jetonsMax_ + c_reset : _jetonsMax_);
 			}
 			_jetons_ = _jetons_ + "/" + _jetonsMax_;
 

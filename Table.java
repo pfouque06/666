@@ -60,7 +60,7 @@ public class Table {
 		store.add(pValue);
 		// remove pvalue to linkedhashset of bets
 		bets.remove(pValue);
-		System.out.println("updated bets lhs: "+bets);
+		//System.out.println("updated bets lhs: "+bets);
 	}
 
 	public void remOccurence(int pValue) {
