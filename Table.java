@@ -2,8 +2,8 @@ package _666_;
 
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
-import java.text.NumberFormat;
-import java.text.DecimalFormat;
+//import java.text.NumberFormat;
+//import java.text.DecimalFormat;
 
 
 public class Table {
@@ -48,6 +48,8 @@ public class Table {
 			}
 			i++;
 		}
+		resetBets();
+		resetStore();
 	}
 
 	public void addOccurence(int pValue) {
@@ -124,25 +126,16 @@ public class Table {
 		return store.contains(pValue);
 	}
 
-
-	// Bets management
-	boolean isFull() {
-		boolean full = true;
-		int i = 0;
-		while (i < 6) {
-			int j = 0;
-			while (j < 6) {
-				if (table_occurence[i][j] < 1)
-					full = false;
-				j++;
-			}
-			i++;
-		}
-		return full;
-
+	void resetStore() {
+		store.clear();
 	}
 
-	boolean resetBets() {
+	// Bets management
+	void resetBets() {
+		 bets.clear();
+		}
+
+	boolean resetTableBets() {
 		boolean full = false;
 		int i = 0;
 		while (i < 6) {
@@ -159,9 +152,41 @@ public class Table {
 		return full;
 	}
 
+	boolean isFull() {
+		boolean full = true;
+		int i = 0;
+		while (i < 6) {
+			int j = 0;
+			while (j < 6) {
+				if (table_occurence[i][j] < 1)
+					full = false;
+				j++;
+			}
+			i++;
+		}
+		return full;
+
+	}
+
+	public boolean isBetsEmpty() {
+		return bets.isEmpty();
+	}
+
+	public int getBetsSize() {
+		return bets.size();
+	}
+
+	public boolean betsContains(int pValue) {
+		return bets.contains(pValue);
+	}
+
+	public String getBets() {
+		return bets.toString();
+	}
+
 	void setBets() {
 		// Reset previous Bets
-		resetBets();
+		resetTableBets();
 		// Lines check
 		int i = 0, j = 0;
 		while (i < 6) {
@@ -253,26 +278,10 @@ public class Table {
 		}
 	}
 
-	public String getBets() {
-		return bets.toString();
-	}
-
-	public boolean isBetsEmpty() {
-		return bets.isEmpty();
-	}
-
-	public int getBetsSize() {
-		return bets.size();
-	}
-
-	public boolean betsContains(int pValue) {
-		return bets.contains(pValue);
-	}
-
 	// display
 	String getTable(boolean pToBet, boolean pColorMode) {
 		String str = "", value = "", onValue = "", offValue = "", betValue="";
-		NumberFormat format = new DecimalFormat("00");
+		//NumberFormat format = new DecimalFormat("00");
 		int i = 0, occ;
 		while (i < 6) {
 			int j = 0;
