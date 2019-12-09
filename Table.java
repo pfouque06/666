@@ -5,19 +5,22 @@ import java.util.LinkedList;
 //import java.text.NumberFormat;
 //import java.text.DecimalFormat;
 
-
 public class Table {
 	static int[][] table_value = { { 28, 4, 3, 31, 35, 10 }, { 36, 18, 21, 24, 11, 1 }, { 7, 23, 12, 17, 22, 30 },
 			{ 8, 13, 26, 19, 16, 29 }, { 5, 20, 15, 14, 25, 32 }, { 27, 33, 34, 6, 2, 9 } };
 	int[][] table_occurence = { { 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 },
 			{ 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 } };
-	int betMax=0;
+	int betMax = 0;
 	LinkedHashSet<Integer> bets = new LinkedHashSet<Integer>();
 	LinkedList<Integer> store = new LinkedList<Integer>();
 
 	// constructor
-	Table() {}
-	Table(int pBetMax) { betMax = pBetMax;}
+	Table() {
+	}
+
+	Table(int pBetMax) {
+		betMax = pBetMax;
+	}
 
 	// Value Managmement
 	int[] getPosition(int pValue) {
@@ -62,7 +65,7 @@ public class Table {
 		store.add(pValue);
 		// remove pvalue to linkedhashset of bets
 		bets.remove(pValue);
-		//System.out.println("updated bets lhs: "+bets);
+		// System.out.println("updated bets lhs: "+bets);
 	}
 
 	public void remOccurence(int pValue) {
@@ -73,9 +76,11 @@ public class Table {
 		occ--;
 		table_occurence[pos[0]][pos[1]] = occ;
 		// add pvalue to linkedhashset of bets while size < betMax value
-		if ( betMax == 0 ) bets.add(pValue);
-		else if ( bets.size() < betMax) bets.add(pValue);
-		//System.out.println("updated bets lhs: "+bets);
+		if (betMax == 0)
+			bets.add(pValue);
+		else if (bets.size() < betMax)
+			bets.add(pValue);
+		// System.out.println("updated bets lhs: "+bets);
 	}
 
 	public int getOccurence(int pValue) {
@@ -96,16 +101,17 @@ public class Table {
 
 	// Store management
 	public String getStore(int pSize) {
-		String str="";
-		if (! store.isEmpty()) {
-			str="[";
-			int max = store.size()-1;
-			//str+=store.get(max);
-			int min = (max > --pSize ? max-pSize : 0);
-			str+=store.get(min);
-			//for(int i=max-1; i >= min ; i--) str+=", "+store.get(i);
-			for(int i=min+1; i <= max ; i++) str+=", "+store.get(i);
-			str+="]";
+		String str = "";
+		if (!store.isEmpty()) {
+			str = "[";
+			int max = store.size() - 1;
+			// str+=store.get(max);
+			int min = (max > --pSize ? max - pSize : 0);
+			str += store.get(min);
+			// for(int i=max-1; i >= min ; i--) str+=", "+store.get(i);
+			for (int i = min + 1; i <= max; i++)
+				str += ", " + store.get(i);
+			str += "]";
 		}
 		return str;
 	}
@@ -130,10 +136,30 @@ public class Table {
 		store.clear();
 	}
 
+	public boolean shortenStore() {
+		int oldestValue;
+		boolean found = false;
+
+		// - retirer le plus ancien
+		// - remove occurence
+		// - check value unhit
+		// - double check with bets
+		
+		if (! isBetsEmpty()) {
+			if (! store.isEmpty()) {
+				oldestValue = store.removeFirst();
+				System.out.println("oldestValue = " + oldestValue);
+				remOccurence(oldestValue);
+				setBets();
+			} else found = false ;
+		}
+		
+		return found;
+	}
 	// Bets management
 	void resetBets() {
-		 bets.clear();
-		}
+		bets.clear();
+	}
 
 	boolean resetTableBets() {
 		boolean full = false;
@@ -199,7 +225,7 @@ public class Table {
 				// else store Value not used
 				else
 					jValue = table_value[i][j];
-				//System.out.println(j+":"+jSum+":"+jValue);
+				// System.out.println(j+":"+jSum+":"+jValue);
 				j++;
 			}
 			// suggest jValue as bet if single in line
@@ -222,7 +248,7 @@ public class Table {
 				// else store Value not used
 				else
 					iValue = table_value[i][j];
-				//System.out.println(i+":"+iSum+":"+iValue);
+				// System.out.println(i+":"+iSum+":"+iValue);
 				i++;
 			}
 			// suggest jValue as bet if single in line
@@ -280,22 +306,22 @@ public class Table {
 
 	// display
 	String getTable(boolean pToBet, boolean pColorMode) {
-		String str = "", value = "", onValue = "", offValue = "", betValue="";
-		//NumberFormat format = new DecimalFormat("00");
+		String str = "", value = "", onValue = "", offValue = "", betValue = "";
+		// NumberFormat format = new DecimalFormat("00");
 		int i = 0, occ;
 		while (i < 6) {
 			int j = 0;
 			while (j < 6) {
-				//value = format.format(table_value[i][j]);
+				// value = format.format(table_value[i][j]);
 				value = String.format("%02d", table_value[i][j]);
-				
-				onValue = ( pColorMode ? colorText.BLACK + value + colorText.RESET : value );
+
+				onValue = (pColorMode ? colorText.BLACK + value + colorText.RESET : value);
 				onValue = " " + onValue + " ";
 
-				offValue = ( pColorMode ? colorText.RED + value + colorText.RESET : "--" );
+				offValue = (pColorMode ? colorText.RED + value + colorText.RESET : "--");
 				offValue = " " + offValue + " ";
 
-				betValue = ( pColorMode ? colorText.GREEN_BOLD + value + colorText.RESET : value );
+				betValue = (pColorMode ? colorText.GREEN_BOLD + value + colorText.RESET : value);
 				betValue = "[" + betValue + "]";
 
 				occ = table_occurence[i][j];
