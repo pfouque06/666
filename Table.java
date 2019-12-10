@@ -2,8 +2,6 @@ package _666_;
 
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
-//import java.text.NumberFormat;
-//import java.text.DecimalFormat;
 
 public class Table {
 	static int[][] table_value = { { 28, 4, 3, 31, 35, 10 }, { 36, 18, 21, 24, 11, 1 }, { 7, 23, 12, 17, 22, 30 },
@@ -65,22 +63,26 @@ public class Table {
 		store.add(pValue);
 		// remove pvalue to linkedhashset of bets
 		bets.remove(pValue);
-		// System.out.println("updated bets lhs: "+bets);
+		// System.out.println(">> updated bets lhs: "+bets);
 	}
 
 	public void remOccurence(int pValue) {
 		int pos[] = { 0, 0 }, occ;
 		pos = getPosition(pValue);
 		occ = table_occurence[pos[0]][pos[1]];
-		// occ = (occ == 0 ? 0 : occ--);
+		// System.out.print(">> table_occurence["+pos[0]+"]["+pos[1]+"] = " + occ);
 		occ--;
 		table_occurence[pos[0]][pos[1]] = occ;
+		// System.out.print(" -->> " + occ);
 		// add pvalue to linkedhashset of bets while size < betMax value
-		if (betMax == 0)
-			bets.add(pValue);
-		else if (bets.size() < betMax)
-			bets.add(pValue);
-		// System.out.println("updated bets lhs: "+bets);
+		if (occ < 0) {
+			if (betMax == 0)
+				bets.add(pValue);
+			else if (bets.size() < betMax)
+				bets.add(pValue);
+			// System.out.print(" >> updated bets lhs: "+bets);
+		}
+		// System.out.println();
 	}
 
 	public int getOccurence(int pValue) {
@@ -136,25 +138,23 @@ public class Table {
 		store.clear();
 	}
 
-	public boolean shortenStore() {
+	public boolean reduceStore() {
 		int oldestValue;
-		boolean found = false;
 
-		// - retirer le plus ancien
-		// - remove occurence
-		// - check value unhit
-		// - double check with bets
-		
-		if (! isBetsEmpty()) {
-			if (! store.isEmpty()) {
+		while ( isFull() ) {
+			// System.out.println(">> store = " + store);
+			// System.out.println(">> store.size = " + store.size());
+			if (store.isEmpty()) return false ;
+			else{
+				// System.out.print(">> get and remove oldest Value");
 				oldestValue = store.removeFirst();
-				System.out.println("oldestValue = " + oldestValue);
+				// System.out.println(">> oldestValue = " + oldestValue);
+				// System.out.println(">> remOccurence(" + oldestValue + ")");
 				remOccurence(oldestValue);
-				setBets();
-			} else found = false ;
+			}
 		}
-		
-		return found;
+
+		return true;
 	}
 	// Bets management
 	void resetBets() {
@@ -184,7 +184,7 @@ public class Table {
 		while (i < 6) {
 			int j = 0;
 			while (j < 6) {
-				if (table_occurence[i][j] < 1)
+				if (table_occurence[i][j] <= 0)
 					full = false;
 				j++;
 			}
@@ -307,7 +307,6 @@ public class Table {
 	// display
 	String getTable(boolean pToBet, boolean pColorMode) {
 		String str = "", value = "", onValue = "", offValue = "", betValue = "";
-		// NumberFormat format = new DecimalFormat("00");
 		int i = 0, occ;
 		while (i < 6) {
 			int j = 0;

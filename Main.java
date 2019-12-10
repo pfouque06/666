@@ -235,50 +235,44 @@ public class Main {
 				input = "";
 				System.out.println(c_black_bold + "Game is over" + c_reset);
 				do {
-					// System.out.print("--> [(q)uit|(CR|r)estart|(p)urge store]: ");
-					System.out.print("--> [(q)uit|(CR|r)estart]: ");
+					System.out.print("--> [(q)uit|(r)estart|(CR|p)urge store]: ");
 					input = sc.nextLine();
-					input = (input.isEmpty() ? "r" : input.substring(0, 1));
+					input = (input.isEmpty() ? "p" : input.substring(0, 1));
 					switch (input) {
 					case "q":
+						// System.out.println("##1.1");
 						sc.close();
 						return;
+					case "p":
+						// System.out.println("##1.2 - start reducing Store");
+						table.reduceStore();
+						break;
 					case "r":
-						System.out.println("##1");
+						// System.out.println("##1.3 - reset table");
 						table.resetTable();
-						roulette = 0;
-						phase = 0;
-						tours = 0;
-						toursTotal = 0;
-						jetons = 0;
-						jetonsMax = 0;
-						coef = 1;
-						nbrMise = 0;
-						gain = 0;
-						gainTotal = 0;
-						gameOver = false;
-						autoMode = auto;
-						_phase_ = " 0";
-						_tours_ = "  0/  0";
-						_jetons_ = "  0/  0";
-						_jetonsMax_ = "";
-						_gains_ = "  0/  0";
+						roulette = 0; phase = 0; tours = 0; toursTotal = 0;
+						jetons = 0; jetonsMax = 0; coef = 1; nbrMise = 0;
+						gain = 0; gainTotal = 0;
+						_phase_ = " 0"; _tours_ = "  0/  0"; _jetons_ = "  0/  0"; _jetonsMax_ = "";
+						_gains_ = "  0/  0/" + String.format("%3s", gainFull);
 						bets = "";
 						break;
-					case "p":
 					default:
-						System.out.println("##2");
+						// System.out.println("##1.4 - default case");
 						input = "";
 						break;
 					}
 				} while (input.isEmpty());
-				System.out.println("##3");
+				// System.out.println("##2.1");
+				autoMode = auto; gameOver = false;
+				// System.out.println("##2.2");
 				// break;
 			}
-			// System.out.println("##4");
+			// System.out.println("##3");
 
 			// get input from user
 			else {
+				//System.out.println("##4.1");
 				do {
 					do {
 						input = "";
@@ -308,7 +302,7 @@ public class Main {
 									TimeUnit.MILLISECONDS.sleep(100);
 								} // or try { TimeUnit.SECONDS.sleep(1); }
 								catch (InterruptedException e) {
-									/* empty */ } // or e.printStackTrace();
+								/* empty */ } // or e.printStackTrace();
 								// System.out.print(".");
 							}
 							;
@@ -323,7 +317,7 @@ public class Main {
 				// increments phase, counters and set display
 				if (tours == 0) {
 					phase++;
-					phaseFull += phase;
+					phaseFull ++;
 				}
 				tours++;
 				toursTotal++;
@@ -359,16 +353,16 @@ public class Main {
 
 				// add roulette value to table
 				table.addOccurence(roulette);
+			}
 
-				// get Bets suggestions
-				bets = "";
-				table.setBets();
-				if (!table.isBetsEmpty()) {
-					nbrMise = table.getBetsSize();
-					coef = (jetons + nbrMise * coef) / 36 + 1;
-					nbrMise *= coef;
-					bets = "--> Bets  : " + table.getBets() + " (x" + coef + ") => mise: " + nbrMise;
-				}
+			// get Bets suggestions
+			bets = "";
+			table.setBets();
+			if (!table.isBetsEmpty()) {
+				nbrMise = table.getBetsSize();
+				coef = (jetons + nbrMise * coef) / 36 + 1;
+				nbrMise *= coef;
+				bets = "--> Bets  : " + table.getBets() + " (x" + coef + ") => mise: " + nbrMise;
 			}
 		}
 	}
