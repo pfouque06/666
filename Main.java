@@ -174,13 +174,13 @@ public class Main {
 		Scanner sc = new Scanner(System.in);
 		int roulette = 0;
 		int phase = 0, phaseFull = 0;
-		int tours = 0, toursTotal = 0;
+		int tours = 0, toursTotal = 0, toursFull = 0;
 		int jetons = 0, jetonsMax = 0, coef = 1, nbrMise = 0;
 		int gain = 0, gainTotal = 0, gainFull = 0;
 		boolean gameOver = false, autoMode = auto;
 		// get global variables :
 		// betMax, gainMax, phaseMax, toursMax, jetonLimite
-		String _phase_ = " 0/ 0", _tours_ = "  0/  0", _jetons_ = "  0/  0", _jetonsMax_ = "", _gains_ = "  0/  0/  0",
+		String _phase_ = " 0/ 0", _tours_ = "  0/  0/  0", _jetons_ = "  0/  0", _jetonsMax_ = "", _gains_ = "  0/  0/   0",
 				bets = "", winFront = "", winBack = "", input = "";
 		String c_black_bold = (colorMode ? colorText.BLACK_BOLD : "[[");
 		String c_red_background = (colorMode ? colorText.RED_BACKGROUND + colorText.WHITE_BOLD : "[[");
@@ -222,7 +222,7 @@ public class Main {
 			if (jetonLimite != 0 && jetons >= jetonLimite) {
 				System.out.print("--> " + c_red_background + "WALLET LIMITE REACHED !!!!!" + c_reset);
 				gainTotal -= jetons;
-				gainFull += gainTotal;
+				gainFull -= jetons;
 				if (gainTotal >= 0)
 					System.out.println("--> Gains: " + c_green_background + String.format("%3s", gainTotal) + c_reset);
 				else
@@ -240,12 +240,12 @@ public class Main {
 					input = (input.isEmpty() ? "p" : input.substring(0, 1));
 					switch (input) {
 					case "q":
-						// System.out.println("##1.1");
+						System.out.println("##1.1");
 						sc.close();
 						return;
 					case "p":
-						// System.out.println("##1.2 - start reducing Store");
-						table.reduceStore();
+						System.out.println("##1.2 - start reducing Store");
+						if ( ! table.reduceStore()) System.out.println("Store is empy .. Purge is not allowed");
 						break;
 					case "r":
 						// System.out.println("##1.3 - reset table");
@@ -319,13 +319,10 @@ public class Main {
 					phase++;
 					phaseFull ++;
 				}
-				tours++;
-				toursTotal++;
-				jetons += nbrMise;
-				jetonsMax = (jetons > jetonsMax ? jetons : jetonsMax);
+				tours++; toursTotal++; toursFull++;
+				jetons += nbrMise; jetonsMax = (jetons > jetonsMax ? jetons : jetonsMax);
 				_phase_ = String.format("%2s", phase) + "/" + String.format("%2s", phaseFull);
-				;
-				_tours_ = String.format("%3s", tours) + "/" + String.format("%3s", toursTotal);
+				_tours_ = String.format("%3s", tours) + "/" + String.format("%3s", toursTotal) + "/" + String.format("%3s", toursFull);
 				_jetons_ = String.format("%3s", jetons);
 				_jetonsMax_ = String.format("%3s", jetonsMax);
 				if (warning != 0) {
@@ -340,7 +337,7 @@ public class Main {
 				if (table.betsContains(roulette)) {
 					gain = 36 * coef - jetons;
 					gainTotal += gain;
-					gainFull += gainTotal;
+					gainFull += gain;
 					tours = 0;
 					jetons = 0;
 					coef = 1;
@@ -349,7 +346,7 @@ public class Main {
 					winBack = c_reset;
 				}
 				_gains_ = winFront + String.format("%3s", gain) + "/" + String.format("%3s", gainTotal) + "/"
-						+ String.format("%3s", gainFull) + winBack;
+						+ String.format("%4s", gainFull) + winBack;
 
 				// add roulette value to table
 				table.addOccurence(roulette);
