@@ -306,7 +306,7 @@ public class Table {
 
 	// display
 	String getTable(boolean pToBet, boolean pColorMode) {
-		String str = "", value = "", onValue = "", offValue = "", betValue = "";
+		String str = "", value = "", onValue = "", offValue = "", betValue = "", occ_="";
 		int i = 0, occ;
 		while (i < 6) {
 			int j = 0;
@@ -314,7 +314,7 @@ public class Table {
 				// value = format.format(table_value[i][j]);
 				value = String.format("%02d", table_value[i][j]);
 
-				onValue = (pColorMode ? colorText.BLACK + value + colorText.RESET : value);
+				onValue = (pColorMode ? colorText.RESET + value + colorText.RESET : value);
 				onValue = " " + onValue + " ";
 
 				offValue = (pColorMode ? colorText.RED + value + colorText.RESET : "--");
@@ -324,15 +324,18 @@ public class Table {
 				betValue = "[" + betValue + "]";
 
 				occ = table_occurence[i][j];
+				occ_ = String.format("% 2d", occ);
 
 				if (occ > 0)
 					str += (pToBet ? offValue : onValue);
 				else if (occ < 0)
 					str += (pToBet ? betValue : betValue);
-				else
+				else {
 					str += (pToBet ? onValue : " -- ");
+					occ_ = "   ";
+				}
 
-				str += String.format("% 2d", occ) + (j == 5 ? "\n" : "\t");
+				str += occ_ + (j == 5 ? "\n" : "\t");
 				j++;
 			}
 			i++;
