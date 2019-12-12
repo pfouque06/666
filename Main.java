@@ -11,6 +11,18 @@ public class Main {
 	// betMax, jetonLimite, warning, gainMax, phaseMax, toursMax
 	public static boolean colorMode = true, auto = false;
 	public static int betMax = 0, jetonLimite = 0, warning = 200, gainMax = 0, phaseMax = 0, toursMax = 0;
+	static String c_black_bold() { return (colorMode ? colorText.BLACK_BOLD : "[["); }
+	static String c_red() { return ( colorMode ? colorText.RED : "[["); }
+	static String c_red_bold () { return ( colorMode ? colorText.RED_BOLD : "[["); }
+	static String c_red_background () { return (colorMode ? colorText.RED_BACKGROUND + colorText.WHITE_BOLD : "[["); }
+	static String c_green () { return  ( colorMode ? colorText.GREEN : "[["); }
+	static String c_green_bold () { return  ( colorMode ? colorText.GREEN_BOLD : "[["); }
+	static String c_green_background () { return  (colorMode ? colorText.GREEN_BACKGROUND + colorText.WHITE_BOLD : "[["); }
+	static String c_blue () { return  ( colorMode ? colorText.BLUE : "[["); }
+	static String c_blue_bold () { return  ( colorMode ? colorText.BLUE_BOLD : "[["); }
+	static String c_blue_background () { return  (colorMode ? colorText.BLUE_BACKGROUND + colorText.WHITE_BOLD : "[["); }
+	static String c_reset () { return  (colorMode ? colorText.RESET : "]]"); }
+
 
 	public static boolean argOpt(String[] pArgs) {
 		String buffer = "";
@@ -148,8 +160,29 @@ public class Main {
 		return true;
 	}
 
+	public static void argToString() {
+
+		System.out.print("");
+		System.out.print(" auto: " + (auto? c_green() + "ON" : c_red() + "OFF" ) + c_reset());
+		System.out.print(" mode: " + (colorMode? c_green() + "color" : c_red() + "mono" ) + c_reset());
+		if (warning > 0 )
+			System.out.print(" warning: " + c_blue() + warning + c_reset());
+		if (jetonLimite > 0 )
+			System.out.print(" jetonLimite: " + c_blue() + jetonLimite + c_reset());
+		if (betMax > 0 )
+			System.out.print(" betMax: " + c_blue() + betMax + c_reset());
+		if (gainMax > 0 )
+			System.out.print(" gainMax: " + c_blue() + gainMax + c_reset());
+		if (phaseMax > 0 )
+			System.out.print(" phaseMax: " + c_blue() + phaseMax + c_reset());
+		if (toursMax > 0 )
+			System.out.print(" toursMax: " + toursMax );
+		System.out.println();
+
+	}
+
 	private static void usage(PrintStream ps) {
-		ps.println("Usage: myapp [-x|--flag] --count=NUM --file=FILE");
+		ps.println("Usage: 666 [-m] [-a] [-b|--bet <betMax>] [-j|--jetons <jetonMax>] [-g|--gain <gainMax>] [-p|--phase <phaseMax>] [-t|--tours <toursMax>] [-w|--warning <jetons>]");
 		ps.println("Options:");
 		ps.println("	-m, --mono				set monocolor mode (color mode par default");
 		ps.println("	-a, --auto				set auto mode with random roulette");
@@ -178,16 +211,11 @@ public class Main {
 		int jetons = 0, jetonsMax = 0, coef = 1, nbrMise = 0;
 		int gain = 0, gainTotal = 0, gainFull = 0;
 		boolean gameOver = false, autoMode = auto;
+		String alert = "";
 		// get global variables :
 		// betMax, gainMax, phaseMax, toursMax, jetonLimite
 		String _phase_ = " 0/ 0", _tours_ = "  0/  0/  0", _jetons_ = "  0/  0", _jetonsMax_ = "", _gains_ = "  0/  0/   0",
 				bets = "", winFront = "", winBack = "", input = "";
-		String c_black_bold = (colorMode ? colorText.BLACK_BOLD : "[[");
-		String c_red_background = (colorMode ? colorText.RED_BACKGROUND + colorText.WHITE_BOLD : "[[");
-		String c_green_background = (colorMode ? colorText.GREEN_BACKGROUND + colorText.WHITE_BOLD : "[[");
-		String c_reset = (colorMode ? colorText.RESET : "]]");
-		// String c_red_bold = ( colorMode ? colorText.RED_BOLD : "[[");
-		// String c_green_bold = ( colorMode ? colorText.GREEN_BOLD : "[[");
 
 		while (true) {
 			// display Table
@@ -220,22 +248,25 @@ public class Main {
 
 			// Check Jetons limites
 			if (jetonLimite != 0 && jetons >= jetonLimite) {
-				System.out.print("--> " + c_red_background + "WALLET LIMITE REACHED !!!!!" + c_reset);
+				System.out.print("--> " + c_red_background() + "WALLET LIMITE REACHED !!!!!" + c_reset());
 				gainTotal -= jetons;
 				gainFull -= jetons;
 				if (gainTotal >= 0)
-					System.out.println("--> Gains: " + c_green_background + String.format("%3s", gainTotal) + c_reset);
+					System.out.println("--> Gains: " + c_green_background() + String.format("%3s", gainTotal) + c_reset());
 				else
-					System.out.println("--> Gains: " + c_red_background + String.format("%3s", gainTotal) + c_reset);
+					System.out.println("--> Gains: " + c_red_background() + String.format("%3s", gainTotal) + c_reset());
 				gameOver = true;
+				alert = "jeton";
 			}
 
 			// run exit prompt
 			if (gameOver) {
 				input = "";
-				System.out.println(c_black_bold + "Game is over" + c_reset);
+				System.out.println(c_black_bold() + "Game is over" + c_reset());
 				do {
-					System.out.print("--> [(q)uit|(r)estart|(CR|p)urge store]: ");
+					String auto_ = (auto? c_green() + "ON" : c_red() + "OFF" ) + c_reset();
+					String colorMode_ = (colorMode? c_green() + "color" : c_red() + "mono" ) + c_reset();
+					System.out.print("--> [(q)uit|(r)estart|(CR|p)urge store|(o)ptions|(m)ode: "+colorMode_+"|(a)uto: " + auto_ +"]: ");
 					input = sc.nextLine();
 					input = (input.isEmpty() ? "p" : input.substring(0, 1));
 					switch (input) {
@@ -244,8 +275,17 @@ public class Main {
 						sc.close();
 						return;
 					case "p":
-						System.out.println("##1.2 - start reducing Store");
-						if ( ! table.reduceStore()) System.out.println("Store is empy .. Purge is not allowed");
+						//System.out.println("##1.2 - start reducing Store");
+						if (alert.isEmpty()) {
+							if ( ! table.reduceStore()) {
+								System.out.println(c_red_bold() + "Store is empy" + c_reset() + " .. Can't purge store, sorry !");
+								input = "";
+							}
+						}
+						else {
+							System.out.println(c_red_bold() + "Alert is raised" + c_reset() + " .. Can't purge store, sorry !");
+							input = "";
+						}
 						break;
 					case "r":
 						// System.out.println("##1.3 - reset table");
@@ -257,6 +297,50 @@ public class Main {
 						_gains_ = "  0/  0/" + String.format("%3s", gainFull);
 						bets = "";
 						break;
+					case "o":
+						//System.out.println("##1.4");
+						//reset input in order to jump back to menu
+						input = "";
+						String buffer = "";
+
+						do {
+							// display actual options :
+							System.out.print("options:"); argToString();
+
+							// get new options args_
+							System.out.print("--> new options (CR: exit): ");
+							buffer = sc.nextLine();
+							//System.out.println("buffer=" + buffer);
+							if (buffer.isEmpty()) break;
+
+							//String[] args_=buffer.split("(?!^)");
+							String[] args_=buffer.split(" ");
+							//if (args_.length > 0) {
+							//	for (String arg_ : args_) System.out.print(arg_ + " ");
+							//	System.out.println();
+							//}
+
+							// parse options args_
+							if (!argOpt(args_))
+								System.out.println("Parsing error, please retry ...");
+						} while ( ! buffer.isEmpty() );
+
+						// display new options :
+						//System.out.print("options:"); argToString();
+						break;
+					case "m":
+						// System.out.println("##1.5");
+						// toggle colorMode
+						colorMode = (colorMode? false : true );
+						input = "";
+						break;
+					case "a":
+						// System.out.println("##1.6");
+						// toggle auto mode
+						auto = (auto? false : true );
+						// autoMode = auto;
+						input = "";
+						break;
 					default:
 						// System.out.println("##1.4 - default case");
 						input = "";
@@ -264,7 +348,7 @@ public class Main {
 					}
 				} while (input.isEmpty());
 				// System.out.println("##2.1");
-				autoMode = auto; gameOver = false;
+				autoMode = auto; gameOver = false; alert = "";
 				// System.out.println("##2.2");
 				// break;
 			}
@@ -326,8 +410,8 @@ public class Main {
 				_jetons_ = String.format("%3s", jetons);
 				_jetonsMax_ = String.format("%3s", jetonsMax);
 				if (warning != 0) {
-					_jetons_ = ((jetons > warning) ? c_red_background + _jetons_ + c_reset : _jetons_);
-					_jetonsMax_ = ((jetonsMax > warning) ? c_red_background + _jetonsMax_ + c_reset : _jetonsMax_);
+					_jetons_ = ((jetons > warning) ? c_red_background() + _jetons_ + c_reset() : _jetons_);
+					_jetonsMax_ = ((jetonsMax > warning) ? c_red_background() + _jetonsMax_ + c_reset() : _jetonsMax_);
 				}
 				_jetons_ = _jetons_ + "/" + _jetonsMax_;
 
@@ -342,8 +426,8 @@ public class Main {
 					jetons = 0;
 					coef = 1;
 					// win= c_green_bold + " !!! WIN !!! " + c_reset;
-					winFront = c_green_background;
-					winBack = c_reset;
+					winFront = c_green_background();
+					winBack = c_reset();
 				}
 				_gains_ = winFront + String.format("%3s", gain) + "/" + String.format("%3s", gainTotal) + "/"
 						+ String.format("%4s", gainFull) + winBack;
