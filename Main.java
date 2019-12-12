@@ -208,13 +208,13 @@ public class Main {
 		int roulette = 0;
 		int phase = 0, phaseFull = 0;
 		int tours = 0, toursTotal = 0, toursFull = 0;
-		int jetons = 0, jetonsMax = 0, coef = 1, nbrMise = 0;
+		int jetons = 0, jetonsTotal = 0, jetonsMax = 0, coef = 1, nbrMise = 0;
 		int gain = 0, gainTotal = 0, gainFull = 0;
 		boolean gameOver = false, autoMode = auto;
 		String alert = "";
 		// get global variables :
 		// betMax, gainMax, phaseMax, toursMax, jetonLimite
-		String _phase_ = " 0/ 0", _tours_ = "  0/  0/  0", _jetons_ = "  0/  0", _jetonsMax_ = "", _gains_ = "  0/  0/   0",
+		String _phase_ = " 0/ 0", _tours_ = "  0/  0/  0", _jetons_ = "  0/  0/  0", _jetonsTotal_ = "", _jetonsMax_ = "", _gains_ = "  0/  0/   0",
 				bets = "", winFront = "", winBack = "", input = "";
 
 		while (true) {
@@ -266,9 +266,9 @@ public class Main {
 				do {
 					String auto_ = (auto? c_green() + "ON" : c_red() + "OFF" ) + c_reset();
 					String colorMode_ = (colorMode? c_green() + "color" : c_red() + "mono" ) + c_reset();
-					System.out.print("--> [(q)uit|(r)estart|(CR|p)urge store|(o)ptions|(m)ode: "+colorMode_+"|(a)uto: " + auto_ +"]: ");
+					System.out.print("--> [(q)uit|(CR|r)estart|(p)urge store|(o)ptions|(m)ode: "+colorMode_+"|(a)uto: " + auto_ +"]: ");
 					input = sc.nextLine();
-					input = (input.isEmpty() ? "p" : input.substring(0, 1));
+					input = (input.isEmpty() ? "r" : input.substring(0, 1));
 					switch (input) {
 					case "q":
 						//System.out.println("##1.1");
@@ -291,11 +291,11 @@ public class Main {
 						// System.out.println("##1.3 - reset table");
 						table.resetTable();
 						roulette = 0; phase = 0; tours = 0; toursTotal = 0;
-						jetons = 0; jetonsMax = 0; coef = 1; nbrMise = 0;
+						jetons = 0; jetonsTotal = 0; coef = 1; nbrMise = 0;
 						gain = 0; gainTotal = 0;
 						_phase_ = " 0";
 						_tours_ = "  0/  0" + "/" + String.format("%3s", toursFull);
-						_jetons_ = "  0/  0"; _jetonsMax_ = "";
+						_jetons_ = "  0/  0"; _jetonsTotal_ = "";
 						_gains_ = "  0/  0/" + String.format("%3s", gainFull);
 						bets = "";
 						break;
@@ -406,16 +406,20 @@ public class Main {
 					phaseFull ++;
 				}
 				tours++; toursTotal++; toursFull++;
-				jetons += nbrMise; jetonsMax = (jetons > jetonsMax ? jetons : jetonsMax);
+				jetons += nbrMise;
+				jetonsTotal = (jetons > jetonsTotal ? jetons : jetonsTotal);
+				jetonsMax = (jetons > jetonsMax ? jetons : jetonsMax);
 				_phase_ = String.format("%2s", phase) + "/" + String.format("%2s", phaseFull);
 				_tours_ = String.format("%3s", tours) + "/" + String.format("%3s", toursTotal) + "/" + String.format("%3s", toursFull);
 				_jetons_ = String.format("%3s", jetons);
+				_jetonsTotal_ = String.format("%3s", jetonsTotal);
 				_jetonsMax_ = String.format("%3s", jetonsMax);
 				if (warning != 0) {
 					_jetons_ = ((jetons > warning) ? c_red_background() + _jetons_ + c_reset() : _jetons_);
+					_jetonsTotal_ = ((jetonsTotal > warning) ? c_red_background() + _jetonsTotal_ + c_reset() : _jetonsTotal_);
 					_jetonsMax_ = ((jetonsMax > warning) ? c_red_background() + _jetonsMax_ + c_reset() : _jetonsMax_);
 				}
-				_jetons_ = _jetons_ + "/" + _jetonsMax_;
+				_jetons_ = _jetons_ + "/" + _jetonsTotal_ + "/" + _jetonsMax_;
 
 				// set win consequences
 				winFront = "";
@@ -429,6 +433,8 @@ public class Main {
 					coef = 1;
 					// win= c_green_bold + " !!! WIN !!! " + c_reset;
 					winFront = c_green_background();
+					if ( (gain < 0) || (gainTotal < 0) || (gainFull < 0) )
+						winFront = c_red_background();
 					winBack = c_reset();
 				}
 				_gains_ = winFront + String.format("%3s", gain) + "/" + String.format("%3s", gainTotal) + "/"
