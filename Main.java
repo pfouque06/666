@@ -271,7 +271,7 @@ public class Main {
 					input = (input.isEmpty() ? "p" : input.substring(0, 1));
 					switch (input) {
 					case "q":
-						System.out.println("##1.1");
+						//System.out.println("##1.1");
 						sc.close();
 						return;
 					case "p":
