@@ -293,7 +293,9 @@ public class Main {
 						roulette = 0; phase = 0; tours = 0; toursTotal = 0;
 						jetons = 0; jetonsMax = 0; coef = 1; nbrMise = 0;
 						gain = 0; gainTotal = 0;
-						_phase_ = " 0"; _tours_ = "  0/  0"; _jetons_ = "  0/  0"; _jetonsMax_ = "";
+						_phase_ = " 0";
+						_tours_ = "  0/  0" + "/" + String.format("%3s", toursFull);
+						_jetons_ = "  0/  0"; _jetonsMax_ = "";
 						_gains_ = "  0/  0/" + String.format("%3s", gainFull);
 						bets = "";
 						break;
