@@ -1,0 +1,10 @@
+#type:key:keyword:value:detail:action
+H:h:help::prints help message:exit
+F:a:auto:autoMode:set auto mode with random roulette (default is OFF):
+F:m:mono:colorMode:set monocolor mode (default is color):
+V:b:bet:betMax:set maximum bets allowed per tour
+V:j:jeton:jetonMax:set maximum jeton before alerting quit game
+V:g:gain:gainMax:set maximum total gain before quit game
+V:p:phase:phaseMax:set maximum phase before quit game
+V:t:tour:tourMax:set maximum total tours before quit game
+V:w:warning:jetons:set warning jeton before alerting per phase (200 par défaut)
