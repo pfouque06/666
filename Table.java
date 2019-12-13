@@ -2,6 +2,9 @@ package _666_;
 
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
 import java_tools.colorText;
 
 public class Table {
@@ -39,6 +42,21 @@ public class Table {
 
 	}
 
+	public int getRandomRoulette(int pDelay) {
+		//System.out.print("get Random Roulette...");
+		int roulette = new Random().nextInt(37);
+		while ( pDelay-- > 0) {
+			try {
+				TimeUnit.MILLISECONDS.sleep(100); // or { TimeUnit.SECONDS.sleep(1);
+			} 
+			catch (InterruptedException e) { /* empty */ } // or e.printStackTrace();
+			// System.out.print(".");
+		}
+		//System.out.println(" ["+roulette+"]");
+		return roulette;
+		
+	}
+	
 	// Occurence management
 	public void resetTable() {
 		int i = 0;
@@ -159,6 +177,7 @@ public class Table {
 		//System.out.println(">> return true");
 		return true;
 	}
+
 	// Bets management
 	void resetBets() {
 		bets.clear();

@@ -23,8 +23,8 @@ public class Main {
 	static String c_blue () { return  ( colorMode ? colorText.BLUE : "[["); }
 	static String c_blue_bold () { return  ( colorMode ? colorText.BLUE_BOLD : "[["); }
 	static String c_blue_background () { return  (colorMode ? colorText.BLUE_BACKGROUND + colorText.WHITE_BOLD : "[["); }
+	static String c_purple_background () { return (colorMode ? colorText.CYAN_BACKGROUND + colorText.WHITE_BOLD : "[["); }
 	static String c_reset () { return  (colorMode ? colorText.RESET : "]]"); }
-
 
 	public static boolean argOpt(String[] pArgs) {
 		String buffer = "";
@@ -320,18 +320,12 @@ public class Main {
 
 							//String[] args_=buffer.split("(?!^)");
 							String[] args_=buffer.split(" ");
-							//if (args_.length > 0) {
-							//	for (String arg_ : args_) System.out.print(arg_ + " ");
-							//	System.out.println();
-							//}
-
+							
 							// parse options args_
 							if (!argOpt(args_))
 								System.out.println("Parsing error, please retry ...");
 						} while ( ! buffer.isEmpty() );
 
-						// display new options :
-						//System.out.print("options:"); argToString();
 						break;
 					case "m":
 						// System.out.println("##1.5");
@@ -365,11 +359,11 @@ public class Main {
 				do {
 					do {
 						input = "";
-						System.out.println();
-						System.out.print("--> Roulette [num|(CR|r)andom|(a)uto|(q)uit]: ");
 						if (autoMode)
 							input = "r";
 						else {
+							System.out.println();
+							System.out.print("--> Roulette [num|(CR|r)andom|(a)uto|(q)uit]: ");
 							input = sc.nextLine();
 							if (input.matches("\\d+"))
 								break;
@@ -383,20 +377,8 @@ public class Main {
 						case "a":
 							autoMode = true;
 						case "r":
-							// System.out.print("get Random Roulette...");
-							roulette = new Random().nextInt(37);
 							int delay = 0; // 0.1sec per delay
-							while (delay-- > 0) {
-								try {
-									TimeUnit.MILLISECONDS.sleep(100);
-								} // or try { TimeUnit.SECONDS.sleep(1); }
-								catch (InterruptedException e) {
-								/* empty */ } // or e.printStackTrace();
-								// System.out.print(".");
-							}
-							;
-							input = String.valueOf(roulette);
-							// System.out.println(" ["+input+"]");
+							input = String.valueOf(table.getRandomRoulette(delay));
 							break;
 						}
 					} while (!input.matches("\\d+"));
@@ -417,10 +399,15 @@ public class Main {
 				_jetons_ = String.format("%3s", jetons);
 				_jetonsTotal_ = String.format("%3s", jetonsTotal);
 				_jetonsMax_ = String.format("%3s", jetonsMax);
+				if (jetonLimite != 0) {
+					_jetons_ = ((jetons >= jetonLimite) ? c_red_background() + _jetons_ + c_reset() : _jetons_);
+					_jetonsTotal_ = ((jetonsTotal >= jetonLimite) ? c_red_background() + _jetonsTotal_ + c_reset() : _jetonsTotal_);
+					_jetonsMax_ = ((jetonsMax >= jetonLimite) ? c_red_background() + _jetonsMax_ + c_reset() : _jetonsMax_);
+				}
 				if (warning != 0) {
-					_jetons_ = ((jetons > warning) ? c_red_background() + _jetons_ + c_reset() : _jetons_);
-					_jetonsTotal_ = ((jetonsTotal > warning) ? c_red_background() + _jetonsTotal_ + c_reset() : _jetonsTotal_);
-					_jetonsMax_ = ((jetonsMax > warning) ? c_red_background() + _jetonsMax_ + c_reset() : _jetonsMax_);
+					_jetons_ = ((jetons >= warning) ? c_purple_background() + _jetons_ + c_reset() : _jetons_);
+					_jetonsTotal_ = ((jetonsTotal >= warning) ? c_purple_background() + _jetonsTotal_ + c_reset() : _jetonsTotal_);
+					_jetonsMax_ = ((jetonsMax >= warning) ? c_purple_background() + _jetonsMax_ + c_reset() : _jetonsMax_);
 				}
 				_jetons_ = _jetons_ + "/" + _jetonsTotal_ + "/" + _jetonsMax_;
 
