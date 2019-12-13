@@ -2,6 +2,7 @@ package _666_;
 
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java_tools.colorText;
 
 public class Table {
 	static int[][] table_value = { { 28, 4, 3, 31, 35, 10 }, { 36, 18, 21, 24, 11, 1 }, { 7, 23, 12, 17, 22, 30 },

@@ -4,6 +4,8 @@ import java.io.PrintStream;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
+import java_tools.colorText;
+//import javaUtils.argOpts;
 
 public class Main {
 
@@ -28,6 +30,7 @@ public class Main {
 		String buffer = "";
 		// File file = null;
 
+		//argOpts.argOpt(pArgs);
 		for (int i = 0; i < pArgs.length; i++) {
 			if ("--help".equals(pArgs[i]) || "-h".equals(pArgs[i])) {
 				usage(System.out); // use STDOUT when help is requested
