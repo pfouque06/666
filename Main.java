@@ -1,17 +1,16 @@
 package _666_;
 
-import java.io.PrintStream;
+import java.util.LinkedHashSet;
 import java.util.Scanner;
 import java_tools.colorText;
 import java_tools.getOpts;
-//import javaUtils.argOpts;
 
 public class Main {
 	// get global variables :
 	getOpts options;
 	// betMax, jetonLimite, warning, gainMax, phaseMax, toursMax
 	public static boolean colorMode = true, auto = false;
-	public static int betMax = 0, jetonLimite = 0, warning = 200, gainMax = 0, phaseMax = 0, toursMax = 0;
+	public static int betMax = 0, jetonLimite = 0, warning = 200, gainMax = 0, phaseMax = 0, tourMax = 0;
 	static String c_black_bold() { return (colorMode ? colorText.BLACK_BOLD : "[["); }
 	static String c_red() { return ( colorMode ? colorText.RED : "[["); }
 	static String c_red_bold () { return ( colorMode ? colorText.RED_BOLD : "[["); }
@@ -25,193 +24,90 @@ public class Main {
 	static String c_purple_background () { return (colorMode ? colorText.CYAN_BACKGROUND + colorText.WHITE_BOLD : "[["); }
 	static String c_reset () { return  (colorMode ? colorText.RESET : "]]"); }
 
-	public static boolean argOpt(String[] pArgs) {
-		String buffer = "";
-		// File file = null;
-
-		//argOpts.argOpt(pArgs);
-		for (int i = 0; i < pArgs.length; i++) {
-			if ("--help".equals(pArgs[i]) || "-h".equals(pArgs[i])) {
-				usage(System.out); // use STDOUT when help is requested
+	public static boolean setOpts(LinkedHashSet<String[]> pList) {
+		// Loop on each options of pList
+		for (String[] fields : pList) {
+			//System.out.println("fields="+fields.toString() );
+			switch (fields[2]) {
+			case "colorMode":
+				colorMode = fields[3].equals("true");
+				System.out.println("colorMode=" + colorMode);
+				break;
+			case "autoMode":
+				auto = fields[3].equals("true");
+				System.out.println("auto=" + auto);
+				break;
+			case "jetonWarning":
+				warning = Integer.valueOf(fields[3]);
+				System.out.println("warning=" + warning);
+				break;
+			case "jetonMax":
+				jetonLimite = Integer.valueOf(fields[3]);
+				System.out.println("jetonLimite=" + jetonLimite);
+				break;
+			case "phaseMax":
+				phaseMax = Integer.valueOf(fields[3]);
+				System.out.println("phaseMax=" + phaseMax);
+				break;
+			case "tourMax":
+				tourMax = Integer.valueOf(fields[3]);
+				System.out.println("tourMax=" + tourMax);
+				break;
+			case "gainMax":
+				gainMax = Integer.valueOf(fields[3]);
+				System.out.println("gainMax=" + gainMax);
+				break;
+			case "betMax":
+				betMax = Integer.valueOf(fields[3]);
+				System.out.println("betMax=" + betMax);
+				break;
+			default:
+				System.err.println("Error: option>valuename unknown");
+			case "usage":
 				return false;
 			}
-
-			// set colorMode flag
-			else if ("--mono".equals(pArgs[i]) || "-m".equals(pArgs[i])) {
-				colorMode = false; // toggle
-				System.out.println("colorMode=" + colorMode);
-			}
-
-			// set auto flag
-			else if ("--auto".equals(pArgs[i]) || "-a".equals(pArgs[i])) {
-				auto = true; // toggle
-				System.out.println("auto=" + auto);
-			}
-
-			// set betMax
-			else if ("--bet".equals(pArgs[i]) || "-b".equals(pArgs[i])) {
-				if (i == pArgs.length - 1) {
-					System.err.println("Error: missing argument for " + pArgs[i]);
-					// usage(System.err);
-					return false;
-				}
-				buffer = pArgs[++i];
-				if (!buffer.matches("\\d+")) {
-					System.err.println("Error: argument for " + buffer + " must be a number");
-					// usage(System.err);
-					return false;
-				}
-				betMax = Integer.valueOf(buffer);
-				System.out.println("betMax=" + betMax);
-			}
-
-			// set jetonMax
-			else if ("--jetons".equals(pArgs[i]) || "-j".equals(pArgs[i])) {
-				if (i == pArgs.length - 1) {
-					System.err.println("Error: missing argument for " + pArgs[i]);
-					// usage(System.err);
-					return false;
-				}
-				buffer = pArgs[++i];
-				if (!buffer.matches("\\d+")) {
-					System.err.println("Error: argument for " + buffer + " must be a number");
-					// usage(System.err);
-					return false;
-				}
-				jetonLimite = Integer.valueOf(buffer);
-				System.out.println("jetonMax=" + jetonLimite);
-			}
-
-			// set gainMax
-			else if ("--gain".equals(pArgs[i]) || "-g".equals(pArgs[i])) {
-				if (i == pArgs.length - 1) {
-					System.err.println("Error: missing argument for " + pArgs[i]);
-					// usage(System.err);
-					return false;
-				}
-				buffer = pArgs[++i];
-				if (!buffer.matches("\\d+")) {
-					System.err.println("Error: argument for " + buffer + " must be a number");
-					// usage(System.err);
-					return false;
-				}
-				gainMax = Integer.valueOf(buffer);
-				System.out.println("gainMax=" + gainMax);
-			}
-
-			// set phaseMax
-			else if ("--phase".equals(pArgs[i]) || "-p".equals(pArgs[i])) {
-				if (i == pArgs.length - 1) {
-					System.err.println("Error: missing argument for " + pArgs[i]);
-					// usage(System.err);
-					return false;
-				}
-				buffer = pArgs[++i];
-				if (!buffer.matches("\\d+")) {
-					System.err.println("Error: argument for " + buffer + " must be a number");
-					// usage(System.err);
-					return false;
-				}
-				phaseMax = Integer.valueOf(buffer);
-				System.out.println("phaseMax=" + phaseMax);
-			}
-
-			// set toursMax
-			else if ("--tours".equals(pArgs[i]) || "-t".equals(pArgs[i])) {
-				if (i == pArgs.length - 1) {
-					System.err.println("Error: missing argument for " + pArgs[i]);
-					// usage(System.err);
-					return false;
-				}
-				buffer = pArgs[++i];
-				if (!buffer.matches("\\d+")) {
-					System.err.println("Error: argument for " + buffer + " must be a number");
-					// usage(System.err);
-					return false;
-				}
-				toursMax = Integer.valueOf(buffer);
-				System.out.println("toursMax=" + toursMax);
-			}
-
-			// set warning
-			else if ("--warning".equals(pArgs[i]) || "-w".equals(pArgs[i])) {
-				if (i == pArgs.length - 1) {
-					System.err.println("Error: missing argument for " + pArgs[i]);
-					// usage(System.err);
-					return false;
-				}
-				buffer = pArgs[++i];
-				if (!buffer.matches("\\d+")) {
-					System.err.println("Error: argument for " + buffer + " must be a number");
-					// usage(System.err);
-					return false;
-				}
-				warning = Integer.valueOf(buffer);
-				System.out.println("warning=" + warning);
-			}
-
-			// else if ("--file".equals(pArgs[i]) || "-f".equals(pArgs[i])) {
-			// if (i == pArgs.length - 1) {
-			// System.err.println("Error: missing argument for " + pArgs[i]);
-			// usage(System.err);
-			// return;
-			// }
-			// file = new File(pArgs[++i]);
-			// }
 		}
 		return true;
 	}
+	
+	public static String optsToString() {
 
-	public static void argToString() {
-
-		System.out.print("");
-		System.out.print(" auto: " + (auto? c_green() + "ON" : c_red() + "OFF" ) + c_reset());
-		System.out.print(" mode: " + (colorMode? c_green() + "color" : c_red() + "mono" ) + c_reset());
+		String buffer = "";
+		
+		buffer += " auto: " + (auto? c_green() + "ON" : c_red() + "OFF" ) + c_reset();
+		buffer += " mode: " + (colorMode? c_green() + "color" : c_red() + "mono" ) + c_reset();
 		if (warning > 0 )
-			System.out.print(" warning: " + c_blue() + warning + c_reset());
+			buffer += " warning: " + c_blue() + warning + c_reset();
 		if (jetonLimite > 0 )
-			System.out.print(" jetonLimite: " + c_blue() + jetonLimite + c_reset());
+			buffer += " jetonLimite: " + c_blue() + jetonLimite + c_reset();
 		if (betMax > 0 )
-			System.out.print(" betMax: " + c_blue() + betMax + c_reset());
+			buffer += " betMax: " + c_blue() + betMax + c_reset();
 		if (gainMax > 0 )
-			System.out.print(" gainMax: " + c_blue() + gainMax + c_reset());
+			buffer += " gainMax: " + c_blue() + gainMax + c_reset();
 		if (phaseMax > 0 )
-			System.out.print(" phaseMax: " + c_blue() + phaseMax + c_reset());
-		if (toursMax > 0 )
-			System.out.print(" toursMax: " + toursMax );
-		System.out.println();
+			buffer += " phaseMax: " + c_blue() + phaseMax + c_reset();
+		if (tourMax > 0 )
+			buffer += " toursMax: " + c_blue() + tourMax + c_reset();
+		return buffer;
 
-	}
-
-	private static void usage(PrintStream ps) {
-		ps.println("Usage: 666 [-m] [-a] [-b|--bet <betMax>] [-j|--jetons <jetonMax>] [-g|--gain <gainMax>] [-p|--phase <phaseMax>] [-t|--tours <toursMax>] [-w|--warning <jetons>]");
-		ps.println("Options:");
-		ps.println("	-m, --mono				set monocolor mode (color mode par default");
-		ps.println("	-a, --auto				set auto mode with random roulette");
-		ps.println("	-b, --bet <betMax>		set maximum bets allowed per tour");
-		ps.println("	-j, --jetons <jetonMax>	set maximum jeton before alerting per phase");
-		ps.println("	-g, --gain <gainMax>	set maximum total gain before quit game");
-		ps.println("	-p, --phase <phaseMax>	set maximum phase before quit game");
-		ps.println("	-t, --tours <toursMax>	set maximum total tours before quit game");
-		ps.println("	-w, --warning <jetons>	set jetons in warning (200 par défaut)");
-		ps.println();
-		ps.println("	-h, --help				Prints this help message and exits");
 	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		// set getOps class and parse args according to file getOptsTable.txt (default)
-		getOpts options = new getOpts();
-		System.out.println("optionTable=\n"+options.optionTable_toString());
-		if ( ! options.setOptionList(args))
+		// parse args :
+		// initiate getOpts class and parse args according to file getOptsTable.txt (default)
+		getOpts options = new getOpts(); //System.out.println("optionTable=\n"+options.optionTable_toString());
+		if ( ! options.setOptionList(args)) {
+			options.getUsage(System.out); // use STDOUT when help is requested
 			return;
+		}
 		System.out.println("optionList=\n"+options.optionList_toString());
-		
-		// parse args
-		if (!argOpt(args))
+		if ( ! setOpts(options.getOptionList()) ) {
+			options.getUsage(System.out); // use STDOUT when help is requested
 			return;
-
+		}
+		
 		Table table = new Table(betMax);
 		Scanner sc = new Scanner(System.in);
 		int roulette = 0;
@@ -250,7 +146,7 @@ public class Main {
 			// if gainMax, phaseMax or toursMax are reached
 			if (table.isFull() || (gainMax != 0 ? gainTotal >= gainMax : false)
 					|| (phaseMax != 0 && tours == 0 ? phase >= phaseMax : false)
-					|| (toursMax != 0 && tours == 0 ? toursTotal >= toursMax : false)) {
+					|| (tourMax != 0 && tours == 0 ? toursTotal >= tourMax : false)) {
 				System.out.println();
 				gameOver = true;
 			}
@@ -316,7 +212,7 @@ public class Main {
 
 						do {
 							// display actual options :
-							System.out.print("options:"); argToString();
+							System.out.println("options:" + optsToString());
 
 							// get new options args_
 							System.out.print("--> new options (CR: exit): ");
@@ -328,10 +224,14 @@ public class Main {
 							String[] args_=buffer.split(" ");
 							
 							// parse options args_
-							if (!argOpt(args_))
+							if ( ! options.setOptionList(args_))
 								System.out.println("Parsing error, please retry ...");
+							else {
+								//System.out.println("optionList=\n"+options.optionList_toString());
+								if ( ! setOpts(options.getOptionList()) )
+									System.err.println("Error : Parsing failed, please retry ...");
+							}
 						} while ( ! buffer.isEmpty() );
-
 						break;
 					case "m":
 						// System.out.println("##1.5");
