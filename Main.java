@@ -1,15 +1,14 @@
 package _666_;
 
 import java.io.PrintStream;
-import java.util.Random;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 import java_tools.colorText;
+import java_tools.getOpts;
 //import javaUtils.argOpts;
 
 public class Main {
-
 	// get global variables :
+	getOpts options;
 	// betMax, jetonLimite, warning, gainMax, phaseMax, toursMax
 	public static boolean colorMode = true, auto = false;
 	public static int betMax = 0, jetonLimite = 0, warning = 200, gainMax = 0, phaseMax = 0, toursMax = 0;
@@ -202,7 +201,14 @@ public class Main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		// parse agrs
+		// set getOps class and parse args according to file getOptsTable.txt (default)
+		getOpts options = new getOpts();
+		System.out.println("optionTable=\n"+options.optionTable_toString());
+		if ( ! options.setOptionList(args))
+			return;
+		System.out.println("optionList=\n"+options.optionList_toString());
+		
+		// parse args
 		if (!argOpt(args))
 			return;
 
