@@ -119,7 +119,7 @@ public class Main {
 			options.getUsage(System.out); // use STDOUT when help is requested
 			return;
 		}
-		System.out.println("optionList=\n"+options.optionList_toString());
+		//System.out.println("optionList=\n"+options.optionList_toString());
 		if ( ! setOpts(options.getOptionList()) ) {
 			options.getUsage(System.out); // use STDOUT when help is requested
 			return;
