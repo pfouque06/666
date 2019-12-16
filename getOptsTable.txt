@@ -1,3 +1,4 @@
+##### DO NOT FORGET FOLLOWING HEADER LINE !! #####
 TYPE:KEY:KEYWORD:VALUENAME:VALUETYPE:DETAIL:ACTION:
 F:h:help:usage:-:prints help message:true:
 F:a:auto:autoMode:boolean:set auto mode with random roulette (default is OFF):true:
@@ -9,4 +10,3 @@ V:p:phase:phaseMax:int:set maximum phase before quit game:-:
 V:t:tour:tourMax:int:set maximum total tours before quit game:-:
 V:g:gain:gainMax:int:set maximum total gain before quit game:-:
 V:b:bet:betMax:int:set maximum bets allowed per tour:-:
-##toto

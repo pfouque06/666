@@ -8,6 +8,21 @@ import java_tools.getOpts;
 public class Main {
 	// get global variables :
 	getOpts options;
+	static String[] optionArray = {
+			"##### DO NOT FORGET FOLLOWING HEADER LINE !! #####",
+			"TYPE:KEY:KEYWORD:VALUENAME:VALUETYPE:DETAIL:ACTION:",
+			"F:h:help:usage:-:prints help message:true:",
+			"F:a:auto:autoMode:boolean:set auto mode with random roulette (default is OFF):true:",
+			"F:c:color:colorMode:boolean:set color mode (default is color):true:",
+			"F:m:mono:colorMode:boolean:set monocolor mode (default is color):false:",
+			"V:w:warning:jetonWarning:int:set warning jeton before alerting per phase (default is 200):-:",
+			"V:j:jeton:jetonMax:int:set maximum jeton before alerting quit game:-:",
+			"V:p:phase:phaseMax:int:set maximum phase before quit game:-:",
+			"V:t:tour:tourMax:int:set maximum total tours before quit game:-:",
+			"V:g:gain:gainMax:int:set maximum total gain before quit game:-:",
+			"V:b:bet:betMax:int:set maximum bets allowed per tour:-:",
+			};
+
 	// betMax, jetonLimite, warning, gainMax, phaseMax, toursMax
 	public static boolean colorMode = true, auto = false;
 	public static int betMax = 0, jetonLimite = 0, warning = 200, gainMax = 0, phaseMax = 0, tourMax = 0;
@@ -23,6 +38,7 @@ public class Main {
 	static String c_blue_background () { return  (colorMode ? colorText.BLUE_BACKGROUND + colorText.WHITE_BOLD : "[["); }
 	static String c_purple_background () { return (colorMode ? colorText.CYAN_BACKGROUND + colorText.WHITE_BOLD : "[["); }
 	static String c_reset () { return  (colorMode ? colorText.RESET : "]]"); }
+	
 
 	public static boolean setOpts(LinkedHashSet<String[]> pList) {
 		// Loop on each options of pList
@@ -31,38 +47,38 @@ public class Main {
 			switch (fields[2]) {
 			case "colorMode":
 				colorMode = fields[3].equals("true");
-				System.out.println("colorMode=" + colorMode);
+				//System.out.println("colorMode=" + colorMode);
 				break;
 			case "autoMode":
 				auto = fields[3].equals("true");
-				System.out.println("auto=" + auto);
+				//System.out.println("auto=" + auto);
 				break;
 			case "jetonWarning":
 				warning = Integer.valueOf(fields[3]);
-				System.out.println("warning=" + warning);
+				//System.out.println("warning=" + warning);
 				break;
 			case "jetonMax":
 				jetonLimite = Integer.valueOf(fields[3]);
-				System.out.println("jetonLimite=" + jetonLimite);
+				//System.out.println("jetonLimite=" + jetonLimite);
 				break;
 			case "phaseMax":
 				phaseMax = Integer.valueOf(fields[3]);
-				System.out.println("phaseMax=" + phaseMax);
+				//System.out.println("phaseMax=" + phaseMax);
 				break;
 			case "tourMax":
 				tourMax = Integer.valueOf(fields[3]);
-				System.out.println("tourMax=" + tourMax);
+				//System.out.println("tourMax=" + tourMax);
 				break;
 			case "gainMax":
 				gainMax = Integer.valueOf(fields[3]);
-				System.out.println("gainMax=" + gainMax);
+				//System.out.println("gainMax=" + gainMax);
 				break;
 			case "betMax":
 				betMax = Integer.valueOf(fields[3]);
-				System.out.println("betMax=" + betMax);
+				//System.out.println("betMax=" + betMax);
 				break;
 			default:
-				System.err.println("Error: option>valuename unknown");
+				System.err.println("Error: option > valuename unknown");
 			case "usage":
 				return false;
 			}
@@ -97,7 +113,8 @@ public class Main {
 
 		// parse args :
 		// initiate getOpts class and parse args according to file getOptsTable.txt (default)
-		getOpts options = new getOpts(); //System.out.println("optionTable=\n"+options.optionTable_toString());
+		//getOpts options = new getOpts(); //System.out.println("optionTable=\n"+options.optionTable_toString());
+		getOpts options = new getOpts(optionArray); //System.out.println("optionTable=\n"+options.optionTable_toString());
 		if ( ! options.setOptionList(args)) {
 			options.getUsage(System.out); // use STDOUT when help is requested
 			return;
