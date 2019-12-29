@@ -15,17 +15,18 @@ public class Main {
 			"F:a:auto:autoMode:boolean:set auto mode with random roulette (default is OFF):true:",
 			"F:c:color:colorMode:boolean:set color mode (default is color):true:",
 			"F:m:mono:colorMode:boolean:set monocolor mode (default is color):false:",
-			"V:w:warning:jetonWarning:int:set warning jeton before alerting per phase (default is 200):-:",
-			"V:j:jeton:jetonMax:int:set maximum jeton before alerting quit game:-:",
-			"V:p:phase:phaseMax:int:set maximum phase before quit game:-:",
-			"V:t:tour:tourMax:int:set maximum total tours before quit game:-:",
-			"V:g:gain:gainMax:int:set maximum total gain before quit game:-:",
+			"V:d:deposit:deposit:int:set jetons for deposit required to start a game (default is 500):-:",
+			"V:w:warning:jetonWarning:int:set warning spent before alerting per phase (default is 200):-:",
+			"V:j:jeton:jetonMax:int:set maximum spent to quit game:-:",
+			"V:p:phase:phaseMax:int:set maximum phase to quit game:-:",
+			"V:t:tour:tourMax:int:set maximum total tours to quit game:-:",
+			"V:g:gain:gainMax:int:set maximum total gain to quit game:-:",
 			"V:b:bet:betMax:int:set maximum bets allowed per tour:-:",
 			};
 
 	// betMax, jetonLimite, warning, gainMax, phaseMax, toursMax
 	public static boolean colorMode = true, autoMode = false;
-	public static int betMax = 0, jetonLimite = 0, warning = 200, gainMax = 0, phaseMax = 0, tourMax = 0;
+	public static int deposit=500, betMax = 0, jetonLimite = 0, warning = 200, gainMax = 0, phaseMax = 0, tourMax = 0;
 
 	static String c_black_bold() { return (colorMode ? colorText.BLACK_BOLD : "[["); }
 	static String c_red() { return (colorMode ? colorText.RED : "[["); }
@@ -43,7 +44,7 @@ public class Main {
 	public static boolean setOpts(LinkedHashSet<String[]> pList) {
 		// Loop on each options of pList
 		for (String[] fields : pList) {
-			// System.out.println("fields="+fields.toString() );
+			//System.out.println("fields="+fields.toString() );
 			switch (fields[2]) {
 			case "colorMode":
 				colorMode = fields[3].equals("true");
@@ -52,6 +53,10 @@ public class Main {
 			case "autoMode":
 				autoMode = fields[3].equals("true");
 				// System.out.println("auto=" + auto);
+				break;
+			case "deposit":
+				deposit = Integer.valueOf(fields[3]);
+				// System.out.println("deposit=" + deposit);
 				break;
 			case "jetonWarning":
 				warning = Integer.valueOf(fields[3]);
@@ -92,6 +97,8 @@ public class Main {
 
 		buffer += " auto: " + (autoMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
 		buffer += " mode: " + (colorMode ? c_green() + "color" : c_red() + "mono") + c_reset();
+		if (deposit > 0)
+			buffer += " deposit: " + c_blue() + deposit + c_reset();
 		if (warning > 0)
 			buffer += " warning: " + c_blue() + warning + c_reset();
 		if (jetonLimite > 0)
@@ -108,6 +115,56 @@ public class Main {
 
 	}
 
+	public static String phaseToString(int pPhase, int pPhaseFull) {
+		String _phase_ = "";
+		_phase_ = String.format("%2s", pPhase) + "/" + String.format("%2s", pPhaseFull);
+		return _phase_;
+	}
+	
+	public static String tourToString(int pTours, int pToursTotal, int pToursFull) {
+		String _tours_ = "";
+		_tours_ = String.format("%3s", pTours)
+				+ "/" + String.format("%3s", pToursTotal)
+				+ "/" + String.format("%3s", pToursFull);
+		return _tours_;
+	}
+	
+	public static String jetonToString(int pJetons, int pJetonsTotal, int pJetonsMax) {
+		String _jetons_ = "", _jetonsTotal_ = "", _jetonsMax_ = "";
+		_jetons_ = String.format("%3s", pJetons);
+		_jetonsTotal_ = String.format("%3s", pJetonsTotal);
+		_jetonsMax_ = String.format("%3s", pJetonsMax);
+		if (warning != 0) {
+			_jetons_ = ((pJetons <= warning) ? c_purple_background() + _jetons_ + c_reset() : _jetons_);
+			_jetonsTotal_ = ((pJetonsTotal <= warning) ? c_purple_background() + _jetonsTotal_ + c_reset()
+			: _jetonsTotal_);
+			_jetonsMax_ = ((pJetonsMax <= warning) ? c_purple_background() + _jetonsMax_ + c_reset()
+			: _jetonsMax_);
+		}
+		if (jetonLimite != 0) {
+			_jetons_ = ((pJetons <= jetonLimite) ? c_red_background() + _jetons_ + c_reset() : _jetons_);
+			_jetonsTotal_ = ((pJetonsTotal <= jetonLimite) ? c_red_background() + _jetonsTotal_ + c_reset()
+					: _jetonsTotal_);
+			_jetonsMax_ = ((pJetonsMax <= jetonLimite) ? c_red_background() + _jetonsMax_ + c_reset()
+					: _jetonsMax_);
+		}
+		_jetons_ = _jetons_ + "/" + _jetonsTotal_ + "/" + _jetonsMax_;
+		return _jetons_;
+	}
+
+	public static String gainToString(int win, int pGain, int pGainTotal, int pGainFull) {
+		String _gains_ = "", buffer = "";
+		String winFront = win > 0 ? c_green_background() : "";
+		String winBack = win > 0 ? c_reset() : "";
+		buffer = String.format("%3s", pGain);
+		_gains_ = ( pGain < 0 ? c_red_background()  + buffer + c_reset() : winFront + buffer + winBack);
+		buffer = String.format("%3s", pGainTotal);
+		_gains_ += "/" + ( pGainTotal < 0 ? c_red_background()  + buffer + c_reset() : winFront + buffer + winBack);
+		buffer = String.format("%3s", pGainFull);
+		_gains_ += "/" + ( pGainFull < 0 ? c_red_background()  + buffer + c_reset() : winFront + buffer + winBack);
+		return _gains_;
+	}
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
@@ -132,14 +189,16 @@ public class Main {
 		int roulette = 0;
 		int phase = 0, phaseFull = 0;
 		int tours = 0, toursTotal = 0, toursFull = 0;
-		int jetons = 0, jetonsTotal = 0, jetonsMax = 0, coef = 1, nbrMise = 0;
-		int gain = 0, gainTotal = 0, gainFull = 0;
+		int depositOrigin = deposit, jetons = deposit, jetonsTotal = deposit, jetonsMax = deposit, coef = 1, nbrMise = 0;
+		int win = 0, gain = 0, gainTotal = 0, gainFull = 0;
 		boolean gameOver = false, autoPlay = autoMode;
 		String alert = "";
 		// get global variables :
 		// betMax, gainMax, phaseMax, toursMax, jetonLimite
-		String _phase_ = " 0/ 0", _tours_ = "  0/  0/  0", _jetons_ = "  0/  0/  0", _jetonsTotal_ = "",
-				_jetonsMax_ = "", _gains_ = "  0/  0/   0", bets = "", winFront = "", winBack = "", input = "";
+		String _phase_ = phaseToString(0, 0),
+				_tours_ = tourToString(0, 0, 0),
+				_jetons_ = jetonToString(jetons, jetonsTotal, jetonsMax),
+				_gains_ = gainToString(0, 0, 0, 0), bets = "", input = "";
 
 		while (true) {
 			// display Table
@@ -163,37 +222,42 @@ public class Main {
 
 			// if table is full (all values are completed)
 			// if gainMax, phaseMax or toursMax are reached
-			if (table.isFull() || (gainMax != 0 ? gainTotal >= gainMax : false)
+			if (table.isFull()
+					|| (gainMax != 0 ? gainTotal >= gainMax : false)
 					|| (phaseMax != 0 && tours == 0 ? phase >= phaseMax : false)
 					|| (tourMax != 0 && tours == 0 ? toursTotal >= tourMax : false)) {
 				System.out.println();
-				gameOver = true;
+				gameOver = true; // launch exit menu
 			}
 
+			// Check Mise versus Jetons
+			if ( jetons < nbrMise ) {
+				System.out.println("--> " + c_red_background() + "CAN'T BET THIS AMOUNT !!!!!" + c_reset());
+				gameOver = true; // launch exit menu
+				alert = "bet";  // set alert
+			}
+				
 			// Check Jetons limites
-			if (jetonLimite != 0 && jetons >= jetonLimite) {
+			if (jetonLimite != 0 && jetons <= jetonLimite) {
 				System.out.print("--> " + c_red_background() + "WALLET LIMITE REACHED !!!!!" + c_reset());
 				gainTotal -= jetons;
 				gainFull -= jetons;
 				if (gainTotal >= 0)
-					System.out.println(
-							"--> Gains: " + c_green_background() + String.format("%3s", gainTotal) + c_reset());
+					System.out.println("--> Gains: " + c_green_background() + String.format("%3s", gainTotal) + c_reset());
 				else
-					System.out
-							.println("--> Gains: " + c_red_background() + String.format("%3s", gainTotal) + c_reset());
-				gameOver = true;
-				alert = "jeton";
+					System.out.println("--> Gains: " + c_red_background() + String.format("%3s", gainTotal) + c_reset());
+				gameOver = true; // launch exit menu
+				alert = "jeton"; // set alert
 			}
 
 			// run exit prompt
 			if (gameOver) {
 				input = "";
-				System.out.println(c_black_bold() + "Game is over" + c_reset());
+				System.out.println("--> " + c_black_bold() + "Game is over" + c_reset());
 				do {
-					String autoMode_ = (autoMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
-					String colorMode_ = (colorMode ? c_green() + "color" : c_red() + "mono") + c_reset();
-					System.out.print("--> [(q)uit|(CR|r)estart|(p)urge store|(o)ptions|(m)ode: " + colorMode_
-							+ "|(a)uto: " + autoMode_ + "]: ");
+					String autoMode_ = "|(m)ode: " + (autoMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
+					String colorMode_ = "|(a)uto: " + (colorMode ? c_green() + "color" : c_red() + "mono") + c_reset();
+					System.out.print("--> [(q)uit|(CR|r)estart|(p)urge store|(o)ptions"	+  colorMode_ + autoMode_ + "]: ");
 					input = sc.nextLine();
 					input = (input.isEmpty() ? "r" : input.substring(0, 1));
 					switch (input) {
@@ -222,17 +286,20 @@ public class Main {
 						phase = 0;
 						tours = 0;
 						toursTotal = 0;
-						jetons = 0;
-						jetonsTotal = 0;
 						coef = 1;
 						nbrMise = 0;
 						gain = 0;
 						gainTotal = 0;
-						_phase_ = " 0";
-						_tours_ = "  0/  0" + "/" + String.format("%3s", toursFull);
-						_jetons_ = "  0/  0";
-						_jetonsTotal_ = "";
-						_gains_ = "  0/  0/" + String.format("%3s", gainFull);
+						if (! alert.isEmpty()) {
+							gainFull -= deposit - jetons;
+						}
+						deposit = depositOrigin;
+						jetons = deposit;
+						jetonsTotal = deposit;
+						_phase_ = phaseToString(0, phaseFull);
+						_tours_ = tourToString(0, 0, toursFull);
+						_jetons_ = jetonToString(jetons, jetonsTotal, jetonsMax);
+						_gains_ = gainToString(win, 0, 0, gainFull);
 						bets = "";
 						break;
 					case "o":
@@ -255,11 +322,31 @@ public class Main {
 							// String[] args_=buffer.split("(?!^)");
 							String[] args_ = buffer.split(" ");
 
+							// get initial deposit value and reset deposit
+							int depositHold = deposit;
+							deposit = 0;
+							
 							// parse options args_
 							if (!options.setOptionList(args_))
 								System.out.println("Parsing error, please retry or use -h, --help to get usage ...");
 							else if (!setOpts(options.getOptionList()))
 								options.getUsage(System.out); // use STDOUT when help is requested
+					
+							// check if deposit is added
+							if ( deposit > 0) {
+								// add new deposit to jetons and to initial value
+								jetons += deposit;
+								deposit += depositHold;
+								_jetons_ = jetonToString(jetons, jetonsTotal, jetonsMax);
+
+								// Check Mise versus Jetons
+								if (alert.equals("bet"))
+									if ( jetons >= nbrMise) {
+										System.out.println("--> " +c_green_bold() + "wallet is up and alive again !!" + c_reset());
+										input = "go on";
+									}
+							} else // return initial deposit value
+								deposit = depositHold;
 
 						} while (!buffer.isEmpty());
 						break;
@@ -280,6 +367,17 @@ public class Main {
 						input = "";
 						break;
 					}
+					
+					if (input.isEmpty()) {
+						// display Global Status
+						System.out.println();
+						System.out.print("Phase: " + _phase_ + " | ");
+						System.out.print("Tour: " + _tours_ + " | ");
+						System.out.print("Jetons: " + _jetons_ + " | ");
+						System.out.print("Gains: " + _gains_ + " | ");
+						System.out.println(bets);
+					}
+
 				} while (input.isEmpty());
 				// System.out.println("##2.1");
 				autoPlay = autoMode;
@@ -330,49 +428,28 @@ public class Main {
 				tours++;
 				toursTotal++;
 				toursFull++;
-				jetons += nbrMise;
-				jetonsTotal = (jetons > jetonsTotal ? jetons : jetonsTotal);
-				jetonsMax = (jetons > jetonsMax ? jetons : jetonsMax);
-				_phase_ = String.format("%2s", phase) + "/" + String.format("%2s", phaseFull);
-				_tours_ = String.format("%3s", tours) + "/" + String.format("%3s", toursTotal) + "/"
-						+ String.format("%3s", toursFull);
-				_jetons_ = String.format("%3s", jetons);
-				_jetonsTotal_ = String.format("%3s", jetonsTotal);
-				_jetonsMax_ = String.format("%3s", jetonsMax);
-				if (jetonLimite != 0) {
-					_jetons_ = ((jetons >= jetonLimite) ? c_red_background() + _jetons_ + c_reset() : _jetons_);
-					_jetonsTotal_ = ((jetonsTotal >= jetonLimite) ? c_red_background() + _jetonsTotal_ + c_reset()
-							: _jetonsTotal_);
-					_jetonsMax_ = ((jetonsMax >= jetonLimite) ? c_red_background() + _jetonsMax_ + c_reset()
-							: _jetonsMax_);
-				}
-				if (warning != 0) {
-					_jetons_ = ((jetons >= warning) ? c_purple_background() + _jetons_ + c_reset() : _jetons_);
-					_jetonsTotal_ = ((jetonsTotal >= warning) ? c_purple_background() + _jetonsTotal_ + c_reset()
-							: _jetonsTotal_);
-					_jetonsMax_ = ((jetonsMax >= warning) ? c_purple_background() + _jetonsMax_ + c_reset()
-							: _jetonsMax_);
-				}
-				_jetons_ = _jetons_ + "/" + _jetonsTotal_ + "/" + _jetonsMax_;
+				jetons -= nbrMise;
+				jetonsTotal = (jetons < jetonsTotal ? jetons : jetonsTotal);
+				jetonsMax = (jetons < jetonsMax ? jetons : jetonsMax);
+
+				// prepare display
+				_phase_ = phaseToString(phase, phaseFull);
+				_tours_ = tourToString(tours, toursTotal, toursFull);
 
 				// set win consequences
-				winFront = "";
-				winBack = "";
+				win = 0;
 				if (table.betsContains(roulette)) {
-					gain = 36 * coef - jetons;
+					win = 36 * coef;
+					jetons += win;
+					gain = jetons - deposit;
+					deposit = (jetons > deposit) ? jetons : deposit;
 					gainTotal += gain;
 					gainFull += gain;
 					tours = 0;
-					jetons = 0;
 					coef = 1;
-					// win= c_green_bold + " !!! WIN !!! " + c_reset;
-					winFront = c_green_background();
-					if ((gain < 0) || (gainTotal < 0) || (gainFull < 0))
-						winFront = c_red_background();
-					winBack = c_reset();
 				}
-				_gains_ = winFront + String.format("%3s", gain) + "/" + String.format("%3s", gainTotal) + "/"
-						+ String.format("%4s", gainFull) + winBack;
+				_jetons_ = jetonToString(jetons, jetonsTotal, jetonsMax);
+				_gains_ = gainToString(win, gain, gainTotal, gainFull);
 
 				// add roulette value to table
 				table.addOccurence(roulette);
@@ -383,7 +460,9 @@ public class Main {
 			table.setBets();
 			if (!table.isBetsEmpty()) {
 				nbrMise = table.getBetsSize();
-				coef = (jetons + nbrMise * coef) / 36 + 1;
+				int delta = deposit - jetons;
+				delta = ( delta > 0 ? delta : 0);
+				coef = ( delta + nbrMise * coef) / 36 + 1;
 				nbrMise *= coef;
 				bets = "--> Bets  : " + table.getBets() + " (x" + coef + ") => mise: " + nbrMise;
 			}
