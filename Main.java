@@ -232,6 +232,7 @@ public class Main {
 
 			// Check Mise versus Jetons
 			if ( jetons < nbrMise ) {
+				System.out.println();
 				System.out.println("--> " + c_red_background() + "CAN'T BET THIS AMOUNT !!!!!" + c_reset());
 				gameOver = true; // launch exit menu
 				alert = "bet";  // set alert
@@ -240,8 +241,8 @@ public class Main {
 			// Check Jetons limites
 			if (jetonLimite != 0 && jetons <= jetonLimite) {
 				System.out.print("--> " + c_red_background() + "WALLET LIMITE REACHED !!!!!" + c_reset());
-				gainTotal -= jetons;
-				gainFull -= jetons;
+				//gainTotal -= jetons;
+				//gainFull -= jetons;
 				if (gainTotal >= 0)
 					System.out.println("--> Gains: " + c_green_background() + String.format("%3s", gainTotal) + c_reset());
 				else
@@ -253,7 +254,7 @@ public class Main {
 			// run exit prompt
 			if (gameOver) {
 				input = "";
-				System.out.println("--> " + c_black_bold() + "Game is over" + c_reset());
+				if (alert.isEmpty()) System.out.println("--> " + c_black_bold() + "Game is over" + c_reset());
 				do {
 					String autoMode_ = "|(m)ode: " + (autoMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
 					String colorMode_ = "|(a)uto: " + (colorMode ? c_green() + "color" : c_red() + "mono") + c_reset();
