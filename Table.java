@@ -24,6 +24,11 @@ public class Table {
 		betMax = pBetMax;
 	}
 
+	int[][] getTable() {
+		return table_value;
+		
+	}
+	
 	// Value Managmement
 	int[] getPosition(int pValue) {
 		int pos[] = { 0, 0 }, i = 0;
