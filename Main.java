@@ -15,7 +15,7 @@ public class Main {
 			"F:a:auto:autoMode:boolean:set auto mode with random roulette (default is OFF):true:",
 			"F:c:color:colorMode:boolean:set color mode (default is color):true:",
 			"F:m:mono:colorMode:boolean:set monocolor mode (default is color):false:",
-			"V:d:deposit:deposit:int:set jetons for deposit required to start a game (default is 500):-:",
+			"V:d:deposit:deposit:int:set jetons for deposit required to start a game (default is 0):-:",
 			"V:w:warning:jetonWarning:int:set warning spent before alerting per phase (default is 200):-:",
 			"V:j:jeton:jetonMax:int:set maximum spent to quit game:-:",
 			"V:p:phase:phaseMax:int:set maximum phase to quit game:-:",
@@ -26,7 +26,7 @@ public class Main {
 
 	// betMax, jetonLimite, warning, gainMax, phaseMax, toursMax
 	public static boolean colorMode = true, autoMode = false;
-	public static int deposit=500, betMax = 0, jetonLimite = 0, warning = 200, gainMax = 0, phaseMax = 0, tourMax = 0;
+	public static int deposit=0, betMax = 0, jetonLimite = 0, warning = 200, gainMax = 0, phaseMax = 0, tourMax = 0;
 
 	static String c_black_bold() { return (colorMode ? colorText.BLACK_BOLD : "[["); }
 	static String c_red() { return (colorMode ? colorText.RED : "[["); }
@@ -256,8 +256,8 @@ public class Main {
 				input = "";
 				if (alert.isEmpty()) System.out.println("--> " + c_black_bold() + "Game is over" + c_reset());
 				do {
-					String autoMode_ = "|(m)ode: " + (autoMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
-					String colorMode_ = "|(a)uto: " + (colorMode ? c_green() + "color" : c_red() + "mono") + c_reset();
+					String autoMode_ = "|(a)uto: " + (autoMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
+					String colorMode_ = "|(m)ode: " + (colorMode ? c_green() + "color" : c_red() + "mono") + c_reset();
 					System.out.print("--> [(q)uit|(CR|r)estart|(p)urge store|(o)ptions"	+  colorMode_ + autoMode_ + "]: ");
 					input = sc.nextLine();
 					input = (input.isEmpty() ? "r" : input.substring(0, 1));
