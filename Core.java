@@ -1,0 +1,225 @@
+package _666_;
+
+import java.util.Scanner;
+
+class Core {
+
+	CommandLineInterface cli = new CommandLineInterface();
+	Table table = new Table(Main.betMax);
+	int roulette = 0;
+	int phase = 0, phaseFull = 0;
+	int tours = 0, toursTotal = 0, toursFull = 0;
+	int depositOrigin = Main.deposit, jetons = Main.deposit, jetonsTotal = Main.deposit, jetonsMax = Main.deposit, coef = 1, nbrMise = 0;
+	int win = 0, gain = 0, gainTotal = 0, gainFull = 0;
+	boolean gameOver = false, autoPlay = Main.autoMode;
+	String alert = "", input = "";
+	// get global variables :
+	// Main.betMax, Main.gainMax, Main.phaseMax, Main.tourMax, Main.jetonLimite
+
+	boolean Run() {
+
+		while (true) {
+			// ---------------------
+			// display dashboard
+			// ---------------------
+			String storeLine = (table.isStoreEmpty() ? "" : table.getStore(20)) + ":";
+			String betTable = table.betToString(Main.colorMode);
+			// display Dashboard
+			cli.displayDashboardTable(storeLine, betTable);
+			cli.displayDashboardStatus();
+			
+			// ---------------------
+			// exit conditions check
+			// ---------------------
+			// if table is full (all values are completed)
+			// or if Main.gainMax, Main.phaseMax or Main.tourMax are reached
+			if (table.isFull()
+					|| (Main.gainMax != 0 ? gainTotal >= Main.gainMax : false)
+					|| (Main.phaseMax != 0 && tours == 0 ? phase >= Main.phaseMax : false)
+					|| (Main.tourMax != 0 && tours == 0 ? toursTotal >= Main.tourMax : false)) {
+				gameOver = true; // launch exit menu
+			}
+
+			// Check Mise versus Jetons
+			if ( jetons < nbrMise ) {
+				gameOver = true; // launch exit menu
+				alert = "bet";  // set alert
+			}
+				
+			// Check Jetons limites
+			if (Main.jetonLimite != 0 && jetons <= Main.jetonLimite) {
+				gameOver = true; // launch exit menu
+				alert = "jeton"; // set alert
+			}
+
+			// run exit prompt
+			if (gameOver) {
+				cli.displayGameOverLabel(alert, gainTotal);
+				input = "";
+				do {
+					input = cli.displayGameOverMenu();
+					switch (input) {
+					case "q": // quit 
+						// System.out.println("##1.1");
+						System.out.println("\nExiting...");
+						cli.close();
+						return false;
+					case "p": // purge table's store requested
+						// System.out.println("##1.2 - start reducing Store");
+						if (!alert.isEmpty()) {
+							System.out.println( cli.alert("Alert is raised") + " .. Can't purge store, sorry !");
+							input = "";
+						} else if (!table.reduceStore()) {
+							System.out.println( cli.alert("Store is empy") + " .. Can't purge store, sorry !");
+							input = "";
+						}
+						break;
+					case "r": // restart table requested
+						// System.out.println("##1.3 - reset table");
+						table.resetTable();
+						roulette = 0; phase = 0; tours = 0; toursTotal = 0; gain = 0; gainTotal = 0;
+						coef = 1; nbrMise = 0; 
+						if (! alert.isEmpty()) {
+							gainFull -= Main.deposit - jetons;
+						}
+						Main.deposit = depositOrigin;
+						jetons = Main.deposit;
+						jetonsTotal = Main.deposit;
+						cli.updatePhaseString(0, phaseFull);
+						cli.updateTourString(0, 0, toursFull);
+						cli.updateJetonString(jetons, jetonsTotal, jetonsMax);
+						cli.updateGainString(win, 0, 0, gainFull);
+						cli.updateBets("");
+						break;
+					case "o": // option menu requested
+						// System.out.println("##1.4");
+						// reset input in order to jump back to menu
+						input = "";
+						
+						// display Options menu and get new jetons if any
+						int newJeton = cli.displaySetOptionsMenu();
+						
+						// check new jetons value, add them to deposit and check bet value again
+						if ( newJeton > 0 ) {
+							jetons += cli.displaySetOptionsMenu();
+							cli.updateJetonString(jetons, jetonsTotal, jetonsMax);
+							
+							// Check Mise versus Jetons
+							if (alert.equals("bet"))
+								if ( jetons >= nbrMise) {
+									System.out.println("--> " +cli.raise("wallet is up and alive again !!"));
+									input = "go on";
+								}
+						}
+
+						break;
+					case "m": // toggle Main.colorMode
+						// System.out.println("##1.5");
+						Main.colorMode = (Main.colorMode ? false : true);
+						input = "";
+						break;
+					case "a": // toggle auto mode
+						// System.out.println("##1.6");
+						Main.autoMode = (Main.autoMode ? false : true);
+						input = "";
+						break;
+					default:
+						// System.out.println("##1.4 - default case");
+						input = "";
+						break;
+					}
+					
+					if (input.isEmpty()) {
+						// display Global Status
+						cli.displayDashboardStatus();
+					}
+
+				} while (input.isEmpty());
+				// System.out.println("##2.1");
+				autoPlay = Main.autoMode;
+				gameOver = false;
+				alert = "";
+				// System.out.println("##2.2");
+				// break;
+			}
+			// System.out.println("##3");
+
+			// game is not over, need now to get standard input from user
+			else {
+				// System.out.println("##4.1");
+				do {
+					do {
+						input = "";
+						if (autoPlay) // autoplay ON
+							input = "r";
+						else // display displayPhaseMenu()
+							input = cli.displayPhaseMenu();
+
+						switch (input) {
+						case "q":
+							System.out.println("\nExiting...");
+							cli.close();
+							return false;
+						case "a":
+							autoPlay = true;
+						case "r":
+							int delay = 0; // 0.1sec per delay
+							input = String.valueOf(table.getRandomRoulette(delay));
+							break;
+						}
+					} while (!input.matches("\\d+"));
+					roulette = Integer.valueOf(input);
+				} while (roulette > 36);
+
+				// increments phase, counters and set display
+				if (tours == 0) {
+					phase++;
+					phaseFull++;
+				}
+				tours++;
+				toursTotal++;
+				toursFull++;
+				jetons -= nbrMise;
+				jetonsTotal = (jetons < jetonsTotal ? jetons : jetonsTotal);
+				jetonsMax = (jetons < jetonsMax ? jetons : jetonsMax);
+
+				// set win consequences
+				win = 0;
+				if (table.betsContains(roulette)) {
+					win = 36 * coef;
+					jetons += win;
+					gain = jetons - Main.deposit;
+					gainTotal += gain;
+					gainFull += gain;
+					tours = 0;
+					coef = 1;
+				}
+				
+				// update deposit value
+				Main.deposit = (jetons > Main.deposit) ? jetons : Main.deposit;
+				
+				// prepare display
+				cli.updatePhaseString(phase, phaseFull);
+				cli.updateTourString(tours, toursTotal, toursFull);
+				cli.updateJetonString(jetons, jetonsTotal, jetonsMax);
+				cli.updateGainString(win, gain, gainTotal, gainFull);
+
+
+				// add roulette value to table
+				table.addOccurence(roulette);
+			}
+
+			// get Bets suggestions
+			cli.updateBets("");
+			table.setBets();
+			if (!table.isBetsEmpty()) {
+				nbrMise = table.getBetsSize();
+				int delta = Main.deposit - jetons;
+				delta = ( delta > 0 ? delta : 0);
+				coef = ( delta + nbrMise * coef) / 36 + 1;
+				nbrMise *= coef;
+				cli.updateBets("--> Bets  : " + table.getBets() + " (x" + coef + ") => mise: " + nbrMise);
+			}
+		}
+	}
+}
