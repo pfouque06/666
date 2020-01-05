@@ -1,19 +1,17 @@
 package _666_;
 
-import java.util.Scanner;
-
 class Core {
 
 	CommandLineInterface cli = new CommandLineInterface();
-	Table table = new Table(Main.betMax);
+	Table table = new Table();
 	int roulette = 0;
 	int phase = 0, phaseFull = 0;
 	int tours = 0, toursTotal = 0, toursFull = 0;
-	int depositOrigin = Main.deposit, jetons = Main.deposit, jetonsTotal = Main.deposit, jetonsMax = Main.deposit, coef = 1, nbrMise = 0;
+	int deposit = Main.deposit, jetons = Main.deposit, jetonsTotal = Main.deposit, jetonsMax = Main.deposit, coef = 1, nbrMise = 0;
 	int win = 0, gain = 0, gainTotal = 0, gainFull = 0;
 	boolean gameOver = false, autoPlay = Main.autoMode;
 	String alert = "", input = "";
-	// get global variables :
+	// Main global variables :
 	// Main.betMax, Main.gainMax, Main.phaseMax, Main.tourMax, Main.jetonLimite
 
 	boolean Run() {
@@ -60,7 +58,7 @@ class Core {
 					input = cli.displayGameOverMenu();
 					switch (input) {
 					case "q": // quit 
-						// System.out.println("##1.1");
+						// System.out.println("##1.1 - exit");
 						System.out.println("\nExiting...");
 						cli.close();
 						return false;
@@ -80,9 +78,9 @@ class Core {
 						roulette = 0; phase = 0; tours = 0; toursTotal = 0; gain = 0; gainTotal = 0;
 						coef = 1; nbrMise = 0; 
 						if (! alert.isEmpty()) {
-							gainFull -= Main.deposit - jetons;
+							gainFull -= deposit - jetons;
 						}
-						Main.deposit = depositOrigin;
+						deposit = Main.deposit;
 						jetons = Main.deposit;
 						jetonsTotal = Main.deposit;
 						cli.updatePhaseString(0, phaseFull);
@@ -92,7 +90,7 @@ class Core {
 						cli.updateBets("");
 						break;
 					case "o": // option menu requested
-						// System.out.println("##1.4");
+						// System.out.println("##1.4 - option menu");
 						// reset input in order to jump back to menu
 						input = "";
 						
@@ -101,25 +99,26 @@ class Core {
 						
 						// check new jetons value, add them to deposit and check bet value again
 						if ( newJeton > 0 ) {
-							jetons += cli.displaySetOptionsMenu();
+							jetons += newJeton;
+							deposit += newJeton;
 							cli.updateJetonString(jetons, jetonsTotal, jetonsMax);
 							
 							// Check Mise versus Jetons
 							if (alert.equals("bet"))
 								if ( jetons >= nbrMise) {
 									System.out.println("--> " +cli.raise("wallet is up and alive again !!"));
-									input = "go on";
+									input = "cycle on";
 								}
 						}
 
 						break;
 					case "m": // toggle Main.colorMode
-						// System.out.println("##1.5");
+						// System.out.println("##1.5 - toggle Main.colorMode");
 						Main.colorMode = (Main.colorMode ? false : true);
 						input = "";
 						break;
-					case "a": // toggle auto mode
-						// System.out.println("##1.6");
+					case "a": // toggle Main.auto mode
+						// System.out.println("##1.6 - toggle Main.auto mode");
 						Main.autoMode = (Main.autoMode ? false : true);
 						input = "";
 						break;
@@ -139,8 +138,6 @@ class Core {
 				autoPlay = Main.autoMode;
 				gameOver = false;
 				alert = "";
-				// System.out.println("##2.2");
-				// break;
 			}
 			// System.out.println("##3");
 
@@ -153,7 +150,7 @@ class Core {
 						if (autoPlay) // autoplay ON
 							input = "r";
 						else // display displayPhaseMenu()
-							input = cli.displayPhaseMenu();
+							input = cli.displayCycleMenu();
 
 						switch (input) {
 						case "q":
@@ -183,12 +180,12 @@ class Core {
 				jetonsTotal = (jetons < jetonsTotal ? jetons : jetonsTotal);
 				jetonsMax = (jetons < jetonsMax ? jetons : jetonsMax);
 
-				// set win consequences
+				// process win consequences
 				win = 0;
 				if (table.betsContains(roulette)) {
 					win = 36 * coef;
 					jetons += win;
-					gain = jetons - Main.deposit;
+					gain = jetons - deposit;
 					gainTotal += gain;
 					gainFull += gain;
 					tours = 0;
@@ -196,7 +193,7 @@ class Core {
 				}
 				
 				// update deposit value
-				Main.deposit = (jetons > Main.deposit) ? jetons : Main.deposit;
+				deposit = (jetons > deposit) ? jetons : deposit;
 				
 				// prepare display
 				cli.updatePhaseString(phase, phaseFull);
@@ -214,7 +211,7 @@ class Core {
 			table.setBets();
 			if (!table.isBetsEmpty()) {
 				nbrMise = table.getBetsSize();
-				int delta = Main.deposit - jetons;
+				int delta = deposit - jetons;
 				delta = ( delta > 0 ? delta : 0);
 				coef = ( delta + nbrMise * coef) / 36 + 1;
 				nbrMise *= coef;

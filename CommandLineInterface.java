@@ -186,16 +186,13 @@ class CommandLineInterface {
 
 			// store initial Main.deposit value and reset Main.deposit
 			int depositHold = Main.deposit;
-			Main.deposit = 0;
 
 			// parse options args_ and set options
 			if (!Main.setOpts(args_))
 				System.out.println();;
 
 			// return added jetons
-			newJeton = Main.deposit;
-			// update deposit
-			Main.deposit += depositHold;
+			newJeton = Main.deposit - depositHold;
 
 		} while (!buffer.isEmpty());
 
@@ -204,7 +201,7 @@ class CommandLineInterface {
 	}
 
 	// display GameOver Menu
-	String displayPhaseMenu() {
+	String displayCycleMenu() {
 		String buffer = "";
 
 		System.out.println();

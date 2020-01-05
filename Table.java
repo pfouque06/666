@@ -12,17 +12,9 @@ public class Table {
 			{ 8, 13, 26, 19, 16, 29 }, { 5, 20, 15, 14, 25, 32 }, { 27, 33, 34, 6, 2, 9 } };
 	int[][] table_occurence = { { 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 },
 			{ 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 } };
-	int betMax = 0;
+	int betMax = Main.betMax;
 	LinkedHashSet<Integer> bets = new LinkedHashSet<Integer>();
 	LinkedList<Integer> store = new LinkedList<Integer>();
-
-	// constructor
-	Table() {
-	}
-
-	Table(int pBetMax) {
-		betMax = pBetMax;
-	}
 
 	int[][] getTable() {
 		return table_value;
