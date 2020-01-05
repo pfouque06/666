@@ -36,52 +36,57 @@ class CommandLineInterface {
 	}
 
 	String phaseToString(int pPhase, int pPhaseFull) {
-		String _phase_ = "";
-		_phase_ = String.format("%2s", pPhase) + "/" + String.format("%2s", pPhaseFull);
-		return _phase_;
+		String buffer = String.format("%2s", pPhase)
+				+ "/" + String.format("%2s", pPhaseFull);
+		return buffer;
 	}
 
 	String tourToString(int pTours, int pToursTotal, int pToursFull) {
-		String _tours_ = "";
-		_tours_ = String.format("%3s", pTours) + "/" + String.format("%3s", pToursTotal) + "/"
-				+ String.format("%3s", pToursFull);
-		return _tours_;
+		String buffer = String.format("%3s", pTours)
+				+ "/" + String.format("%3s", pToursTotal)
+				+ "/" + String.format("%3s", pToursFull);
+		return buffer;
 	}
 
 	String jetonToString(int pJetons, int pJetonsTotal, int pJetonsMax) {
-		String _jetons_ = "", _jetonsTotal_ = "", _jetonsMax_ = "";
-		_jetons_ = String.format("%3s", pJetons);
-		_jetonsTotal_ = String.format("%3s", pJetonsTotal);
-		_jetonsMax_ = String.format("%3s", pJetonsMax);
+		String buffer = "", bufferTotal = "", bufferMax = "";
+		buffer = String.format("%3s", pJetons);
+		bufferTotal = String.format("%3s", pJetonsTotal);
+		bufferMax = String.format("%3s", pJetonsMax);
 		if (Main.warning != 0) {
-			_jetons_ = ((pJetons <= Main.warning) ? c_purple_background() + _jetons_ + c_reset() : _jetons_);
-			_jetonsTotal_ = ((pJetonsTotal <= Main.warning) ? c_purple_background() + _jetonsTotal_ + c_reset()
-					: _jetonsTotal_);
-			_jetonsMax_ = ((pJetonsMax <= Main.warning) ? c_purple_background() + _jetonsMax_ + c_reset()
-					: _jetonsMax_);
+			buffer = ((pJetons <= Main.warning) ?
+					c_purple_background() + buffer + c_reset() : buffer);
+			bufferTotal = ((pJetonsTotal <= Main.warning) ?
+					c_purple_background() + bufferTotal + c_reset() : bufferTotal);
+			bufferMax = ((pJetonsMax <= Main.warning) ?
+					c_purple_background() + bufferMax + c_reset() : bufferMax);
 		}
 		if (Main.jetonLimite != 0) {
-			_jetons_ = ((pJetons <= Main.jetonLimite) ? c_red_background() + _jetons_ + c_reset() : _jetons_);
-			_jetonsTotal_ = ((pJetonsTotal <= Main.jetonLimite) ? c_red_background() + _jetonsTotal_ + c_reset()
-					: _jetonsTotal_);
-			_jetonsMax_ = ((pJetonsMax <= Main.jetonLimite) ? c_red_background() + _jetonsMax_ + c_reset()
-					: _jetonsMax_);
+			buffer = ((pJetons <= Main.jetonLimite) ?
+					c_red_background() + buffer + c_reset() : buffer);
+			bufferTotal = ((pJetonsTotal <= Main.jetonLimite) ?
+					c_red_background() + bufferTotal + c_reset() : bufferTotal);
+			bufferMax = ((pJetonsMax <= Main.jetonLimite) ?
+					c_red_background() + bufferMax + c_reset() : bufferMax);
 		}
-		_jetons_ = _jetons_ + "/" + _jetonsTotal_ + "/" + _jetonsMax_;
-		return _jetons_;
+		return buffer + "/" + bufferTotal + "/" + bufferMax;
 	}
 
 	String gainToString(int win, int pGain, int pGainTotal, int pGainFull) {
-		String _gains_ = "", buffer = "";
+		String buffer = "", bufferTotal = "", bufferFull = "";
 		String winFront = win > 0 ? c_green_background() : "";
 		String winBack = win > 0 ? c_reset() : "";
+
 		buffer = String.format("%3s", pGain);
-		_gains_ = (pGain < 0 ? c_red_background() + buffer + c_reset() : winFront + buffer + winBack);
-		buffer = String.format("%3s", pGainTotal);
-		_gains_ += "/" + (pGainTotal < 0 ? c_red_background() + buffer + c_reset() : winFront + buffer + winBack);
-		buffer = String.format("%3s", pGainFull);
-		_gains_ += "/" + (pGainFull < 0 ? c_red_background() + buffer + c_reset() : winFront + buffer + winBack);
-		return _gains_;
+		buffer = (pGain < 0 ? c_red_background() + buffer + c_reset() : winFront + buffer + winBack);
+
+		bufferTotal = String.format("%3s", pGainTotal);
+		bufferTotal = (pGainTotal < 0 ? c_red_background() + bufferTotal + c_reset() : winFront + bufferTotal + winBack);
+
+		bufferFull = String.format("%3s", pGainFull);
+		bufferFull = (pGainFull < 0 ? c_red_background() + bufferFull + c_reset() : winFront + bufferFull + winBack);
+
+		return buffer + "/" + bufferTotal + "/" + bufferFull;
 	}
 
 	void updatePhaseString(int pPhase, int pPhaseFull) {
