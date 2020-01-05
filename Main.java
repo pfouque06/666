@@ -5,6 +5,7 @@ import java_tools.colorText;
 import java_tools.getOpts;
 
 public class Main {
+
 	// public global argument mgt
 	static final String[] optionArray = {
 		"##### DO NOT FORGET FOLLOWING HEADER LINE !! #####",
@@ -23,16 +24,6 @@ public class Main {
 		};
 	public static getOpts options = new getOpts(optionArray);
 	
-	// public global variables
-	public static boolean colorMode = true, autoMode = false;
-	public static int deposit=0, betMax = 0, jetonLimite = 0, warning = 0, gainMax = 0, phaseMax = 0, tourMax = 0;
-	
-	// local methods
-	static String c_red() { return (colorMode ? colorText.RED : "[["); }
-	static String c_green() { return (colorMode ? colorText.GREEN : "[["); }
-	static String c_blue() { return (colorMode ? colorText.BLUE : "[["); }
-	static String c_reset() { return (colorMode ? colorText.RESET : "]]"); }
-
 	public static boolean setOpts(String[] pArgs) {
 
 		//System.out.println("optionTable=\n"+options.optionTable_toString());
@@ -126,6 +117,16 @@ public class Main {
 		return buffer;
 
 	}
+
+	// public global variables
+	public static boolean colorMode = true, autoMode = false;
+	public static int deposit=0, betMax = 0, jetonLimite = 0, warning = 0, gainMax = 0, phaseMax = 0, tourMax = 0;
+
+	// local methods
+	static String c_red() { return (colorMode ? colorText.RED : "[["); }
+	static String c_green() { return (colorMode ? colorText.GREEN : "[["); }
+	static String c_blue() { return (colorMode ? colorText.BLUE : "[["); }
+	static String c_reset() { return (colorMode ? colorText.RESET : "]]"); }
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
