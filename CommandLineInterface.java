@@ -157,8 +157,8 @@ class CommandLineInterface {
 	String displayGameOverMenu() {
 		String buffer = "";
 
-		String autoMode_ = "|(a)uto: " + (Main.autoMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
 		String colorMode_ = "|(m)ode: " + (Main.colorMode ? c_green() + "color" : c_red() + "mono") + c_reset();
+		String autoMode_ = "|(a)uto: " + (Main.autoMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
 		System.out.print("--> [(q)uit|(CR|r)estart|(p)urge store|(o)ptions" + colorMode_ + autoMode_ + "]: ");
 		buffer = scan.nextLine();
 		buffer = (buffer.isEmpty() ? "r" : buffer.substring(0, 1));
