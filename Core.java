@@ -100,8 +100,9 @@ class Core {
 						// check new jetons value, add them to deposit and check bet value again
 						if ( newJeton > 0 ) {
 							jetons += newJeton;
+							jetonsTotal += newJeton;
+							jetonsMax += newJeton;
 							deposit += newJeton;
-							cli.updateJetonString(jetons, jetonsTotal, jetonsMax);
 							
 							// Check Mise versus Jetons
 							if (alert.equals("bet"))
@@ -110,6 +111,7 @@ class Core {
 									input = "cycle on";
 								}
 						}
+						cli.updateJetonString(jetons, jetonsTotal, jetonsMax);
 
 						break;
 					case "m": // toggle Main.colorMode
@@ -213,7 +215,7 @@ class Core {
 				nbrMise = table.getBetsSize();
 				int delta = deposit - jetons;
 				delta = ( delta > 0 ? delta : 0);
-				coef = ( delta + nbrMise * coef) / 36 + 1;
+				coef = delta / ( 36 - nbrMise ) + 1; // ceiling(( deposit - jetons ) / (36 - NbrMise ))
 				nbrMise *= coef;
 				cli.updateBets("--> Bets  : " + table.getBets() + " (x" + coef + ") => mise: " + nbrMise);
 			}
