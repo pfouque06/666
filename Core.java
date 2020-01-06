@@ -45,14 +45,14 @@ class Core {
 			}
 				
 			// Check Jetons limites
-			if (Main.jetonLimite != 0 && jetons <= Main.jetonLimite) {
+			if (Main.jetonLimite != 0 && (deposit - jetons) >= Main.jetonLimite) {
 				gameOver = true; // launch exit menu
-				alert = "jeton"; // set alert
+				alert = "limite"; // set alert
 			}
 
 			// run exit prompt
 			if (gameOver) {
-				cli.displayGameOverLabel(alert, gainTotal);
+				cli.displayGameOverLabel(alert, (gainTotal - (deposit - jetons)));
 				input = "";
 				do {
 					input = cli.displayGameOverMenu();
@@ -104,12 +104,24 @@ class Core {
 							jetonsMax += newJeton;
 							deposit += newJeton;
 							
-							// Check Mise versus Jetons
-							if (alert.equals("bet"))
+							switch (alert) {
+							case "bet": // alert = bet
+								// Check Mise versus Jetons
 								if ( jetons >= nbrMise) {
 									System.out.println("--> " +cli.raise("wallet is up and alive again !!"));
-									input = "cycle on";
+									input = "cycle back on";
 								}
+								break;
+							case "limite": // alert = jeton
+								// Check Jetons limites
+								//if ((deposit - jetons) < Main.jetonLimite) {
+								if ( newJeton > Main.jetonLimite) {
+									System.out.println("--> " +cli.raise("wallet is up and alive again !!"));
+									input = "cycle back on";
+								}
+								break;
+							}
+
 						}
 						cli.updateJetonString(jetons, jetonsTotal, jetonsMax);
 

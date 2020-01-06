@@ -53,20 +53,23 @@ class CommandLineInterface {
 		buffer = String.format("%3s", pJetons);
 		bufferTotal = String.format("%3s", pJetonsTotal);
 		bufferMax = String.format("%3s", pJetonsMax);
+		int spent = Main.deposit - pJetons;
+		int spentTotal = Main.deposit - pJetonsTotal;
+		int spentMax = Main.deposit - pJetonsMax;
 		if (Main.warning != 0) {
-			buffer = ((pJetons <= Main.warning) ?
+			buffer = ((spent >= Main.warning) ?
 					c_purple_background() + buffer + c_reset() : buffer);
-			bufferTotal = ((pJetonsTotal <= Main.warning) ?
+			bufferTotal = ((spentTotal >= Main.warning) ?
 					c_purple_background() + bufferTotal + c_reset() : bufferTotal);
-			bufferMax = ((pJetonsMax <= Main.warning) ?
+			bufferMax = ((spentMax >= Main.warning) ?
 					c_purple_background() + bufferMax + c_reset() : bufferMax);
 		}
 		if (Main.jetonLimite != 0) {
-			buffer = ((pJetons <= Main.jetonLimite) ?
+			buffer = ((spent >= Main.jetonLimite) ?
 					c_red_background() + buffer + c_reset() : buffer);
-			bufferTotal = ((pJetonsTotal <= Main.jetonLimite) ?
+			bufferTotal = ((spentTotal >= Main.jetonLimite) ?
 					c_red_background() + bufferTotal + c_reset() : bufferTotal);
-			bufferMax = ((pJetonsMax <= Main.jetonLimite) ?
+			bufferMax = ((spentMax >= Main.jetonLimite) ?
 					c_red_background() + bufferMax + c_reset() : bufferMax);
 		}
 		return buffer + "/" + bufferTotal + "/" + bufferMax;
@@ -145,7 +148,7 @@ class CommandLineInterface {
 			System.out.println();
 			System.out.println("--> " + c_red_background() + "CAN'T BET THIS AMOUNT !!!!!" + c_reset());
 			break;
-		case "jeton": // alert = jeton
+		case "limite": // alert = jeton
 			System.out.print("--> " + c_red_background() + "WALLET LIMITE REACHED !!!!!" + c_reset());
 			if (pGain >= 0)
 				System.out.println("--> Gains: " + c_green_background() + String.format("%3s", pGain) + c_reset());

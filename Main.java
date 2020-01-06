@@ -15,11 +15,11 @@ public class Main {
 		"F:c:color:colorMode:boolean:set color mode (default is color):true:",
 		"F:m:mono:colorMode:boolean:set monocolor mode (default is color):false:",
 		"V:d:deposit:deposit:int:add jetons to deposit - NON Zero amount required to start a game (default is 0):-:",
-		"V:w:warning:jetonWarning:int:set warning spent before alerting per phase (default is half of deposit):-:",
-		"V:j:jeton:jetonMax:int:set maximum spent to quit game:-:",
-		"V:p:phase:phaseMax:int:set maximum phase to quit game:-:",
-		"V:t:tour:tourMax:int:set maximum total tours to quit game:-:",
-		"V:g:gain:gainMax:int:set maximum total gain to quit game:-:",
+		"V:w:warning:jetonWarning:int:set limit value of spent jetons to alert gamer (default is half of deposit):-:",
+		"V:l:limite:jetonLimite:int:set maximum spent jetons to quit game cycle :-:",
+		"V:p:phase:phaseMax:int:set maximum phase to quit game cycle:-:",
+		"V:t:tour:tourMax:int:set maximum total tours to quit game cycle:-:",
+		"V:g:gain:gainMax:int:set maximum total gain to quit game cycle:-:",
 		"V:b:bet:betMax:int:set maximum bets allowed per tour:-:",
 		};
 	public static getOpts options = new getOpts(optionArray);
@@ -63,7 +63,7 @@ public class Main {
 				warning = Integer.valueOf(fields[3]);
 				// System.out.println("warning=" + warning);
 				break;
-			case "jetonMax":
+			case "jetonLimite":
 				jetonLimite = Integer.valueOf(fields[3]);
 				// System.out.println("jetonLimite=" + jetonLimite);
 				break;
