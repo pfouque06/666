@@ -1,8 +1,9 @@
 package _666_;
 
 import java.util.LinkedHashSet;
-import java_tools.colorText;
-import java_tools.getOpts;
+
+import javaTools.ColorText;
+import javaTools.GetOpts;
 
 public class Main {
 
@@ -22,7 +23,7 @@ public class Main {
 		"V:g:gain:gainMax:int:set maximum total gain to quit game cycle:-:",
 		"V:b:bet:betMax:int:set maximum bets allowed per tour:-:",
 		};
-	public static getOpts options = new getOpts(optionArray);
+	public static GetOpts options = new GetOpts(optionArray);
 	
 	public static boolean setOpts(String[] pArgs) {
 
@@ -123,10 +124,10 @@ public class Main {
 	public static int deposit=0, betMax = 0, jetonLimite = 0, warning = 0, gainMax = 0, phaseMax = 0, tourMax = 0;
 
 	// local methods
-	static String c_red() { return (colorMode ? colorText.RED : "[["); }
-	static String c_green() { return (colorMode ? colorText.GREEN : "[["); }
-	static String c_blue() { return (colorMode ? colorText.BLUE : "[["); }
-	static String c_reset() { return (colorMode ? colorText.RESET : "]]"); }
+	static String c_red() { return (colorMode ? ColorText.RED : "[["); }
+	static String c_green() { return (colorMode ? ColorText.GREEN : "[["); }
+	static String c_blue() { return (colorMode ? ColorText.BLUE : "[["); }
+	static String c_reset() { return (colorMode ? ColorText.RESET : "]]"); }
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

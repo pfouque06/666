@@ -1,31 +1,28 @@
 package _666_;
 
-import java.util.Scanner;
-
-import java_tools.colorText;
+import javaTools.ColorText;
+import javaTools.ScanTools;
 
 class CommandLineInterface {
 
-	Scanner scan = new Scanner(System.in);
-	
 	String _phase_ = phaseToString(0, 0);
 	String _tours_ = tourToString(0, 0, 0);
 	String _jetons_ = jetonToString(Main.deposit, Main.deposit, Main.deposit);
 	String _gains_ = gainToString(0, 0, 0, 0);
 	String bets = "", input = "";
 
-	String c_black_bold() { return (Main.colorMode ? colorText.BLACK_BOLD : "[["); }
-	String c_red() { return (Main.colorMode ? colorText.RED : "[["); }
-	String c_red_bold() { return (Main.colorMode ? colorText.RED_BOLD : "[["); }
-	String c_red_background() { return (Main.colorMode ? colorText.RED_BACKGROUND + colorText.WHITE_BOLD : "[["); }
-	String c_green() { return (Main.colorMode ? colorText.GREEN : "[["); }
-	String c_green_bold() { return (Main.colorMode ? colorText.GREEN_BOLD : "[["); }
-	String c_green_background() { return (Main.colorMode ? colorText.GREEN_BACKGROUND + colorText.WHITE_BOLD : "[["); }
-	String c_blue() { return (Main.colorMode ? colorText.BLUE : "[["); }
-	String c_blue_bold() { return (Main.colorMode ? colorText.BLUE_BOLD : "[["); }
-	String c_blue_background() { return (Main.colorMode ? colorText.BLUE_BACKGROUND + colorText.WHITE_BOLD : "[["); }
-	String c_purple_background() { return (Main.colorMode ? colorText.CYAN_BACKGROUND + colorText.WHITE_BOLD : "[["); }
-	String c_reset() { return (Main.colorMode ? colorText.RESET : "]]"); }
+	String c_black_bold() { return (Main.colorMode ? ColorText.BLACK_BOLD : "[["); }
+	String c_red() { return (Main.colorMode ? ColorText.RED : "[["); }
+	String c_red_bold() { return (Main.colorMode ? ColorText.RED_BOLD : "[["); }
+	String c_red_background() { return (Main.colorMode ? ColorText.RED_BACKGROUND + ColorText.WHITE_BOLD : "[["); }
+	String c_green() { return (Main.colorMode ? ColorText.GREEN : "[["); }
+	String c_green_bold() { return (Main.colorMode ? ColorText.GREEN_BOLD : "[["); }
+	String c_green_background() { return (Main.colorMode ? ColorText.GREEN_BACKGROUND + ColorText.WHITE_BOLD : "[["); }
+	String c_blue() { return (Main.colorMode ? ColorText.BLUE : "[["); }
+	String c_blue_bold() { return (Main.colorMode ? ColorText.BLUE_BOLD : "[["); }
+	String c_blue_background() { return (Main.colorMode ? ColorText.BLUE_BACKGROUND + ColorText.WHITE_BOLD : "[["); }
+	String c_purple_background() { return (Main.colorMode ? ColorText.CYAN_BACKGROUND + ColorText.WHITE_BOLD : "[["); }
+	String c_reset() { return (Main.colorMode ? ColorText.RESET : "]]"); }
 
 	String alert(String pAlert) {
 		return c_red_bold() + pAlert + c_reset();
@@ -145,15 +142,15 @@ class CommandLineInterface {
 
 		switch (pAlert) {
 		case "bet": // alert = bet
-			System.out.println();
+			//System.out.println();
 			System.out.println("--> " + c_red_background() + "CAN'T BET THIS AMOUNT !!!!!" + c_reset());
-			break;
-		case "limite": // alert = jeton
-			System.out.print("--> " + c_red_background() + "WALLET LIMITE REACHED !!!!!" + c_reset());
 			if (pGain >= 0)
 				System.out.println("--> Gains: " + c_green_background() + String.format("%3s", pGain) + c_reset());
 			else
 				System.out.println("--> Gains: " + c_red_background() + String.format("%3s", pGain) + c_reset());
+			break;
+		case "limite": // alert = jeton
+			System.out.print("--> " + c_red_background() + "WALLET LIMITE REACHED !!!!!" + c_reset());
 			break;
 		default:
 			System.out.println();
@@ -167,8 +164,10 @@ class CommandLineInterface {
 
 		String colorMode_ = "|(m)ode: " + (Main.colorMode ? c_green() + "color" : c_red() + "mono") + c_reset();
 		String autoMode_ = "|(a)uto: " + (Main.autoMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
-		System.out.print("--> [(q)uit|(CR|r)estart|(p)urge store|(o)ptions" + colorMode_ + autoMode_ + "]: ");
-		buffer = scan.nextLine();
+		String prompt_ = "--> [(q)uit|(CR|r)estart|(p)urge store|(o)ptions" + colorMode_ + autoMode_ + "]: ";
+		//System.out.print("--> [(q)uit|(CR|r)estart|(p)urge store|(o)ptions" + colorMode_ + autoMode_ + "]: ");
+		//buffer = scan.nextLine();
+		buffer = ScanTools.scanMatchedBuffer(prompt_,".*");
 		buffer = (buffer.isEmpty() ? "r" : buffer.substring(0, 1));
 		return buffer;
 	}
@@ -183,9 +182,9 @@ class CommandLineInterface {
 			System.out.println("options:" + Main.optsToString());
 
 			// get new options args_
-			System.out.print("--> new options (CR: exit): ");
-			buffer = scan.nextLine();
-			// System.out.println("buffer=" + buffer);
+			//System.out.print("--> new options (CR: exit): ");
+			//buffer = scan.nextLine();
+			buffer = ScanTools.scanMatchedBuffer("--> new options (CR: exit): ",".*");
 			if (buffer.isEmpty())
 				break;
 
@@ -213,16 +212,16 @@ class CommandLineInterface {
 		String buffer = "";
 
 		System.out.println();
-		System.out.print("--> Roulette [num|(CR|r)andom|(a)uto|(q)uit]: ");
-		buffer = scan.nextLine();
+		//System.out.print("--> Roulette [num|(CR|r)andom|(a)uto|(q)uit]: ");
+		//buffer = scan.nextLine();
+		buffer = ScanTools.scanMatchedBuffer("--> Roulette [num|(CR|r)andom|(a)uto|(q)uit]: ",".*");
 		if (buffer.matches("\\d+"))
 			return buffer;
 		return (buffer.isEmpty() ? "r" : buffer.substring(0, 1));		
 	}
 	
 	void close() {
-		scan.close();
+		ScanTools.close();
 	}
-
 	
 }

@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import java_tools.colorText;
+import javaTools.ColorText;
 
 public class Table {
 	static int[][] table_value = { { 28, 4, 3, 31, 35, 10 }, { 36, 18, 21, 24, 11, 1 }, { 7, 23, 12, 17, 22, 30 },
@@ -333,13 +333,13 @@ public class Table {
 				// value = format.format(table_value[i][j]);
 				value = String.format("%02d", table_value[i][j]);
 
-				onValue = (pColorMode ? colorText.RESET + value + colorText.RESET : value);
+				onValue = (pColorMode ? ColorText.RESET + value + ColorText.RESET : value);
 				onValue = " " + onValue + " ";
 
-				offValue = (pColorMode ? colorText.RED + value + colorText.RESET : "--");
+				offValue = (pColorMode ? ColorText.RED + value + ColorText.RESET : "--");
 				offValue = " " + offValue + " ";
 
-				betValue = (pColorMode ? colorText.GREEN_BOLD + value + colorText.RESET : value);
+				betValue = (pColorMode ? ColorText.GREEN_BOLD + value + ColorText.RESET : value);
 				betValue = "[" + betValue + "]";
 
 				occ = table_occurence[i][j];
