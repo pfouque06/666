@@ -9,8 +9,10 @@ class Core {
 	int tours = 0, toursTotal = 0, toursFull = 0;
 	int deposit = Main.deposit, jetons = Main.deposit, jetonsTotal = Main.deposit, jetonsMax = Main.deposit, coef = 1, nbrMise = 0;
 	int win = 0, gain = 0, gainTotal = 0, gainFull = 0;
+	int nbrMiseOrigin = 0, coefOrigin = 0;
+	boolean newMise = false, newCoef = false;
 	boolean gameOver = false, autoPlay = Main.autoMode;
-	String alert = "", input = "";
+	String alert = "", input = "", betsOrigin = "";
 	// Main global variables :
 	// Main.betMax, Main.gainMax, Main.phaseMax, Main.tourMax, Main.jetonLimite
 
@@ -222,14 +224,19 @@ class Core {
 
 			// get Bets suggestions
 			cli.updateBets("");
+			betsOrigin = table.getBets();
+			//nbrMiseOrigin = table.getBetsSize();
+			coefOrigin = coef;
 			table.setBets();
 			if (!table.isBetsEmpty()) {
 				nbrMise = table.getBetsSize();
+				newMise = (! betsOrigin.equals(table.getBets())) ? true : false;
 				int delta = deposit - jetons;
 				delta = ( delta > 0 ? delta : 0);
 				coef = delta / ( 36 - nbrMise ) + 1; // ceiling(( deposit - jetons ) / (36 - NbrMise ))
 				nbrMise *= coef;
-				cli.updateBets("--> Bets  : " + table.getBets() + " (x" + coef + ") => mise: " + nbrMise);
+				newCoef = coef != coefOrigin ? true : false;
+				cli.updateBets(table.getBets(), coef , newCoef, nbrMise, newMise);
 			}
 		}
 	}

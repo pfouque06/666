@@ -75,7 +75,8 @@ class CommandLineInterface {
 	String gainToString(int win, int pGain, int pGainTotal, int pGainFull) {
 		String buffer = "", bufferTotal = "", bufferFull = "";
 		String winFront = win > 0 ? c_green_background() : "";
-		String winBack = win > 0 ? c_reset() : "";
+		//String winBack = win > 0 ? c_reset() : "";
+		String winBack = c_reset();
 
 		buffer = String.format("%3s", pGain);
 		buffer = (pGain < 0 ? c_red_background() + buffer + c_reset() : winFront + buffer + winBack);
@@ -107,6 +108,14 @@ class CommandLineInterface {
 
 	void updateBets(String pBets) {
 		bets = pBets;
+	}
+
+	void updateBets(String pTable, int pCoef, boolean pNewCoef, int pNbrMise, boolean pNewMise) {
+		// "--> Bets  : " + table.getBets() + " (x" + coef + ") => mise: " + nbrMise)
+		String bets_ = pNewMise ? c_blue_bold() + pTable + c_reset() : "" + pTable;
+		String coef = "(x" + (pNewCoef ? c_blue_bold() + pCoef + c_reset() : "" + pCoef) + ")";
+		String mise = ( pNewCoef || pNewMise )? c_blue_bold() + pNbrMise + c_reset() : "" + pNbrMise;
+		bets =  "--> Bets  : " + bets_ + " " + coef + " => mise: " + mise;
 	}
 
 	// display Dashboard Status
