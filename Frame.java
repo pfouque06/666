@@ -32,6 +32,13 @@ import java.awt.event.ActionEvent;
 import javax.swing.Action;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.MatteBorder;
+import java.awt.Color;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.TitledBorder;
 
 public class Frame {
 
@@ -92,6 +99,11 @@ public class Frame {
 		spinner.setToolTipText("");
 		
 		table = new JTable();
+		table.setShowVerticalLines(false);
+		table.setShowHorizontalLines(false);
+		table.setShowGrid(false);
+		table.setRowSelectionAllowed(false);
+		table.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -99,12 +111,12 @@ public class Frame {
 		});
 		table.setModel(new DefaultTableModel(
 			new Object[][] {
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
+				{"1", "2", "3", "4", "5", "6"},
+				{"7", "8", "9", "10", "11", "12"},
+				{"13", "14", "15", "16", "17", "18"},
+				{"19", "20", "21", "22", "23", "24"},
+				{"25", "26", "27", "28", "29", "30"},
+				{"31", "32", "33", "34", "35", "36"},
 			},
 			new String[] {
 				"New column", "New column", "New column", "New column", "New column", "New column"
@@ -135,18 +147,21 @@ public class Frame {
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(40)
-					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-						.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING, false)
-							.addComponent(progressBar, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-							.addComponent(editorPane, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(table, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-							.addComponent(txtJtextfield, Alignment.LEADING)
-							.addComponent(txtrJtextarea, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
-							.addGroup(groupLayout.createSequentialGroup()
-								.addGap(12)
-								.addComponent(slider, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-						.addComponent(frmtdtxtfldJformattedtext, GroupLayout.PREFERRED_SIZE, 218, GroupLayout.PREFERRED_SIZE))
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addContainerGap(42, Short.MAX_VALUE)
+							.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING, false)
+								.addComponent(frmtdtxtfldJformattedtext, GroupLayout.PREFERRED_SIZE, 218, GroupLayout.PREFERRED_SIZE)
+								.addComponent(progressBar, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(editorPane, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(txtJtextfield, Alignment.LEADING)
+								.addComponent(txtrJtextarea, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
+								.addGroup(groupLayout.createSequentialGroup()
+									.addGap(12)
+									.addComponent(slider, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGap(40)
+							.addComponent(table, GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)))
 					.addGap(18)
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
@@ -156,10 +171,10 @@ public class Frame {
 							.addGap(40))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-								.addComponent(txtpnJtextpane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+								.addComponent(txtpnJtextpane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
 								.addComponent(spinner, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE)
 								.addComponent(chckbxNewCheckBox)
-								.addComponent(tree, GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+								.addComponent(tree, GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
 								.addComponent(rdbtnNewRadioButton))
 							.addGap(22))))
 		);
@@ -174,20 +189,21 @@ public class Frame {
 							.addComponent(editorPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addGap(39)
 							.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-								.addGroup(groupLayout.createSequentialGroup()
+								.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
 									.addGap(69)
 									.addComponent(frmtdtxtfldJformattedtext, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
-									.addComponent(table, GroupLayout.PREFERRED_SIZE, 188, GroupLayout.PREFERRED_SIZE))
+									.addPreferredGap(ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+									.addComponent(table, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
+									.addGap(25))
 								.addGroup(groupLayout.createSequentialGroup()
 									.addGap(174)
 									.addComponent(spinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 									.addPreferredGap(ComponentPlacement.UNRELATED)
 									.addComponent(chckbxNewCheckBox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(rdbtnNewRadioButton)
-									.addGap(35)
-									.addComponent(tglbtnNewToggleButton)))
+									.addComponent(rdbtnNewRadioButton)))
+							.addGap(35)
+							.addComponent(tglbtnNewToggleButton)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
 								.addComponent(btnNewButton)
@@ -203,7 +219,7 @@ public class Frame {
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(64)
 					.addComponent(txtrJtextarea, GroupLayout.PREFERRED_SIZE, 84, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(387, Short.MAX_VALUE))
+					.addContainerGap(384, Short.MAX_VALUE))
 		);
 		frame.getContentPane().setLayout(groupLayout);
 	}
