@@ -148,18 +148,21 @@ class CommandLineInterface {
 	// display GameOver Label
 	void displayGameOverLabel(String pAlert, int pGain) {
 
+		String gain_ = "";
+		if (pGain >= 0)
+			gain_ = "--> Gains: " + c_green_background() + String.format("%3s", pGain) + c_reset();
+		else
+			gain_ = "--> Gains: " + c_red_background() + String.format("%3s", pGain) + c_reset();
 
 		switch (pAlert) {
 		case "bet": // alert = bet
 			//System.out.println();
 			System.out.println("--> " + c_red_background() + "CAN'T BET THIS AMOUNT !!!!!" + c_reset());
-			if (pGain >= 0)
-				System.out.println("--> Gains: " + c_green_background() + String.format("%3s", pGain) + c_reset());
-			else
-				System.out.println("--> Gains: " + c_red_background() + String.format("%3s", pGain) + c_reset());
+			System.out.println(gain_);
 			break;
 		case "limite": // alert = jeton
-			System.out.print("--> " + c_red_background() + "WALLET LIMITE REACHED !!!!!" + c_reset());
+			System.out.println("--> " + c_red_background() + "WALLET LIMITE REACHED !!!!!" + c_reset());
+			System.out.println(gain_);
 			break;
 		default:
 			System.out.println();
