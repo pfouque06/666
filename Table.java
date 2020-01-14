@@ -291,12 +291,10 @@ public class Table {
 
 		// sort by value then sort by occurrence
 		System.out.println("unsorted : " + nodesArray);
-		nodesArray.sort(Comparator.comparing(TableNode::getValue).thenComparing(TableNode::getOccurence).reversed());
+		//nodesArray.sort(Comparator.comparing(TableNode::getValue).thenComparing(TableNode::getOccurence).reversed());
+		nodesArray.sort(Comparator.comparing(TableNode::getValue));
+		nodesArray.sort(Comparator.comparing(TableNode::getOccurence).reversed());
 		System.out.println("sorted by value then occurrence : " + nodesArray);
-		//nodesArray.sort(Comparator.comparing(TableNode::getValue));
-		//System.out.println("sorted by value : " + nodesArray);
-		//nodesArray.sort(Comparator.comparing(TableNode::getOccurence).reversed());
-		//System.out.println("sorted by occurrence : " + nodesArray);
 
 		// remove extra bets if betMax is set
 		if (betMax != 0) {
