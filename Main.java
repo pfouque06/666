@@ -137,6 +137,9 @@ public class Main {
 		if (!setOpts(args))
 				return;
 
+		// GUI instance
+		GraphicUserInterface frame = new GraphicUserInterface();
+		
 		// Core instance
 		Core core = new Core();
 		core.Run();
