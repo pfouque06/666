@@ -135,7 +135,8 @@ class CommandLineInterface {
 		System.out.print("Jetons: " + _jetons_ + " | ");
 		System.out.print("Gains: " + _gains_ + " | ");
 		if (! bets.isEmpty())
-			System.out.println("--> Bets  : " + bets + " => mise: " + mise);
+			System.out.print("--> Bets  : " + bets + " => mise: " + mise);
+		System.out.println();
 	}
 
 	// displayFullDashboard : display Table and status

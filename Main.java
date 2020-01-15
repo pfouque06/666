@@ -32,13 +32,13 @@ public class Main {
 			System.out.println("Parsing error, please retry or use -h, --help to get usage ...");
 			return false;
 		}
-		System.out.println("optionList=\n" + options.optionList_toString());
+		//System.out.println("optionList=\n" + options.optionList_toString());
 		// set options
 		if (!setOpts(options.getOptionList())) {
 			options.getUsage(System.out); // use STDOUT when help is requested
 			return false;
 		}
-		System.out.println("options:" + optsToString());
+		//System.out.println("options:" + optsToString());
 		return true;
 	}
 
@@ -140,6 +140,7 @@ public class Main {
 		// initiate getOpts class and parse args according to optionArray
 		if (!setOpts(args))
 			return;
+		System.out.println("options:" + optsToString());
 
 		if (guiMode) {
 			// force colorMode to false

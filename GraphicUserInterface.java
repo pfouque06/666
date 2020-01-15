@@ -25,7 +25,7 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 	private JPanel labelPan = new JPanel();
 	private JLabel jetonLabel = new JLabel();
 	private JLabel gainLabel = new JLabel();
-	private JPanel tablePan = new JPanel();
+	//private JPanel tablePan = new JPanel();
 	private JPanel storePan = new JPanel();
 	private JLabel storeLabel = new JLabel();
 	private JPanel betsPan = new JPanel();
