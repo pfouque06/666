@@ -9,20 +9,20 @@ class CommandLineInterface {
 	String _tours_ = tourToString(0, 0, 0);
 	String _jetons_ = jetonToString(Main.deposit, Main.deposit, Main.deposit);
 	String _gains_ = gainToString(0, 0, 0, 0);
-	String bets = "", input = "";
+	String bets = "", mise = "", input = "";
 
-	String c_black_bold() { return (Main.colorMode ? ColorText.BLACK_BOLD : "[["); }
-	String c_red() { return (Main.colorMode ? ColorText.RED : "[["); }
-	String c_red_bold() { return (Main.colorMode ? ColorText.RED_BOLD : "[["); }
-	String c_red_background() { return (Main.colorMode ? ColorText.RED_BACKGROUND + ColorText.WHITE_BOLD : "[["); }
-	String c_green() { return (Main.colorMode ? ColorText.GREEN : "[["); }
-	String c_green_bold() { return (Main.colorMode ? ColorText.GREEN_BOLD : "[["); }
-	String c_green_background() { return (Main.colorMode ? ColorText.GREEN_BACKGROUND + ColorText.WHITE_BOLD : "[["); }
-	String c_blue() { return (Main.colorMode ? ColorText.BLUE : "[["); }
-	String c_blue_bold() { return (Main.colorMode ? ColorText.BLUE_BOLD : "[["); }
-	String c_blue_background() { return (Main.colorMode ? ColorText.BLUE_BACKGROUND + ColorText.WHITE_BOLD : "[["); }
-	String c_purple_background() { return (Main.colorMode ? ColorText.CYAN_BACKGROUND + ColorText.WHITE_BOLD : "[["); }
-	String c_reset() { return (Main.colorMode ? ColorText.RESET : "]]"); }
+	String c_black_bold() { return (Main.colorMode ? ColorText.BLACK_BOLD : ""); }
+	String c_red() { return (Main.colorMode ? ColorText.RED : ""); }
+	String c_red_bold() { return (Main.colorMode ? ColorText.RED_BOLD : ""); }
+	String c_red_background() { return (Main.colorMode ? ColorText.RED_BACKGROUND + ColorText.WHITE_BOLD : ""); }
+	String c_green() { return (Main.colorMode ? ColorText.GREEN : ""); }
+	String c_green_bold() { return (Main.colorMode ? ColorText.GREEN_BOLD : ""); }
+	String c_green_background() { return (Main.colorMode ? ColorText.GREEN_BACKGROUND + ColorText.WHITE_BOLD : ""); }
+	String c_blue() { return (Main.colorMode ? ColorText.BLUE : ""); }
+	String c_blue_bold() { return (Main.colorMode ? ColorText.BLUE_BOLD : ""); }
+	String c_blue_background() { return (Main.colorMode ? ColorText.BLUE_BACKGROUND + ColorText.WHITE_BOLD : ""); }
+	String c_purple_background() { return (Main.colorMode ? ColorText.CYAN_BACKGROUND + ColorText.WHITE_BOLD : ""); }
+	String c_reset() { return (Main.colorMode ? ColorText.RESET : ""); }
 
 	String alert(String pAlert) {
 		return c_red_bold() + pAlert + c_reset();
@@ -114,14 +114,15 @@ class CommandLineInterface {
 		// "--> Bets  : " + table.getBets() + " (x" + coef + ") => mise: " + nbrMise)
 		String bets_ = pNewMise ? c_blue_bold() + pTable + c_reset() : "" + pTable;
 		String coef = "(x" + (pNewCoef ? c_blue_bold() + pCoef + c_reset() : "" + pCoef) + ")";
-		String mise = ( pNewCoef || pNewMise )? c_blue_bold() + pNbrMise + c_reset() : "" + pNbrMise;
-		bets =  "--> Bets  : " + bets_ + " " + coef + " => mise: " + mise;
+		bets =  bets_ + " " + coef;
+		//+ " => mise: " + mise;
+		mise = ( pNewCoef || pNewMise )? c_blue_bold() + pNbrMise + c_reset() : "" + pNbrMise;
 	}
 
 	// display Dashboard Status
 	void displayDashboardTable(String pStore, String pTable) {
 		System.out.println();
-		System.out.println("Table " + pStore);
+		System.out.println("Table " + pStore + ":");
 		System.out.println();
 		System.out.print(pTable);
 	}
@@ -133,7 +134,8 @@ class CommandLineInterface {
 		System.out.print("Tour: " + _tours_ + " | ");
 		System.out.print("Jetons: " + _jetons_ + " | ");
 		System.out.print("Gains: " + _gains_ + " | ");
-		System.out.println(bets);
+		if (! bets.isEmpty())
+			System.out.println("--> Bets  : " + bets + " => mise: " + mise);
 	}
 
 	// displayFullDashboard : display Table and status

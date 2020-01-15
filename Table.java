@@ -101,10 +101,11 @@ public class Table {
 			int max = store.size() - 1;
 			// str+=store.get(max);
 			int min = (max > --pSize ? max - pSize : 0);
-			str += store.get(min);
+			
+			str += String.format("%02d", store.get(min));
 			// for(int i=max-1; i >= min ; i--) str+=", "+store.get(i);
 			for (int i = min + 1; i <= max; i++)
-				str += ", " + store.get(i);
+				str += ", " + String.format("%02d", store.get(i));
 			str += "]";
 		}
 		return str;
