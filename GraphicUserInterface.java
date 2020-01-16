@@ -61,15 +61,15 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		jetonLabel.setBackground(Color.WHITE);
 		jetonLabel.setHorizontalAlignment(SwingConstants.TRAILING);
 		jetonLabel.setLocation(10, 0);
-		jetonLabel.setSize(new Dimension(120, 40));
+		jetonLabel.setSize(new Dimension(180, 40));
 		jetonLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "jetons",
 				TitledBorder.TRAILING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
 		jetonLabel.setText("0");
 
 		gainLabel.setBackground(UIManager.getColor("Button.light"));
 		gainLabel.setHorizontalAlignment(SwingConstants.TRAILING);
-		gainLabel.setLocation(240, 0);
-		gainLabel.setSize(new Dimension(150, 40));
+		gainLabel.setLocation(210, 0);
+		gainLabel.setSize(new Dimension(180, 40));
 		gainLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "gains",
 				TitledBorder.TRAILING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
 		gainLabel.setText("0");
@@ -155,15 +155,15 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		cycleLabel.setBackground(Color.WHITE);
 		cycleLabel.setHorizontalAlignment(SwingConstants.TRAILING);
 		cycleLabel.setLocation(10, 0);
-		cycleLabel.setSize(new Dimension(80, 40));
+		cycleLabel.setSize(new Dimension(60, 40));
 		cycleLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "cycles",
 				TitledBorder.TRAILING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
 		cycleLabel.setText("");
 
 		tourLabel.setBackground(Color.WHITE);
 		tourLabel.setHorizontalAlignment(SwingConstants.TRAILING);
-		tourLabel.setLocation(100, 0);
-		tourLabel.setSize(new Dimension(80, 40));
+		tourLabel.setLocation(80, 0);
+		tourLabel.setSize(new Dimension(100, 40));
 		tourLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "tours",
 				TitledBorder.TRAILING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
 		tourLabel.setText("");
