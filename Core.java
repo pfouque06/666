@@ -492,7 +492,7 @@ public class Core implements Observed {
 				message += "\n" + gain_;
 			}
 			int index = JOptionPane.showOptionDialog(null, message, title, JOptionPane.YES_NO_CANCEL_OPTION,
-					JOptionPane.QUESTION_MESSAGE, null, optionButtons, optionButtons[1]);
+					(alert.isEmpty() ? JOptionPane.QUESTION_MESSAGE : JOptionPane.WARNING_MESSAGE), null, optionButtons, optionButtons[1]);
 			if (index >= 0) System.out.println("--> action[" + index + "]: " + optionButtons[index]);
 			switch (index) {
 			case -1:
