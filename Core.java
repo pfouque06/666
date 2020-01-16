@@ -25,8 +25,8 @@ public class Core implements Observed {
 	int tours = 0, toursTotal = 0, toursFull = 0;
 	int deposit = Main.deposit, jetons = Main.deposit, jetonsTotal = Main.deposit, jetonsMax = Main.deposit, coef = 1, nbrMise = 0;
 	int win = 0, gain = 0, gainTotal = 0, gainFull = 0, storeLineSize = 0;
-	int nbrMiseOrigin = 0, coefOrigin = 0;
-	boolean newMise = false, newCoef = false;
+	int miseOrigin = 0, coefOrigin = 0;
+	boolean newBets = false, newCoef = false;
 	boolean gameOver = false, autoPlay = Main.autoMode;
 	String alert = "", input = "", betsOrigin = "";
 	// Main global variables :
@@ -59,7 +59,7 @@ public class Core implements Observed {
 		return true;
 	}
 	
-	boolean Run() {
+	boolean runCLI() {
 
 		// CLI init 
 		storeLineSize = 20;
@@ -116,15 +116,14 @@ public class Core implements Observed {
 							System.out.println( cli.alert("Alert is raised") + " .. Can't purge store, sorry !");
 							input = "";
 						} else if (!table.reduceStore()) {
-							System.out.println( cli.alert("Store is empy") + " .. Can't purge store, sorry !");
+							System.out.println( cli.alert("Store is empty") + " .. Can't purge store, sorry !");
 							input = "";
 						}
 						break;
 					case "r": // restart table requested
 						// System.out.println("##1.3 - reset table");
 						table.resetTable();
-						roulette = 0; phase = 0; tours = 0; toursTotal = 0; gain = 0; gainTotal = 0;
-						coef = 1; nbrMise = 0; 
+						roulette = phase = tours = toursTotal = gain = gainTotal = coef = nbrMise = 0;
 						if (! alert.isEmpty()) {
 							gainFull -= deposit - jetons;
 						}
@@ -251,39 +250,42 @@ public class Core implements Observed {
 					gainTotal += gain;
 					gainFull += gain;
 					tours = 0;
-					coef = 1;
+
+					// update deposit value
+					deposit = (jetons > deposit) ? jetons : deposit;
 				}
 				
-				// update deposit value
-				deposit = (jetons > deposit) ? jetons : deposit;
-				
-				// prepare display
-				cli.updatePhaseString(phase, phaseFull);
-				cli.updateTourString(tours, toursTotal, toursFull);
-				cli.updateJetonString(jetons, jetonsTotal, jetonsMax);
-				cli.updateGainString(win, gain, gainTotal, gainFull);
-
-
 				// add roulette value to table
 				table.addOccurence(roulette);
 			}
 
 			// get Bets suggestions
 			cli.updateBets("");
-			betsOrigin = table.getBets();
-			//nbrMiseOrigin = table.getBetsSize();
-			coefOrigin = coef;
+			coef = nbrMise = 0;
 			table.setBets();
 			if (!table.isBetsEmpty()) {
 				nbrMise = table.getBetsSize();
-				newMise = (! betsOrigin.equals(table.getBets())) ? true : false;
 				int delta = deposit - jetons;
 				delta = ( delta > 0 ? delta : 0);
 				coef = delta / ( 36 - nbrMise ) + 1; // ceiling(( deposit - jetons ) / (36 - NbrMise ))
 				nbrMise *= coef;
-				newCoef = coef != coefOrigin ? true : false;
-				cli.updateBets(table.getBets(), coef , newCoef, nbrMise, newMise);
+				newBets = (! betsOrigin.equals(table.getBets())) ? true : false;
+				newCoef = ( coefOrigin != coef ) ? true : false;
+				//if ( newCoef ) System.out.println("Core>>--> coef: old: "+coefOrigin +", new: "+ coef);
+				//if ( newBets) System.out.println("Core>>--> bets: old: "+ betsOrigin +", new: "+table.getBets());
 			}
+			//store next Origin values
+			//betsOrigin = cli.bets;
+			betsOrigin = table.getBets();
+			coefOrigin = coef;
+			//miseOrigin = nbrMise;
+
+			// prepare display
+			cli.updatePhaseString(phase, phaseFull);
+			cli.updateTourString(tours, toursTotal, toursFull);
+			cli.updateJetonString(jetons, jetonsTotal, jetonsMax);
+			cli.updateGainString(win, gain, gainTotal, gainFull);
+			cli.updateBets(table.getBets(), coef, nbrMise, newBets, newCoef);
 		}
 	}
 
@@ -359,6 +361,7 @@ public class Core implements Observed {
 		System.out.println("Core>>operateSpin(" + input + ")");
 		if (input.isEmpty()) return;
 		
+		// get roulette value
 		roulette = Integer.valueOf(input);
 		
 		// increments phase, counters and set display
@@ -382,59 +385,217 @@ public class Core implements Observed {
 			gainTotal += gain;
 			gainFull += gain;
 			tours = 0;
-			coef = 1;
+
+			// update deposit value
+			deposit = (jetons > deposit) ? jetons : deposit;
 		}
-		
-		// update deposit value
-		deposit = (jetons > deposit) ? jetons : deposit;
-		
+
+		// add roulette value to table
+		table.addOccurence(roulette);
+
+		// get Bets suggestions
+		cli.updateBets("");
+		coef = nbrMise = 0;
+		table.setBets();
+		if (!table.isBetsEmpty()) {
+			nbrMise = table.getBetsSize();
+			int delta = deposit - jetons;
+			delta = ( delta > 0 ? delta : 0);
+			coef = delta / ( 36 - nbrMise ) + 1; // ceiling(( deposit - jetons ) / (36 - NbrMise ))
+			nbrMise *= coef;
+			newBets = (! betsOrigin.equals(table.getBets())) ? true : false;
+			newCoef = ( coefOrigin != coef ) ? true : false;
+			//if ( newCoef ) System.out.println("Core>>--> coef: old: "+coefOrigin +", new: "+ coef);
+			//if ( newBets) System.out.println("Core>>--> bets: old: "+ betsOrigin +", new: "+table.getBets());
+		}
+		//store next Origin values
+		//betsOrigin = cli.bets;
+		betsOrigin = table.getBets();
+		coefOrigin = coef;
+		//miseOrigin = nbrMise;
+
 		// prepare display
 		cli.updatePhaseString(phase, phaseFull);
 		cli.updateTourString(tours, toursTotal, toursFull);
 		cli.updateJetonString(jetons, jetonsTotal, jetonsMax);
 		cli.updateGainString(win, gain, gainTotal, gainFull);
+		cli.updateBets(table.getBets(), coef, nbrMise, newBets, newCoef);
 		String jetonLabel = cli._jetons_;
 		String gainLabel = cli._gains_;
-
-		// add roulette value to table
-		table.addOccurence(roulette);
 		String storeLabel = (table.isStoreEmpty() ? "" : table.getStore(storeLineSize));
-
-		// get Bets suggestions
-		cli.updateBets("");
-		betsOrigin = table.getBets();
-		//nbrMiseOrigin = table.getBetsSize();
-		coefOrigin = coef;
-		nbrMise = 0;
-		table.setBets();
-		if (!table.isBetsEmpty()) {
-			nbrMise = table.getBetsSize();
-			newMise = (! betsOrigin.equals(table.getBets())) ? true : false;
-			int delta = deposit - jetons;
-			delta = ( delta > 0 ? delta : 0);
-			coef = delta / ( 36 - nbrMise ) + 1; // ceiling(( deposit - jetons ) / (36 - NbrMise ))
-			nbrMise *= coef;
-			newCoef = coef != coefOrigin ? true : false;
-			cli.updateBets(table.getBets(), coef , newCoef, nbrMise, newMise);
-		}
 		String betLabel = cli.bets;
+		String coefLabel = cli.coef;
 		String miseLabel = cli.mise;
-		if (betLabel.isEmpty())
-			miseLabel = "";
 
 		// update OBSERVER
 		observerUpdateList.add(new String[] {"jeton", jetonLabel});
 		observerUpdateList.add(new String[] {"gain", gainLabel});
 		if (win > 0)
 			observerUpdateList.add(new String[] {"win", ""});
-		if (newMise)
+		if (newBets)
 			observerUpdateList.add(new String[] {"newMise", ""});
+		if (newCoef)
+			observerUpdateList.add(new String[] {"newCoef", ""});
 		if (! storeLabel.isEmpty()) //--> Convert to setText("") if not updated !!
 			observerUpdateList.add(new String[] {"store", storeLabel});
 		if (! betLabel.isEmpty()) //--> Convert to setText("") if not updated !!
 			observerUpdateList.add(new String[] {"bets", betLabel});
+		if (! coefLabel.isEmpty()) //--> Convert to setText("") if not updated !!
+			observerUpdateList.add(new String[] {"coef", coefLabel});
 		if (! miseLabel.isEmpty()) //--> Convert to setText("") if not updated !!
 			observerUpdateList.add(new String[] {"mise", miseLabel});
 		updateObserver();
+
+		// ---------------------
+		// exit conditions check
+		// ---------------------
+		// if table is full (all values are completed)
+		// or if Main.gainMax, Main.phaseMax or Main.tourMax are reached
+		if (table.isFull()
+				|| (Main.gainMax != 0 ? gainTotal >= Main.gainMax : false)
+				|| (Main.phaseMax != 0 && tours == 0 ? phase >= Main.phaseMax : false)
+				|| (Main.tourMax != 0 && tours == 0 ? toursTotal >= Main.tourMax : false)) {
+			gameOver = true; // launch exit menu
+		}
+
+		// Check Mise versus Jetons
+		if ( jetons < nbrMise ) {
+			gameOver = true; // launch exit menu
+			alert = "bet";  // set alert
+		}
+
+		// Check Jetons limites
+		if (Main.jetonLimite != 0 && (deposit - jetons) >= Main.jetonLimite) {
+			gameOver = true; // launch exit menu
+			alert = "limite"; // set alert
+		}
+
+		// run exit prompt
+		if (gameOver) {
+			//JOptionPane jop = new JOptionPane();
+			String title = "Game Over";
+			String message = "";
+			String gain_ = "--> Gains: " + String.format("%3s", gainTotal);
+			//String[] optionButtons = { "Quit", "Purge", "Restart" };
+			String[] optionButtons = { "Purge", "Restart" };
+			switch (alert) {
+			case "bet": // alert = bet
+				message = "--> CAN'T BET THIS AMOUNT !!!!!";
+				message += "\n" + gain_;
+				break;
+			case "limite": // alert = jeton
+				message = "--> WALLET LIMITE REACHED !!!!!";
+				message += "\n" + gain_;
+				break;
+			default:
+				message = "--> Game is over";
+				message += "\n" + gain_;
+			}
+			int index = JOptionPane.showOptionDialog(null, message, title, JOptionPane.YES_NO_CANCEL_OPTION,
+					JOptionPane.QUESTION_MESSAGE, null, optionButtons, optionButtons[1]);
+			if (index >= 0) System.out.println("--> action[" + index + "]: " + optionButtons[index]);
+			switch (index) {
+			case -1:
+				System.out.println("--> cancel process");
+				break;
+			case 0:
+			//	System.out.println("--> quit process");
+			//	cli.close();
+			//	return;
+			//case 1:
+				System.out.println("--> purge process");
+				// System.out.println("##1.2 - start reducing Store");
+				if (!alert.isEmpty()) {
+					message = "Alert is raised";
+					message += "\n .. Can't purge store, sorry !";
+					JOptionPane.showMessageDialog(null, message, "Alert", JOptionPane.WARNING_MESSAGE);
+				} else if (!table.reduceStore()) {
+					message = "Store is empty";
+					message += "\n .. Can't purge store, sorry !";
+					JOptionPane.showMessageDialog(null, message, "Alert", JOptionPane.WARNING_MESSAGE);
+				}
+				break;
+			case 1:
+			//case 2:
+				System.out.println("--> restart process");
+				// System.out.println("##1.3 - reset table");
+				table.resetTable();
+				roulette = phase = tours = toursTotal = gain = gainTotal = coef = nbrMise = 0;
+				if (! alert.isEmpty()) {
+					gainFull -= deposit - jetons;
+				}
+				deposit = Main.deposit;
+				jetons = Main.deposit;
+				jetonsTotal = Main.deposit;
+//				cli.updatePhaseString(0, phaseFull);
+//				cli.updateTourString(0, 0, toursFull);
+//				cli.updateJetonString(jetons, jetonsTotal, jetonsMax);
+//				cli.updateGainString(win, 0, 0, gainFull);
+//				cli.updateBets("");
+				break;
+			}
+
+			// prepare display and update observer
+			switch(index) {
+			case 0:
+			case 1:
+			//case 2:
+				gameOver = false;
+				alert = "";
+
+				// get Bets suggestions
+				cli.updateBets("");
+				coef = nbrMise = 0;
+				table.setBets();
+				if (!table.isBetsEmpty()) {
+					nbrMise = table.getBetsSize();
+					int delta = deposit - jetons;
+					delta = ( delta > 0 ? delta : 0);
+					coef = delta / ( 36 - nbrMise ) + 1; // ceiling(( deposit - jetons ) / (36 - NbrMise ))
+					nbrMise *= coef;
+					newBets = (! betsOrigin.equals(table.getBets())) ? true : false;
+					newCoef = ( coefOrigin != coef ) ? true : false;
+					//if ( newCoef ) System.out.println("Core>>--> coef: old: "+coefOrigin +", new: "+ coef);
+					//if ( newBets) System.out.println("Core>>--> bets: old: "+ betsOrigin +", new: "+table.getBets());
+				}
+				//store next Origin values
+				//betsOrigin = cli.bets;
+				betsOrigin = table.getBets();
+				coefOrigin = coef;
+				//miseOrigin = nbrMise;
+
+				// prepare display
+				cli.updatePhaseString(phase, phaseFull);
+				cli.updateTourString(tours, toursTotal, toursFull);
+				cli.updateJetonString(jetons, jetonsTotal, jetonsMax);
+				cli.updateGainString(win, gain, gainTotal, gainFull);
+				cli.updateBets(table.getBets(), coef, nbrMise, newBets, newCoef);
+				jetonLabel = cli._jetons_;
+				gainLabel = cli._gains_;
+				storeLabel = (table.isStoreEmpty() ? "" : table.getStore(storeLineSize));
+				betLabel = cli.bets;
+				coefLabel = cli.coef;
+				miseLabel = cli.mise;
+
+				// update OBSERVER
+				observerUpdateList.add(new String[] {"jeton", jetonLabel});
+				observerUpdateList.add(new String[] {"gain", gainLabel});
+				if (win > 0)
+					observerUpdateList.add(new String[] {"win", ""});
+				if (newBets)
+					observerUpdateList.add(new String[] {"newMise", ""});
+				if (newCoef)
+					observerUpdateList.add(new String[] {"newCoef", ""});
+				if (! storeLabel.isEmpty()) //--> Convert to setText("") if not updated !!
+					observerUpdateList.add(new String[] {"store", storeLabel});
+				if (! betLabel.isEmpty()) //--> Convert to setText("") if not updated !!
+					observerUpdateList.add(new String[] {"bets", betLabel});
+				if (! coefLabel.isEmpty()) //--> Convert to setText("") if not updated !!
+					observerUpdateList.add(new String[] {"coef", coefLabel});
+				if (! miseLabel.isEmpty()) //--> Convert to setText("") if not updated !!
+					observerUpdateList.add(new String[] {"mise", miseLabel});
+				updateObserver();
+			}
+		}
 	}
 }

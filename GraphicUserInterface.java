@@ -30,6 +30,7 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 	private JLabel storeLabel = new JLabel();
 	private JPanel betsPan = new JPanel();
 	private JLabel betsLabel = new JLabel();
+	private JLabel coefLabel = new JLabel();
 	private JLabel miseLabel = new JLabel();
 	private JPanel actionPan = new JPanel();
 	private JButton menuButton = new JButton("Options");
@@ -50,11 +51,11 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		this.setUndecorated(false);
 		this.setSize(400, 300);
 		this.setResizable(false);
-		this.setAlwaysOnTop(true);
+		this.setAlwaysOnTop(false);
 
 		// labelPan init
 		Dimension subLabelDim = new Dimension(100, 40);
-		Dimension labelDim = new Dimension(300, 50);
+		Dimension labelDim = new Dimension(400, 50);
 		jetonLabel.setBackground(Color.WHITE);
 		jetonLabel.setHorizontalAlignment(SwingConstants.TRAILING);
 		jetonLabel.setLocation(10, 0);
@@ -64,7 +65,7 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		jetonLabel.setText("0");
 		gainLabel.setBackground(UIManager.getColor("Button.light"));
 		gainLabel.setHorizontalAlignment(SwingConstants.TRAILING);
-		gainLabel.setLocation(224, 0);
+		gainLabel.setLocation(240, 0);
 		gainLabel.setSize(new Dimension(150, 40));
 		gainLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "gains",
 				TitledBorder.TRAILING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
@@ -87,21 +88,30 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		betsLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "à miser",
 				TitledBorder.TRAILING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
 		betsLabel.setText("");
+		coefLabel.setBackground(Color.WHITE);
+		coefLabel.setHorizontalAlignment(SwingConstants.TRAILING);
+		coefLabel.setLocation(10, 50);
+		coefLabel.setSize(new Dimension(60, 40));
+		coefLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "coef",
+				TitledBorder.TRAILING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
+		coefLabel.setText("");
 		miseLabel.setBackground(Color.WHITE);
 		miseLabel.setHorizontalAlignment(SwingConstants.TRAILING);
-		miseLabel.setLocation(10, 50);
+		miseLabel.setLocation(130, 50);
 		miseLabel.setSize(new Dimension(60, 40));
 		miseLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "mises",
 				TitledBorder.TRAILING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
 		miseLabel.setText("");
 		
-		betsButton.setLocation(90, 60);
+		betsButton.setLocation(120, 110);
 		betsButton.setSize(70, 30);
 		betsButton.setPreferredSize(new Dimension(70, 30));
 		betsButton.addActionListener(this);
+		betsButton.setVisible(false);
 		betsPan.setPreferredSize(BetsDim);
 		betsPan.setLayout(null);
 		betsPan.add(betsLabel);
+		betsPan.add(coefLabel);
 		betsPan.add(miseLabel);
 		betsPan.add(betsButton);
 
@@ -125,19 +135,20 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 
 		// action Pan
 		Dimension subActionlDim = new Dimension(70, 30);
-		Dimension ActionDim = new Dimension(300, 50);
+		Dimension ActionDim = new Dimension(400, 50);
 		// menuButton.setBounds(10, 10, 70, 30);
 		menuButton.setLocation(10, 10);
-		menuButton.setSize(80, 30);
+		menuButton.setSize(90, 30);
 		menuButton.setPreferredSize(subActionlDim);
 		menuButton.addActionListener(this);
+		menuButton.setVisible(false);
 		// spinButton.setBounds(120, 10, 70, 30);
-		spinButton.setLocation(224, 10);
+		spinButton.setLocation(240, 10);
 		spinButton.setSize(70, 30);
 		spinButton.setPreferredSize(subActionlDim);
 		spinButton.addActionListener(this);
 		// rollButton.setBounds(200, 10, 70, 30);
-		rollButton.setLocation(304, 10);
+		rollButton.setLocation(320, 10);
 		rollButton.setSize(70, 30);
 		rollButton.setPreferredSize(subActionlDim);
 		rollButton.addActionListener(this);
@@ -169,8 +180,10 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 				jetonLabel.setForeground(Color.black);
 				gainLabel.setForeground(Color.black);
 				betsLabel.setForeground(Color.black);
+				coefLabel.setForeground(Color.black);
 				miseLabel.setForeground(Color.black);
 				betsLabel.setText("");
+				coefLabel.setText("");
 				miseLabel.setText("");
 				storeLabel.setText("");
 				for(String[] item : pLHS) {
@@ -178,6 +191,10 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 					switch (item[0]) {
 					case "newMise" :
 						betsLabel.setForeground(Color.blue);
+						miseLabel.setForeground(Color.blue);
+						break;
+					case "newCoef" :
+						coefLabel.setForeground(Color.blue);
 						miseLabel.setForeground(Color.blue);
 						break;
 					case "win" :
@@ -200,6 +217,9 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 						break;
 					case "bets" :
 						betsLabel.setText(item[1]);
+						break;
+					case "coef" :
+						coefLabel.setText(item[1]);
 						break;
 					case "mise" :
 						miseLabel.setText(item[1]);

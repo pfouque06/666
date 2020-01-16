@@ -188,7 +188,10 @@ public class Table {
 	}
 
 	public String getBets() {
-		return bets.toString();
+		String buffer = "";
+		if (! bets.isEmpty())
+			buffer = bets.toString();
+		return buffer;
 	}
 
 	void setBets() {
@@ -291,11 +294,11 @@ public class Table {
 			nodesArray.add(new TableNode(value, -getOccurence(value)));
 
 		// sort by value then sort by occurrence
-		System.out.println("unsorted : " + nodesArray);
+		//System.out.println("unsorted : " + nodesArray);
 		//nodesArray.sort(Comparator.comparing(TableNode::getValue).thenComparing(TableNode::getOccurence).reversed());
 		nodesArray.sort(Comparator.comparing(TableNode::getValue));
 		nodesArray.sort(Comparator.comparing(TableNode::getOccurence).reversed());
-		System.out.println("sorted by value then occurrence : " + nodesArray);
+		//System.out.println("sorted by value then occurrence : " + nodesArray);
 
 		// remove extra bets if betMax is set
 		if (betMax != 0) {
@@ -308,7 +311,7 @@ public class Table {
 		// sort gain by value
 		//nodesArray.sort(Comparator.comparing(TableNode -> TableNode.getValue()));
 		nodesArray.sort(Comparator.comparing(TableNode::getValue));
-		System.out.println("sorted by value : " + nodesArray);
+		//System.out.println("sorted by value : " + nodesArray);
 
 		// reset and rebuild bets
 		resetBets();

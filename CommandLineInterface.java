@@ -9,7 +9,7 @@ class CommandLineInterface {
 	String _tours_ = tourToString(0, 0, 0);
 	String _jetons_ = jetonToString(Main.deposit, Main.deposit, Main.deposit);
 	String _gains_ = gainToString(0, 0, 0, 0);
-	String bets = "", mise = "", input = "";
+	String bets = "", coef = "", mise = "", input = "";
 
 	String c_black_bold() { return (Main.colorMode ? ColorText.BLACK_BOLD : ""); }
 	String c_red() { return (Main.colorMode ? ColorText.RED : ""); }
@@ -110,13 +110,15 @@ class CommandLineInterface {
 		bets = pBets;
 	}
 
-	void updateBets(String pTable, int pCoef, boolean pNewCoef, int pNbrMise, boolean pNewMise) {
+	void updateBets(String pTable, int pCoef, int pNbrMise, boolean pNewTable, boolean pNewCoef) {
 		// "--> Bets  : " + table.getBets() + " (x" + coef + ") => mise: " + nbrMise)
-		String bets_ = pNewMise ? c_blue_bold() + pTable + c_reset() : "" + pTable;
-		String coef = "(x" + (pNewCoef ? c_blue_bold() + pCoef + c_reset() : "" + pCoef) + ")";
-		bets =  bets_ + " " + coef;
-		//+ " => mise: " + mise;
-		mise = ( pNewCoef || pNewMise )? c_blue_bold() + pNbrMise + c_reset() : "" + pNbrMise;
+		if (pTable.isEmpty()) {
+			bets = coef = mise = "";
+			return;
+		}
+		bets  = pNewTable ? c_blue_bold() + pTable + c_reset() : "" + pTable;
+		coef = "x" + (pNewCoef ? c_blue_bold() + pCoef + c_reset() : "" + pCoef);
+		mise = ( pNewCoef || pNewTable )? c_blue_bold() + pNbrMise + c_reset() : "" + pNbrMise;
 	}
 
 	// display Dashboard Status
@@ -135,7 +137,7 @@ class CommandLineInterface {
 		System.out.print("Jetons: " + _jetons_ + " | ");
 		System.out.print("Gains: " + _gains_ + " | ");
 		if (! bets.isEmpty())
-			System.out.print("--> Bets  : " + bets + " => mise: " + mise);
+			System.out.print("--> Bets  : " + bets + " " + coef + "  => mise: " + mise);
 		System.out.println();
 	}
 

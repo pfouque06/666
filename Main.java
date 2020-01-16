@@ -151,7 +151,7 @@ public class Main {
 		} else {
 			// Core instance
 			Core core = new Core();
-			core.Run();
+			core.runCLI();
 		}
 
 	}
