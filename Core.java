@@ -43,22 +43,25 @@ public class Core implements Observed {
 		return true;
 	}
 
-	void udateCLI() {
+	void updateCLI() {
+		System.out.println("Core>>updateCLI()");
+
 		// prepare dashboard information
 		String storeLine = (table.isStoreEmpty() ? "" : table.getStore(storeLineSize));
 		String betTable = table.betToString(Main.colorMode);
 		// display Dashboard
 		cli.displayFullDashboard(storeLine, betTable);
-		//cli.displayDashboardStatus();
 	}
 
 	boolean runCLI() {
+		System.out.println("Core>>runCLI()");
+
 		// CLI init
 		storeLineSize = 20;
 
 		// prepare display and update CLI dahsboard
 		prepareDisplay();
-		udateCLI();
+		updateObserver();
 
 		while (true) {
 			// if game is not over, need now to get input from user from cycle Menu
@@ -80,8 +83,7 @@ public class Core implements Observed {
 						case "a":
 							autoPlay = true;
 						case "r":
-							int delay = 0; // 0.1sec per delay
-							input = String.valueOf(table.getRandomRoulette(delay));
+							randomSpin();
 							break;
 						}
 					} while (!input.matches("\\d+"));
@@ -100,7 +102,7 @@ public class Core implements Observed {
 
 				// prepare display and update CLI dahsboard
 				prepareDisplay();
-				udateCLI();
+				updateObserver();
 
 				// GameOver check
 				gameOver = checkGameOverConditions();
@@ -192,7 +194,7 @@ public class Core implements Observed {
 				processBetsSuggestion();
 				// prepare display and update CLI dahsboard
 				prepareDisplay();
-				udateCLI();
+				updateObserver();
 			}
 		}
 	}
@@ -208,6 +210,10 @@ public class Core implements Observed {
 		// TODO Auto-generated method stub
 		System.out.println("Core>>updateObserver()");
 
+		if (!Main.guiMode) {
+			updateCLI();
+			return;
+		}
 		// Prepare Observer update List
 		observerUpdateList.add(new String[] { "jeton", cli._jetons_ });
 		observerUpdateList.add(new String[] { "gain", cli._gains_ });
