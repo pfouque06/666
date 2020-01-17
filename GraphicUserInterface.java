@@ -5,12 +5,16 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.LinkedHashSet;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 
@@ -35,16 +39,85 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 	private JLabel cycleLabel = new JLabel();
 	private JLabel tourLabel = new JLabel();
 	private JPanel actionPan = new JPanel();
-	private JButton menuButton = new JButton("Options");
-	private JButton betsButton = new JButton("Bets");
-	private JButton rollButton = new JButton("Bille");
-	private JButton spinButton = new JButton("Spin");
+	private JButton menuButton = new JButton("Options") {
+		@Override
+		protected boolean processKeyBinding(KeyStroke ks, KeyEvent ke, int i, boolean bln) {
+			boolean b = super.processKeyBinding(ks, ke, i, bln);
+
+			if (b && ks.getKeyCode() == KeyEvent.VK_O) {
+				requestFocusInWindow();
+			}
+
+			return b;
+		}
+	};
+	private JButton betsButton = new JButton("Mise") {
+		@Override
+		protected boolean processKeyBinding(KeyStroke ks, KeyEvent ke, int i, boolean bln) {
+			boolean b = super.processKeyBinding(ks, ke, i, bln);
+
+			if (b && ks.getKeyCode() == KeyEvent.VK_M) {
+				requestFocusInWindow();
+			}
+
+			return b;
+		}
+	};
+	private JButton spinButton = new JButton("Spin") {
+		@Override
+		protected boolean processKeyBinding(KeyStroke ks, KeyEvent ke, int i, boolean bln) {
+			boolean b = super.processKeyBinding(ks, ke, i, bln);
+
+			if (b && ks.getKeyCode() == KeyEvent.VK_S) {
+				requestFocusInWindow();
+			}
+
+			return b;
+		}
+	};
+	private JButton rollButton = new JButton("Bille") {
+		@Override
+		protected boolean processKeyBinding(KeyStroke ks, KeyEvent ke, int i, boolean bln) {
+			boolean b = super.processKeyBinding(ks, ke, i, bln);
+
+			if (b && ks.getKeyCode() == KeyEvent.VK_B) {
+				requestFocusInWindow();
+			}
+
+			return b;
+		}
+	};
 
 	// Core instance
 	private Core core;
 
 	public GraphicUserInterface() {
 		// TODO Auto-generated constructor stub
+
+		AbstractAction keybindAction = new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				System.out.println("GUI>>keybindAction.actionPerformed(" + ae.getActionCommand() + ")");
+				String buttonTitle = "";
+				switch (ae.getActionCommand()) {
+				case "s":
+					buttonTitle = "Spin";
+					break;
+				case "b":
+					buttonTitle = "Bille";
+					break;
+				case "o":
+					buttonTitle = "Options";
+					break;
+				case "m":
+					buttonTitle = "Mise";
+					break;
+				default:
+					return;
+				}
+				core.processAction(buttonTitle);
+			}
+		};
 
 		// On initialise la JFrame
 		this.setTitle("_666_");
@@ -113,13 +186,17 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		betsButton.setSize(70, 30);
 		betsButton.setPreferredSize(new Dimension(70, 30));
 		betsButton.addActionListener(this);
-		betsButton.setVisible(false);
+		betsButton.setVisible(true);
+		betsButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_M, 0), "m");
+		betsButton.getActionMap().put("m", keybindAction);
 
 		menuButton.setLocation(100, 130);
 		menuButton.setSize(90, 30);
 		menuButton.setPreferredSize(new Dimension(90, 30));
 		menuButton.addActionListener(this);
-		menuButton.setVisible(false);
+		menuButton.setVisible(true);
+		menuButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_O, 0), "o");
+		menuButton.getActionMap().put("o", keybindAction);
 
 		betsPan.setPreferredSize(BetsDim);
 		betsPan.setLayout(null);
@@ -173,12 +250,16 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		spinButton.setSize(70, 30);
 		spinButton.setPreferredSize(subActionlDim);
 		spinButton.addActionListener(this);
+		rollButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0), "s");
+		rollButton.getActionMap().put("s", keybindAction);
 
 		// rollButton.setBounds(200, 10, 70, 30);
 		rollButton.setLocation(320, 10);
 		rollButton.setSize(70, 30);
 		rollButton.setPreferredSize(subActionlDim);
 		rollButton.addActionListener(this);
+		rollButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_B, 0), "b");
+		rollButton.getActionMap().put("b", keybindAction);
 
 		// actionPan.setSize(ActionDim);
 		actionPan.setPreferredSize(ActionDim);
@@ -202,7 +283,6 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		// Core instance
 		core = new Core();
 		core.addObserver(new Observer() {
-
 			@Override
 			public void update(LinkedHashSet<String[]> pLHS) {
 				// TODO Auto-generated method stub
@@ -270,12 +350,10 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 				container.setVisible(false);
 				container.setVisible(true);
 				// this.setVisible(true);
-
 			}
-
 		});
 
-		core.runGUI();
+		core.run();
 	}
 
 	@Override

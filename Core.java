@@ -31,6 +31,14 @@ public class Core implements Observed {
 	// Main global variables :
 	// Main.betMax, Main.gainMax, Main.phaseMax, Main.tourMax, Main.jetonLimite
 
+	boolean run() {
+
+		if (Main.guiMode)
+			return runGUI();
+		else
+			return runCLI();
+	}
+
 	boolean runGUI() {
 		System.out.println("Core>>runGUI()");
 
@@ -230,6 +238,8 @@ public class Core implements Observed {
 			observerUpdateList.add(new String[] { "mise", cli.mise });
 		if (win > 0)
 			observerUpdateList.add(new String[] { "win", "" });
+		if (!alert.isEmpty())
+			observerUpdateList.add(new String[] { "alert", "" });
 		if (newBets)
 			observerUpdateList.add(new String[] { "newMise", "" });
 		if (newCoef)
@@ -265,7 +275,7 @@ public class Core implements Observed {
 		case "Bille":
 			operateSpin(expectSpin());
 			break;
-		case "Bets":
+		case "Mise":
 		case "Options":
 			break;
 		}
@@ -413,7 +423,7 @@ public class Core implements Observed {
 		// JOptionPane jop = new JOptionPane();
 		String title = "Game Over";
 		String message = "";
-		String gain_ = "--> Gains: " + String.format("%3s", gainTotal);
+		String gain_ = "--> Gains: " + String.format("%3s", (jetons - Main.deposit));
 		// String[] optionButtons = { "Quit", "Purge", "Restart" };
 		String[] optionButtons = { "Purge", "Restart" };
 		switch (alert) {
@@ -496,16 +506,18 @@ public class Core implements Observed {
 			table.addOccurence(roulette);
 			processBetsSuggestion();
 
+			// GameOver check
+			gameOver = checkGameOverConditions();
+
 			// prepare display dashboard & update OBSERVER
 			prepareDisplay();
 			updateObserver();
 
-			// GameOver check
-			gameOver = checkGameOverConditions();
 		}
 
 		// run exit prompt if required
 		if (gameOver) {
+
 			// game over dialog
 			int index = gameOverDialog();
 			switch (index) {
