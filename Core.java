@@ -237,13 +237,13 @@ public class Core implements Observed {
 			autoPlay = ! autoPlay;
 			System.out.println("Core>>--> AutoMode: " + autoPlay );
 			break;
-		case "Spin":
+		case "Rand":
 			do {
 				operateSpin(randomSpin());
 			// repeat if autoMode is TRUE and game is NOT over
 			} while (autoPlay && ! gameOver && (tours != 0));
 			break;
-		case "Bille":
+		case "Spin":
 			operateSpin(expectSpin());
 			break;
 		case "Mise":

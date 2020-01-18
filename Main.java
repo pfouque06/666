@@ -12,6 +12,7 @@ public class Main {
 			"TYPE:KEY:KEYWORD:VALUENAME:VALUETYPE:DETAIL:ACTION:", "F:h:help:usage:-:prints this help message:true:",
 			"F:G:gui:guiMode:boolean:set GUI mode (default mode):true:",
 			"F:T:text:guiMode:boolean:set CLI mode (default is GUI mode):false:",
+			"F:S:sim:simMode:boolean:set simulation mode ON (default is oFF):true:",
 			"F:a:auto:autoMode:boolean:set auto mode with random roulette (default is OFF):true:",
 			"F:c:color:colorMode:boolean:set color mode (default is color):true:",
 			"F:m:mono:colorMode:boolean:set monocolor mode (default is color):false:",
@@ -25,7 +26,6 @@ public class Main {
 	public static GetOpts options = new GetOpts(optionArray);
 
 	public static boolean setOpts(String[] pArgs) {
-
 		// System.out.println("optionTable=\n"+options.optionTable_toString());
 		// parse options pArgs
 		if (!options.setOptionList(pArgs)) {
@@ -47,8 +47,12 @@ public class Main {
 		for (String[] fields : pList) {
 			// System.out.println("fields="+fields.toString() );
 			switch (fields[2]) {
-			case "guiMode":
+			case "guiMode": // define text or gui mode
 				guiMode = fields[3].equals("true");
+				// System.out.println("colorMode=" + colorMode);
+				break;
+			case "simMode": // define simulation mode
+				simMode = fields[3].equals("true");
 				// System.out.println("colorMode=" + colorMode);
 				break;
 			case "colorMode":
@@ -103,6 +107,7 @@ public class Main {
 		String buffer = "";
 
 		buffer += " gui: " + (guiMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
+		buffer += " sim: " + (simMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
 		buffer += " auto: " + (autoMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
 		buffer += " mode: " + (colorMode ? c_green() + "color" : c_red() + "mono") + c_reset();
 		if (deposit > 0)
@@ -124,7 +129,7 @@ public class Main {
 	}
 
 	// public global variables
-	public static boolean guiMode = true, colorMode = true, autoMode = false;
+	public static boolean guiMode = true, simMode = false, colorMode = true, autoMode = false;
 	public static int deposit = 0, betMax = 0, jetonLimite = 0, warning = 0, gainMax = 0, phaseMax = 0, tourMax = 0;
 
 	// local methods
