@@ -14,6 +14,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
@@ -23,6 +24,7 @@ import javaTools.Observer;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
+@SuppressWarnings("serial")
 public class GraphicUserInterface extends JFrame implements ActionListener {
 
 	private JPanel container = new JPanel();
@@ -39,6 +41,18 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 	private JLabel cycleLabel = new JLabel();
 	private JLabel tourLabel = new JLabel();
 	private JPanel actionPan = new JPanel();
+	private JToggleButton autoButton = new JToggleButton("Auto", Main.autoMode) {
+		@Override
+		protected boolean processKeyBinding(KeyStroke ks, KeyEvent ke, int i, boolean bln) {
+			boolean b = super.processKeyBinding(ks, ke, i, bln);
+
+			if (b && ks.getKeyCode() == KeyEvent.VK_A) {
+				requestFocusInWindow();
+			}
+
+			return b;
+		}
+	};
 	private JButton menuButton = new JButton("Options") {
 		@Override
 		protected boolean processKeyBinding(KeyStroke ks, KeyEvent ke, int i, boolean bln) {
@@ -98,24 +112,31 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				System.out.println("GUI>>keybindAction.actionPerformed(" + ae.getActionCommand() + ")");
-				String buttonTitle = "";
+				//String buttonTitle = "";
 				switch (ae.getActionCommand()) {
 				case "s":
-					buttonTitle = "Spin";
+					//buttonTitle = "Spin";
+					spinButton.doClick();
 					break;
 				case "b":
-					buttonTitle = "Bille";
+					//buttonTitle = "Bille";
+					rollButton.doClick();
+					break;
+				case "a":
+					autoButton.doClick();
 					break;
 				case "o":
-					buttonTitle = "Options";
+					//buttonTitle = "Options";
+					menuButton.doClick();
 					break;
 				case "m":
-					buttonTitle = "Mise";
+					//buttonTitle = "Mise";
+					betsButton.doClick();
 					break;
 				default:
-					return;
+					break;
 				}
-				core.processAction(buttonTitle);
+				//core.processAction(buttonTitle);
 			}
 		};
 
@@ -124,12 +145,13 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		this.setUndecorated(false);
+		this.setLocation(1000, 200);
 		this.setSize(400, 300);
 		this.setResizable(false);
 		this.setAlwaysOnTop(false);
 
 		// labelPan init
-		Dimension subLabelDim = new Dimension(100, 40);
+		//Dimension subLabelDim = new Dimension(100, 40);
 		Dimension labelDim = new Dimension(400, 50);
 		jetonLabel.setBackground(Color.WHITE);
 		jetonLabel.setHorizontalAlignment(SwingConstants.TRAILING);
@@ -182,7 +204,15 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 				TitledBorder.TRAILING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
 		miseLabel.setText("");
 
-		betsButton.setLocation(10, 130);
+		autoButton.setLocation(40, 140);
+		autoButton.setSize(70, 30);
+		autoButton.setPreferredSize(new Dimension(70, 30));
+		autoButton.addActionListener(this);
+		autoButton.setVisible(true);
+		autoButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0), "a");
+		autoButton.getActionMap().put("a", keybindAction);
+
+		betsButton.setLocation(120, 140);
 		betsButton.setSize(70, 30);
 		betsButton.setPreferredSize(new Dimension(70, 30));
 		betsButton.addActionListener(this);
@@ -194,7 +224,7 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		menuButton.setSize(90, 30);
 		menuButton.setPreferredSize(new Dimension(90, 30));
 		menuButton.addActionListener(this);
-		menuButton.setVisible(true);
+		menuButton.setVisible(false);
 		menuButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_O, 0), "o");
 		menuButton.getActionMap().put("o", keybindAction);
 
@@ -204,6 +234,7 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		betsPan.add(coefLabel);
 		betsPan.add(miseLabel);
 		betsPan.add(menuButton);
+		betsPan.add(autoButton);
 		betsPan.add(betsButton);
 
 		// table init
@@ -296,6 +327,7 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 				coefLabel.setText("");
 				miseLabel.setText("");
 				storeLabel.setText("");
+				autoButton.setSelected(false);
 				for (String[] item : pLHS) {
 					System.out.println("[" + item[0] + ":" + item[1] + "]");
 					switch (item[0]) {
@@ -343,6 +375,8 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 					case "tour":
 						tourLabel.setText(item[1]);
 						break;
+					case "auto":
+						autoButton.setSelected(true);
 					default:
 						break;
 					}
@@ -352,18 +386,20 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 				// this.setVisible(true);
 			}
 		});
+	}
 
-		core.run();
+	public boolean run() {
+		return core.run();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
-		System.out.println("GUI>>actionPerformed");
+		System.out.print("GUI>>actionPerformed(");
 		// JButton buttonHit= (JButton) arg0.getSource();
 		// String buttonTitle = buttonHit.getName();
 		String buttonTitle = arg0.getActionCommand();
-		System.out.println("GUI>>-->buttonTitle= " + buttonTitle);
+		System.out.println( buttonTitle + ")");
 		switch (buttonTitle) {
 		default:
 			core.processAction(buttonTitle);

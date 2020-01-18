@@ -145,10 +145,11 @@ public class Main {
 		if (guiMode) {
 			// force colorMode to false
 			colorMode = false;
-			// GUI instance
+			// GUI instance and run
 			GraphicUserInterface frame = new GraphicUserInterface();
+			frame.run();
 		} else {
-			// Core instance
+			// Core instance and run
 			Core core = new Core();
 			core.run();
 		}
