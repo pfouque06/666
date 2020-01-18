@@ -1,47 +1,38 @@
 package _666_;
 
 import java.util.LinkedHashSet;
-import java_tools.colorText;
-import java_tools.getOpts;
+
+import javaTools.ColorText;
+import javaTools.GetOpts;
 
 public class Main {
+
 	// public global argument mgt
-	static final String[] optionArray = {
-		"##### DO NOT FORGET FOLLOWING HEADER LINE !! #####",
-		"TYPE:KEY:KEYWORD:VALUENAME:VALUETYPE:DETAIL:ACTION:",
-		"F:h:help:usage:-:prints this help message:true:",
-		"F:a:auto:autoMode:boolean:set auto mode with random roulette (default is OFF):true:",
-		"F:c:color:colorMode:boolean:set color mode (default is color):true:",
-		"F:m:mono:colorMode:boolean:set monocolor mode (default is color):false:",
-		"V:d:deposit:deposit:int:add jetons to deposit - NON Zero amount required to start a game (default is 0):-:",
-		"V:w:warning:jetonWarning:int:set warning spent before alerting per phase (default is half of deposit):-:",
-		"V:j:jeton:jetonMax:int:set maximum spent to quit game:-:",
-		"V:p:phase:phaseMax:int:set maximum phase to quit game:-:",
-		"V:t:tour:tourMax:int:set maximum total tours to quit game:-:",
-		"V:g:gain:gainMax:int:set maximum total gain to quit game:-:",
-		"V:b:bet:betMax:int:set maximum bets allowed per tour:-:",
-		};
-	public static getOpts options = new getOpts(optionArray);
-	
-	// public global variables
-	public static boolean colorMode = true, autoMode = false;
-	public static int deposit=0, betMax = 0, jetonLimite = 0, warning = 0, gainMax = 0, phaseMax = 0, tourMax = 0;
-	
-	// local methods
-	static String c_red() { return (colorMode ? colorText.RED : "[["); }
-	static String c_green() { return (colorMode ? colorText.GREEN : "[["); }
-	static String c_blue() { return (colorMode ? colorText.BLUE : "[["); }
-	static String c_reset() { return (colorMode ? colorText.RESET : "]]"); }
+	static final String[] optionArray = { "##### DO NOT FORGET FOLLOWING HEADER LINE !! #####",
+			"TYPE:KEY:KEYWORD:VALUENAME:VALUETYPE:DETAIL:ACTION:", "F:h:help:usage:-:prints this help message:true:",
+			"F:G:gui:guiMode:boolean:set GUI mode (default mode):true:",
+			"F:T:text:guiMode:boolean:set CLI mode (default is GUI mode):false:",
+			"F:a:auto:autoMode:boolean:set auto mode with random roulette (default is OFF):true:",
+			"F:c:color:colorMode:boolean:set color mode (default is color):true:",
+			"F:m:mono:colorMode:boolean:set monocolor mode (default is color):false:",
+			"V:d:deposit:deposit:int:add jetons to deposit - NON Zero amount required to start a game (default is 0):-:",
+			"V:w:warning:jetonWarning:int:set limit value of spent jetons to alert gamer (default is half of deposit):-:",
+			"V:l:limite:jetonLimite:int:set maximum spent jetons to quit game cycle :-:",
+			"V:p:phase:phaseMax:int:set maximum phase to quit game cycle:-:",
+			"V:t:tour:tourMax:int:set maximum total tours to quit game cycle:-:",
+			"V:g:gain:gainMax:int:set maximum total gain to quit game cycle:-:",
+			"V:b:bet:betMax:int:set maximum bets allowed per tour:-:", };
+	public static GetOpts options = new GetOpts(optionArray);
 
 	public static boolean setOpts(String[] pArgs) {
 
-		//System.out.println("optionTable=\n"+options.optionTable_toString());
+		// System.out.println("optionTable=\n"+options.optionTable_toString());
 		// parse options pArgs
 		if (!options.setOptionList(pArgs)) {
 			System.out.println("Parsing error, please retry or use -h, --help to get usage ...");
 			return false;
 		}
-		//System.out.println("optionList=\n"+options.optionList_toString());
+		//System.out.println("optionList=\n" + options.optionList_toString());
 		// set options
 		if (!setOpts(options.getOptionList())) {
 			options.getUsage(System.out); // use STDOUT when help is requested
@@ -50,12 +41,16 @@ public class Main {
 		//System.out.println("options:" + optsToString());
 		return true;
 	}
-	
+
 	public static boolean setOpts(LinkedHashSet<String[]> pList) {
 		// Loop on each options of pList
 		for (String[] fields : pList) {
-			//System.out.println("fields="+fields.toString() );
+			// System.out.println("fields="+fields.toString() );
 			switch (fields[2]) {
+			case "guiMode":
+				guiMode = fields[3].equals("true");
+				// System.out.println("colorMode=" + colorMode);
+				break;
 			case "colorMode":
 				colorMode = fields[3].equals("true");
 				// System.out.println("colorMode=" + colorMode);
@@ -72,7 +67,7 @@ public class Main {
 				warning = Integer.valueOf(fields[3]);
 				// System.out.println("warning=" + warning);
 				break;
-			case "jetonMax":
+			case "jetonLimite":
 				jetonLimite = Integer.valueOf(fields[3]);
 				// System.out.println("jetonLimite=" + jetonLimite);
 				break;
@@ -93,7 +88,7 @@ public class Main {
 				// System.out.println("betMax=" + betMax);
 				break;
 			default:
-				System.err.println("Error: option > valuename unknown");
+				System.err.println("Error: option " + fields[2] + " unknown");
 			case "usage":
 				return false;
 			}
@@ -107,6 +102,7 @@ public class Main {
 
 		String buffer = "";
 
+		buffer += " gui: " + (guiMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
 		buffer += " auto: " + (autoMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
 		buffer += " mode: " + (colorMode ? c_green() + "color" : c_red() + "mono") + c_reset();
 		if (deposit > 0)
@@ -127,17 +123,36 @@ public class Main {
 
 	}
 
+	// public global variables
+	public static boolean guiMode = true, colorMode = true, autoMode = false;
+	public static int deposit = 0, betMax = 0, jetonLimite = 0, warning = 0, gainMax = 0, phaseMax = 0, tourMax = 0;
+
+	// local methods
+	static String c_red() { return (colorMode ? ColorText.RED : "[["); }
+	static String c_green() { return (colorMode ? ColorText.GREEN : "[["); }
+	static String c_blue() { return (colorMode ? ColorText.BLUE : "[["); }
+	static String c_reset() { return (colorMode ? ColorText.RESET : "]]"); }
+
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
 		// parse args :
 		// initiate getOpts class and parse args according to optionArray
 		if (!setOpts(args))
-				return;
+			return;
+		System.out.println("options:" + optsToString());
 
-		// Core instance
-		Core core = new Core();
-		core.Run();
+		if (guiMode) {
+			// force colorMode to false
+			colorMode = false;
+			// GUI instance and run
+			GraphicUserInterface frame = new GraphicUserInterface();
+			frame.run();
+		} else {
+			// Core instance and run
+			Core core = new Core();
+			core.run();
+		}
 
 	}
 
