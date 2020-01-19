@@ -61,11 +61,14 @@ public class Core implements Observed {
 		prepareDisplay();
 		updateObserver();
 
+		// infinite loop
 		while (true)
 			// process CLI Cycle Menu() to get roulette value and operate Spin operations
-			if (! operateSpin(processCycleMenuCLI())) 
+			if (! processCycleMenuCLI()) 
 				break; // exit requested
 
+		// exiting ...
+		processExit();
 		return false;
 	}
 
@@ -114,6 +117,18 @@ public class Core implements Observed {
 			obs.update(observerUpdateList);
 		}
 		observerUpdateList.clear();
+
+		if (win > 0) {
+			// GUI : throw dialog win information box
+			String message= new String();
+			message += String.format("- %-10s : %d (36x%d)\n", "win", win, (int)win/36);
+			message += String.format("- %-10s : %d\n", "gain", gain);
+			message += String.format("- %-12s : %d\n", "gain total", gainTotal);
+			JOptionPane.showMessageDialog(null, message, "you got a Win !!!", JOptionPane.INFORMATION_MESSAGE);
+
+			// reset tours and win value
+			tours = win = 0;
+		}
 	}
 
 	void updateCLI() {
@@ -124,6 +139,20 @@ public class Core implements Observed {
 		String betTable = table.betToString(Main.colorMode);
 		// display Dashboard
 		cli.displayFullDashboard(storeLine, betTable);
+
+		// information dialog message if win
+		if (win > 0) {
+			// CLI : display win information
+			String message = new String();
+			message += cli.raise("--> you got a Win !!! " + String.format("win : %d (36x%d)", win, (int)win/36));
+			message += cli.raise(String.format("\n--> gain/gain total : %3d/%3d", gain, gainTotal));
+			System.out.println(message);
+
+			// reset tours and win value
+			tours = win = 0;
+		}
+		else
+			System.out.println();
 	}
 
 	void processExit() {
@@ -133,33 +162,31 @@ public class Core implements Observed {
 		cli.close();
 	}
 
-	String processCycleMenuCLI() {
+
+	boolean processCycleMenuCLI() {
 		System.out.println("Core>>processCycleMenuCLI()");
 
 		// process Cycle Menu
-		String input;
-		do {
-			do {
-				input = "";
-				if (autoPlay) // autoplay ON
-					input = "r";
-				else // display displayPhaseMenu()
-					input = cli.displayCycleMenu();
+		String input = cli.displayCycleMenu(autoPlay);
 
-				switch (input) {
-				case "q": // exit ....
-					processExit();
-					return "";
-				case "a": // auto mode
-					autoPlay = true;
-				case "r": // random Spin
-					input = randomSpin();
-					break;
-				}
-			} while (!input.matches("\\d+"));
-		} while ( Integer.valueOf(input) > 36);
+		// commute input to normated action Value
+		switch (input) {
+		case "q": // exit ....
+			return false;
+		case "r": // random Spin
+			input = "Rand";
+			break;
+		case "a": // auto mode
+			input = "Auto";
+			break;
+		default : // Spin value
+			break;
+		}
 
-		return input;
+		//call common processAction switch
+		if ( ! processAction(input) )
+			return false;
+		return true;
 	}
 
 	void processOptionsMenuCLI() {
@@ -217,7 +244,6 @@ public class Core implements Observed {
 			updateCLI();
 	}
 
-
 	@Override
 	public void delObserver() {
 		// TODO Auto-generated method stub
@@ -226,8 +252,7 @@ public class Core implements Observed {
 		observers = new ArrayList<Observer>();
 	}
 
-
-	public void processAction(String buttonTitle) {
+	public boolean processAction(String buttonTitle) {
 		// TODO Auto-generated method stub
 		System.out.println("Core>>processAction(" + buttonTitle + ")");
 
@@ -239,19 +264,26 @@ public class Core implements Observed {
 			break;
 		case "Rand":
 			do {
-				operateSpin(randomSpin());
+				if ( ! operateSpin(randomSpin()))
+					return false;
 			// repeat if autoMode is TRUE and game is NOT over
 			} while (autoPlay && ! gameOver && (tours != 0));
 			break;
 		case "Spin":
-			operateSpin(expectSpin());
+			if ( ! operateSpin(expectSpin()))
+				return false;
 			break;
 		case "Mise":
 		case "Options":
 			break;
+		default : // integer provided in CLI process
+			if (buttonTitle.matches("\\d+") && Integer.valueOf(buttonTitle) < 36)
+				if ( ! operateSpin(buttonTitle))
+					return false;
+			break;
 		}
+		return true;
 	}
-
 
 	String randomSpin() {
 		System.out.println("Core>>randomSpin()");
@@ -261,7 +293,6 @@ public class Core implements Observed {
 		int delay = 0; // 0.1sec per delay
 		return input = String.valueOf(table.getRandomRoulette(delay));
 	}
-
 
 	String expectSpin() {
 		System.out.println("Core>>expectSpin()");
@@ -287,19 +318,9 @@ public class Core implements Observed {
 		return input;
 	}
 
+	void processJetonsCycleUpdate() {
+		System.out.println("Core>>processJetonsUpdate()");
 
-
-	void processCycle() {
-		System.out.println("Core>>processCycle()");
-
-		// increments phase, counters and set display
-		if (tours == 0) {
-			phase++;
-			phaseFull++;
-		}
-		tours++;
-		toursTotal++;
-		toursFull++;
 		jetons -= nbrMise;
 		jetonsTotal = (jetons < jetonsTotal ? jetons : jetonsTotal);
 		jetonsMax = (jetons < jetonsMax ? jetons : jetonsMax);
@@ -317,7 +338,6 @@ public class Core implements Observed {
 			gain = jetons - deposit;
 			gainTotal += gain;
 			gainFull += gain;
-			tours = 0;
 
 			// update deposit value
 			deposit = (jetons > deposit) ? jetons : deposit;
@@ -325,7 +345,6 @@ public class Core implements Observed {
 		}
 		return false;
 	}
-
 
 	void processBetsSuggestion() {
 		System.out.println("Core>>processBetsSuggestion()");
@@ -351,7 +370,6 @@ public class Core implements Observed {
 		betsOrigin = table.getBets(); // betsOrigin = cli.bets;
 		coefOrigin = coef;
 	}
-
 
 	boolean checkGameOverConditions() {
 		System.out.println("Core>>checkGameOverConditions()");
@@ -385,6 +403,19 @@ public class Core implements Observed {
 	}
 
 
+	void processToursCycleUpdate() {
+		System.out.println("Core>>processCycle()");
+
+		// increments phase, counters and set display
+		if (tours == 0) {
+			phase++;
+			phaseFull++;
+		}
+		tours++;
+		toursTotal++;
+		toursFull++;
+	}
+
 	int gameOverDialog() {
 		System.out.println("Core>>gameOverDialog()");
 
@@ -415,7 +446,6 @@ public class Core implements Observed {
 		return index;
 	}
 
-
 	boolean processPurge() {
 		System.out.println("Core>>processPurge()");
 
@@ -440,13 +470,12 @@ public class Core implements Observed {
 		return true;
 	}
 
-
 	void processRestart() {
 		System.out.println("Core>>processRestart()");
 
 		// process Restart
 		table.resetTable();
-		roulette = phase = tours = toursTotal = gain = gainTotal = coef = nbrMise = 0;
+		roulette = phase = tours = toursTotal = gain = gainTotal = coef = nbrMise = win = 0;
 		if (!alert.isEmpty()) {
 			gainFull -= deposit - jetons;
 		}
@@ -504,8 +533,6 @@ public class Core implements Observed {
 			input = cli.displayGameOverMenu();
 			switch (input) {
 			case "q": // quit
-				// exit ...
-				processExit();
 				return false;
 			case "p": // purge table's store requested
 				// process Purge
@@ -556,13 +583,14 @@ public class Core implements Observed {
 
 		if (!gameOver) {
 			if (input.isEmpty())
-				return false; //ext requested
+				return false; //exit requested
 
 			// get roulette value
 			roulette = Integer.valueOf(input);
 
-			// process Cycle and Win check
-			processCycle();
+			// process Cycle updates and Win check
+			processJetonsCycleUpdate();
+			processToursCycleUpdate();
 			processWin();
 
 			// add roulette value to table and get Bets suggestions
@@ -574,8 +602,7 @@ public class Core implements Observed {
 
 			// prepare display dashboard & update OBSERVER
 			prepareDisplay();
-			updateObserver();
-
+			updateObserver(); // and finally update tours
 		}
 
 		// run exit prompt if required
@@ -592,7 +619,6 @@ public class Core implements Observed {
 			prepareDisplay();
 			updateObserver();
 		}
-
 		return true;
 	}
 
