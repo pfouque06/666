@@ -129,10 +129,12 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		// On initialise la JFrame
 		this.setTitle("_666_");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setLocationRelativeTo(null);
-		this.setUndecorated(false);
-		this.setLocation(1000, 200);
 		this.setSize(400, 300);
+		this.setLocationRelativeTo(null); // set location to display Frame in middel of screen like :
+		//System.out.println(this.getX() +"-"+ this.getWidth() + "/2 = "  + (this.getX() - this.getWidth()/2));
+		//System.out.println(this.getY() +"-"+ this.getHeight() + "/2 = "  + (this.getY() - this.getHeight()/2));
+		//this.setLocation(this.getX() - this.getWidth()/2, this.getY() - this.getHeight() /2);
+		this.setUndecorated(false);
 		this.setResizable(false);
 		this.setAlwaysOnTop(false);
 
