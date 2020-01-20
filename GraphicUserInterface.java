@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.LinkedHashSet;
 
 import javax.swing.AbstractAction;
@@ -31,7 +33,6 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 	private JPanel labelPan = new JPanel();
 	private JLabel jetonLabel = new JLabel();
 	private JLabel gainLabel = new JLabel();
-	// private JPanel tablePan = new JPanel();
 	private JPanel storePan = new JPanel();
 	private JLabel storeLabel = new JLabel();
 	private JPanel misePan = new JPanel();
@@ -93,30 +94,41 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 	public GraphicUserInterface() {
 		// TODO Auto-generated constructor stub
 
+        // Add window listener by implementing WindowAdapter class to
+        // the frame instance. To handle the close event we just need
+        // to implement the windowClosing() method.
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				System.out.println("GUI>>addWindowListener(WindowAdapter.windowClosing(" + e.getID() + "))");
+
+				// throw exit request to Core
+				if (!core.processAction("Quit"))
+					core.processExit();
+				// System.exit(0);
+			}
+		});
+
+		// catch keybinding and process associated action
 		AbstractAction keybindAction = new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				System.out.println("GUI>>keybindAction.actionPerformed(" + ae.getActionCommand() + ")");
 				//String buttonTitle = "";
 				switch (ae.getActionCommand()) {
-				case "r":
-					//buttonTitle = "Rand";
+				case "r": //buttonTitle = "Rand";
 					randButton.doClick();
 					break;
-				case "s":
-					//buttonTitle = "Spin";
+				case "s": //buttonTitle = "Spin";
 					spinButton.doClick();
 					break;
-				case "a":
-					//buttonTitle = "Auto";
+				case "a": //buttonTitle = "Auto";
 					autoButton.doClick();
 					break;
-				case "o":
-					//buttonTitle = "Options";
+				case "o": //buttonTitle = "Options";
 					optionsButton.doClick();
 					break;
-				case "m":
-					//buttonTitle = "Mise";
+				case "m": //buttonTitle = "Mise";
 					miseButton.doClick();
 					break;
 				default:

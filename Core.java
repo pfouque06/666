@@ -172,7 +172,9 @@ public class Core implements Observed {
 		// commute input to normated action Value
 		switch (input) {
 		case "q": // exit ....
-			return false;
+			input = "Quit";
+			break;
+			//return false;
 		case "r": // random Spin
 			input = "Rand";
 			break;
@@ -257,6 +259,8 @@ public class Core implements Observed {
 		System.out.println("Core>>processAction(" + buttonTitle + ")");
 
 		switch (buttonTitle) {
+		case "Quit" : //Exit requested
+			return false;
 		case "Auto":
 			// auto mode
 			autoPlay = ! autoPlay;
@@ -276,7 +280,7 @@ public class Core implements Observed {
 		case "Mise":
 		case "Options":
 			break;
-		default : // integer provided in CLI process
+		default : // roulette value (integer) provided in CLI process
 			if (buttonTitle.matches("\\d+") && Integer.valueOf(buttonTitle) < 36)
 				if ( ! operateSpin(buttonTitle))
 					return false;
@@ -464,7 +468,7 @@ public class Core implements Observed {
 				System.out.println(cli.alert(message));
 			return false;
 		}
-		autoPlay = Main.autoMode;
+		//autoPlay = Main.autoMode;
 		gameOver = false;
 		alert = "";
 		return true;
