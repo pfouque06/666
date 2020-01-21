@@ -5,10 +5,14 @@ import java.util.LinkedHashSet;
 
 import javax.swing.JOptionPane;
 
+import javaTools.Logger;
 import javaTools.Observed;
 import javaTools.Observer;
 
 public class Core implements Observed {
+
+	// logger
+	Logger logger = Main.logger;
 
 	// Observer Array list
 	private ArrayList<Observer> observers = new ArrayList<Observer>();
@@ -40,7 +44,7 @@ public class Core implements Observed {
 	}
 
 	boolean runGUI() {
-		System.out.println("Core>>runGUI()");
+		logger.logging("Core>>runGUI()");
 
 		// GUI init
 		storeLineSize = 6;
@@ -52,7 +56,7 @@ public class Core implements Observed {
 	}
 
 	boolean runCLI() {
-		System.out.println("Core>>runCLI()");
+		logger.logging("Core>>runCLI()");
 
 		// CLI init
 		storeLineSize = 20;
@@ -73,7 +77,7 @@ public class Core implements Observed {
 	}
 
 	void prepareDisplay() {
-		System.out.println("Core>>prepareDisplay()");
+		logger.logging("Core>>prepareDisplay()");
 
 		// prepare display dashboard
 		cli.updatePhaseString(phase, phaseFull);
@@ -84,7 +88,7 @@ public class Core implements Observed {
 	}
 
 	void updateGUI() {
-		System.out.println("Core>>updateGUI()");
+		logger.logging("Core>>updateGUI()");
 
 		// Prepare Observer update List
 		observerUpdateList.add(new String[] { "jeton", cli._jetons_ });
@@ -112,7 +116,7 @@ public class Core implements Observed {
 			observerUpdateList.add(new String[] { "auto", "" });
 
 		// update Observers
-		// for(String[] item : observerUpdateList) System.out.println("["+item[0] + ":" + item[1] + "]");
+		// for(String[] item : observerUpdateList) logger.logging("["+item[0] + ":" + item[1] + "]");
 		for (Observer obs : observers) {
 			obs.update(observerUpdateList);
 		}
@@ -132,7 +136,7 @@ public class Core implements Observed {
 	}
 
 	void updateCLI() {
-		System.out.println("Core>>updateCLI()");
+		logger.logging("Core>>updateCLI()");
 
 		// prepare dashboard information
 		String storeLine = (table.isStoreEmpty() ? "" : table.getStore(storeLineSize));
@@ -156,15 +160,14 @@ public class Core implements Observed {
 	}
 
 	void processExit() {
-		System.out.println("Core>>processExit()");
-
-		System.out.println("\nExiting...");
+		logger.logging("Core>>processExit()");
+		//logger.logging("\nExiting...");
 		cli.close();
 	}
 
 
 	boolean processCycleMenuCLI() {
-		System.out.println("Core>>processCycleMenuCLI()");
+		logger.logging("Core>>processCycleMenuCLI()");
 
 		// process Cycle Menu
 		String input = cli.displayCycleMenu(autoPlay);
@@ -192,7 +195,7 @@ public class Core implements Observed {
 	}
 
 	void processOptionsMenuCLI() {
-		//System.out.println("Core>>processOptionsMenuCLI()");
+		logger.logging("Core>>processOptionsMenuCLI()");
 
 		// display Options menu and get new jetons if any
 		int newJeton = cli.displaySetOptionsMenu();
@@ -238,7 +241,7 @@ public class Core implements Observed {
 	@Override
 	public void updateObserver() {
 		// TODO Auto-generated method stub
-		System.out.println("Core>>updateObserver()");
+		logger.logging("Core>>updateObserver()");
 
 		if (Main.guiMode)
 			updateGUI();
@@ -249,14 +252,14 @@ public class Core implements Observed {
 	@Override
 	public void delObserver() {
 		// TODO Auto-generated method stub
-		System.out.println("Core>>delObserver()");
+		logger.logging("Core>>delObserver()");
 
 		observers = new ArrayList<Observer>();
 	}
 
 	public boolean processAction(String buttonTitle) {
 		// TODO Auto-generated method stub
-		System.out.println("Core>>processAction(" + buttonTitle + ")");
+		logger.logging("Core>>processAction(" + buttonTitle + ")");
 
 		switch (buttonTitle) {
 		case "Quit" : //Exit requested
@@ -264,7 +267,7 @@ public class Core implements Observed {
 		case "Auto":
 			// auto mode
 			autoPlay = ! autoPlay;
-			System.out.println("Core>>--> AutoMode: " + autoPlay );
+			logger.logging("Core>>--> AutoMode: " + autoPlay );
 			break;
 		case "Rand":
 			do {
@@ -290,7 +293,7 @@ public class Core implements Observed {
 	}
 
 	String randomSpin() {
-		System.out.println("Core>>randomSpin()");
+		logger.logging("Core>>randomSpin()");
 
 		// exit if Game is over
 		if (gameOver) return null;
@@ -299,11 +302,11 @@ public class Core implements Observed {
 	}
 
 	String expectSpin() {
-		System.out.println("Core>>expectSpin()");
+		logger.logging("Core>>expectSpin()");
 
 		// exit if Game is over
 		if (gameOver) return null;
-		System.out.println("Core>>-->Spin DialogBox ");
+		logger.logging("Core>>-->Spin DialogBox ");
 		// return String.valueOf(ScanTools.scanIntRange("--> Roulette [0-36]", 0, 36));
 		// JOptionPane jop = new JOptionPane();
 		// String input = JOptionPane.showInputDialog
@@ -311,19 +314,19 @@ public class Core implements Observed {
 		do {
 			input = JOptionPane.showInputDialog(null, "Spin ? (0 - 36)", "Spin", JOptionPane.QUESTION_MESSAGE);
 			if (input == null) {
-				//System.out.println("Core>>-->Spin DialogBox canceled");
+				//logger.logging("Core>>-->Spin DialogBox canceled");
 				return "";
 			}
 			if (!input.matches("(^[0-2]?[0-9]$)|(^3[0-6]$)")) {
 				input = "";
 			}
 		} while (input.isEmpty());
-		//System.out.println("Core>>-->Spin to (" + input + ")");
+		//logger.logging("Core>>-->Spin to (" + input + ")");
 		return input;
 	}
 
 	void processJetonsCycleUpdate() {
-		System.out.println("Core>>processJetonsUpdate()");
+		logger.logging("Core>>processJetonsUpdate()");
 
 		jetons -= nbrMise;
 		jetonsTotal = (jetons < jetonsTotal ? jetons : jetonsTotal);
@@ -332,7 +335,7 @@ public class Core implements Observed {
 
 
 	boolean processWin() {
-		System.out.println("Core>>processWin()");
+		logger.logging("Core>>processWin()");
 
 		// process win
 		win = 0;
@@ -351,7 +354,7 @@ public class Core implements Observed {
 	}
 
 	void processBetsSuggestion() {
-		System.out.println("Core>>processBetsSuggestion()");
+		logger.logging("Core>>processBetsSuggestion()");
 
 		// get Bets suggestions
 		cli.updateBets("");
@@ -366,9 +369,9 @@ public class Core implements Observed {
 			newBets = (!betsOrigin.equals(table.getBets())) ? true : false;
 			newCoef = (coefOrigin != coef) ? true : false;
 			if (newCoef)
-				System.out.println("Core>>--> coef: old: " + coefOrigin + ", new: " + coef);
+				logger.logging("Core>>--> coef: old: " + coefOrigin + ", new: " + coef);
 			if (newBets)
-				System.out.println("Core>>--> bets: old: " + betsOrigin + ", new: " + table.getBets());
+				logger.logging("Core>>--> bets: old: " + betsOrigin + ", new: " + table.getBets());
 		}
 		// store next Origin values
 		betsOrigin = table.getBets(); // betsOrigin = cli.bets;
@@ -376,7 +379,7 @@ public class Core implements Observed {
 	}
 
 	boolean checkGameOverConditions() {
-		System.out.println("Core>>checkGameOverConditions()");
+		logger.logging("Core>>checkGameOverConditions()");
 
 		// ---------------------
 		// exit conditions check
@@ -408,7 +411,7 @@ public class Core implements Observed {
 
 
 	void processToursCycleUpdate() {
-		System.out.println("Core>>processCycle()");
+		logger.logging("Core>>processCycle()");
 
 		// increments phase, counters and set display
 		if (tours == 0) {
@@ -421,7 +424,7 @@ public class Core implements Observed {
 	}
 
 	int gameOverDialog() {
-		System.out.println("Core>>gameOverDialog()");
+		logger.logging("Core>>gameOverDialog()");
 
 		// JOptionPane jop = new JOptionPane();
 		String title = "Game Over";
@@ -446,15 +449,15 @@ public class Core implements Observed {
 				(alert.isEmpty() ? JOptionPane.QUESTION_MESSAGE : JOptionPane.WARNING_MESSAGE), null, optionButtons,
 				optionButtons[1]);
 		if (index >= 0)
-			System.out.println("--> action[" + index + "]: " + optionButtons[index]);
+			logger.logging("--> action[" + index + "]: " + optionButtons[index]);
 		return index;
 	}
 
 	boolean processPurge() {
-		System.out.println("Core>>processPurge()");
+		logger.logging("Core>>processPurge()");
 
 		// process Purge
-		System.out.println("--> purge process");
+		logger.logging("--> purge process");
 		String message = "";
 		if (!alert.isEmpty()) {
 			message = "Alert is raised... Can't purge store, sorry !";
@@ -465,7 +468,7 @@ public class Core implements Observed {
 			if (Main.guiMode) // GUI mode
 				JOptionPane.showMessageDialog(null, message, "Alert", JOptionPane.WARNING_MESSAGE);
 			else // CLI mode
-				System.out.println(cli.alert(message));
+				logger.logging(cli.alert(message));
 			return false;
 		}
 		//autoPlay = Main.autoMode;
@@ -475,7 +478,7 @@ public class Core implements Observed {
 	}
 
 	void processRestart() {
-		System.out.println("Core>>processRestart()");
+		logger.logging("Core>>processRestart()");
 
 		// process Restart
 		table.resetTable();
@@ -492,7 +495,7 @@ public class Core implements Observed {
 	}
 
 	boolean processGameOverMenu() {
-		System.out.println("Core>>processGameOverMenu()");
+		logger.logging("Core>>processGameOverMenu()");
 
 		if (Main.guiMode)
 			return processGameOverMenuGUI();
@@ -501,16 +504,16 @@ public class Core implements Observed {
 	}
 
 	boolean processGameOverMenuGUI() {
-		System.out.println("Core>>processGameOverMenuGUI()");
+		logger.logging("Core>>processGameOverMenuGUI()");
 
 		// game over dialog
 		int index = gameOverDialog();
 		switch (index) {
 		case -1:
-			System.out.println("Core>> --> cancel process");
+			logger.logging("Core>> --> cancel process");
 			break;
 		//case 0:
-			// System.out.println("--> quit process");
+			// logger.logging("--> quit process");
 			// cli.close();
 			// return false;
 		case 0:
@@ -528,7 +531,7 @@ public class Core implements Observed {
 	}
 
 	boolean processGameOverMenuCLI() {
-		System.out.println("Core>>processGameOverMenuCLI()");
+		logger.logging("Core>>processGameOverMenuCLI()");
 
 		// process GameOver Menu
 		cli.displayGameOverLabel(alert, (gainTotal - (deposit - jetons)));
@@ -558,19 +561,19 @@ public class Core implements Observed {
 				input = "";
 				break;
 			case "m": // toggle Main.colorMode
-				//System.out.println("Core>> - toggle Main.colorMode");
+				//logger.logging("Core>> - toggle Main.colorMode");
 				Main.colorMode = (Main.colorMode ? false : true);
 				// Jump back to Menu
 				input = "";
 				break;
 			case "a": // toggle Main.auto mode
-				//System.out.println("Core>> - toggle Main.autoMode");
+				//logger.logging("Core>> - toggle Main.autoMode");
 				Main.autoMode = (Main.autoMode ? false : true);
 				// Jump back to Menu
 				input = "";
 				break;
 			default:
-				// System.out.println("##1.4 - default case");
+				// logger.logging("##1.4 - default case");
 				// display Global Status
 				cli.displayDashboardStatus();
 				// Jump back to Menu
@@ -583,7 +586,7 @@ public class Core implements Observed {
 	}
 
 	boolean operateSpin(String input) {
-		System.out.println("Core>>operateSpin(" + input + ")");
+		logger.logging("Core>>operateSpin(" + input + ")");
 
 		if (!gameOver) {
 			if (input.isEmpty())

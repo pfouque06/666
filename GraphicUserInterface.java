@@ -21,6 +21,7 @@ import javax.swing.KeyStroke;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 
+import javaTools.Logger;
 import javaTools.Observer;
 
 import javax.swing.SwingConstants;
@@ -28,6 +29,9 @@ import javax.swing.UIManager;
 
 @SuppressWarnings("serial")
 public class GraphicUserInterface extends JFrame implements ActionListener {
+
+	// logger
+	Logger logger = Main.logger;
 
 	private JPanel container = new JPanel();
 	private JPanel labelPan = new JPanel();
@@ -93,6 +97,7 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 
 	public GraphicUserInterface() {
 		// TODO Auto-generated constructor stub
+		logger.logging("GUI>>GraphicUserInterface()");
 
         // Add window listener by implementing WindowAdapter class to
         // the frame instance. To handle the close event we just need
@@ -100,7 +105,7 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				System.out.println("GUI>>addWindowListener(WindowAdapter.windowClosing(" + e.getID() + "))");
+				logger.logging("GUI>>addWindowListener(WindowAdapter.windowClosing(" + e.getID() + "))");
 
 				// throw exit request to Core
 				if (!core.processAction("Quit"))
@@ -113,7 +118,7 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		AbstractAction keybindAction = new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				System.out.println("GUI>>keybindAction.actionPerformed(" + ae.getActionCommand() + ")");
+				logger.logging("GUI>>keybindAction.actionPerformed(" + ae.getActionCommand() + ")");
 				//String buttonTitle = "";
 				switch (ae.getActionCommand()) {
 				case "r": //buttonTitle = "Rand";
@@ -143,8 +148,8 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(400, 300);
 		this.setLocationRelativeTo(null); // set location to display Frame in middel of screen like :
-		//System.out.println(this.getX() +"-"+ this.getWidth() + "/2 = "  + (this.getX() - this.getWidth()/2));
-		//System.out.println(this.getY() +"-"+ this.getHeight() + "/2 = "  + (this.getY() - this.getHeight()/2));
+		//logger.logging(this.getX() +"-"+ this.getWidth() + "/2 = "  + (this.getX() - this.getWidth()/2));
+		//logger.logging(this.getY() +"-"+ this.getHeight() + "/2 = "  + (this.getY() - this.getHeight()/2));
 		//this.setLocation(this.getX() - this.getWidth()/2, this.getY() - this.getHeight() /2);
 		this.setUndecorated(false);
 		this.setResizable(false);
@@ -318,7 +323,7 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 			@Override
 			public void update(LinkedHashSet<String[]> pLHS) {
 				// TODO Auto-generated method stub
-				System.out.println("GUI>>update(pLHS)");
+				logger.logging("GUI>>update(pLHS)");
 
 				// default display
 				jetonLabel.setForeground(Color.black);
@@ -334,7 +339,7 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 
 				// updating provided LHS
 				for (String[] item : pLHS) {
-					System.out.println("[" + item[0] + ":" + item[1] + "]");
+					logger.logging("[" + item[0] + ":" + item[1] + "]");
 					switch (item[0]) {
 					case "newMise":
 						betsLabel.setForeground(Color.blue);
@@ -396,6 +401,7 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 	}
 
 	public boolean run() {
+		logger.logging("GUI>>run()");
 		return core.run();
 	}
 
@@ -403,7 +409,7 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
 		String buttonTitle = arg0.getActionCommand();
-		System.out.print("GUI>>actionPerformed(" + buttonTitle + ")");
+		logger.logging("GUI>>actionPerformed(" + buttonTitle + ")");
 		// JButton buttonHit= (JButton) arg0.getSource();
 		// String buttonTitle = buttonHit.getName();
 		switch (buttonTitle) {
