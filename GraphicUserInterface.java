@@ -3,6 +3,7 @@ package _666_;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -39,6 +40,7 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 	private JLabel gainLabel = new JLabel();
 	private JPanel storePan = new JPanel();
 	private JLabel storeLabel = new JLabel();
+	private JLabel tableLabel = new JLabel();
 	private JPanel misePan = new JPanel();
 	private JLabel betsLabel = new JLabel();
 	private JLabel coefLabel = new JLabel();
@@ -253,9 +255,21 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 				TitledBorder.LEADING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
 		storeLabel.setText("");
 
+		tableLabel.setBackground(Color.WHITE);
+		tableLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		tableLabel.setLocation(30, 50);
+		tableLabel.setSize(new Dimension(140, 100));
+		//tableLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "table",
+		//		TitledBorder.LEADING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
+		tableLabel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		Font tFont = new Font("DS-digital", Font.PLAIN, 12);
+		tableLabel.setFont(tFont);
+		tableLabel.setText("");
+
 		storePan.setPreferredSize(StoreDim);
 		storePan.setLayout(null);
 		storePan.add(storeLabel);
+		storePan.add(tableLabel);
 
 		// action Pan
 		Dimension subActionlDim = new Dimension(70, 30);
@@ -378,6 +392,9 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 						break;
 					case "store":
 						storeLabel.setText(item[1]);
+						break;
+					case "table":
+						tableLabel.setText(item[1]);
 						break;
 					case "cycle":
 						cycleLabel.setText(item[1]);

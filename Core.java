@@ -90,11 +90,19 @@ public class Core implements Observed {
 	void updateGUI() {
 		logger.logging("Core>>updateGUI()");
 
+		// Prepare table and convert to html
+		String betTable = table.betToString().replaceAll("\n", "<br>").replaceAll("\t", "");
+		betTable = betTable.replaceAll("\\[", "<font color='lime'><b>").replaceAll("\\]", "</b></font>");
+		//betTable = betTable.replaceAll("--", "<font color='red'>00</font>");
+		betTable = betTable.replaceAll("--", "<b>...</b>");
+		betTable = "<html>" + betTable + "<html>";
+
 		// Prepare Observer update List
 		observerUpdateList.add(new String[] { "jeton", cli._jetons_ });
 		observerUpdateList.add(new String[] { "gain", cli._gains_ });
 		observerUpdateList.add(new String[] { "cycle", cli._phase_ });
 		observerUpdateList.add(new String[] { "tour", cli._tours_ });
+		observerUpdateList.add(new String[] { "table", betTable });
 		String storeLabel = (table.isStoreEmpty() ? "" : table.getStore(storeLineSize));
 		if (!storeLabel.isEmpty()) // --> Convert to setText("") if not updated !!
 			observerUpdateList.add(new String[] { "store", storeLabel });
@@ -140,7 +148,7 @@ public class Core implements Observed {
 
 		// prepare dashboard information
 		String storeLine = (table.isStoreEmpty() ? "" : table.getStore(storeLineSize));
-		String betTable = table.betToString(Main.colorMode);
+		String betTable = table.betToString();
 		// display Dashboard
 		cli.displayFullDashboard(storeLine, betTable);
 
