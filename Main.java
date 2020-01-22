@@ -4,6 +4,7 @@ import java.util.LinkedHashSet;
 
 import javaTools.ColorText;
 import javaTools.GetOpts;
+import javaTools.Logger;
 
 public class Main {
 
@@ -12,9 +13,11 @@ public class Main {
 			"TYPE:KEY:KEYWORD:VALUENAME:VALUETYPE:DETAIL:ACTION:", "F:h:help:usage:-:prints this help message:true:",
 			"F:G:gui:guiMode:boolean:set GUI mode (default mode):true:",
 			"F:T:text:guiMode:boolean:set CLI mode (default is GUI mode):false:",
+			"F:S:sim:simMode:boolean:set simulation mode ON (default is oFF):true:",
 			"F:a:auto:autoMode:boolean:set auto mode with random roulette (default is OFF):true:",
 			"F:c:color:colorMode:boolean:set color mode (default is color):true:",
 			"F:m:mono:colorMode:boolean:set monocolor mode (default is color):false:",
+			"F:L:log:logging:boolean:set logging mode (to console/terminal):true:",
 			"V:d:deposit:deposit:int:add jetons to deposit - NON Zero amount required to start a game (default is 0):-:",
 			"V:w:warning:jetonWarning:int:set limit value of spent jetons to alert gamer (default is half of deposit):-:",
 			"V:l:limite:jetonLimite:int:set maximum spent jetons to quit game cycle :-:",
@@ -25,7 +28,6 @@ public class Main {
 	public static GetOpts options = new GetOpts(optionArray);
 
 	public static boolean setOpts(String[] pArgs) {
-
 		// System.out.println("optionTable=\n"+options.optionTable_toString());
 		// parse options pArgs
 		if (!options.setOptionList(pArgs)) {
@@ -47,8 +49,12 @@ public class Main {
 		for (String[] fields : pList) {
 			// System.out.println("fields="+fields.toString() );
 			switch (fields[2]) {
-			case "guiMode":
+			case "guiMode": // define text or gui mode
 				guiMode = fields[3].equals("true");
+				// System.out.println("colorMode=" + colorMode);
+				break;
+			case "simMode": // define simulation mode
+				simMode = fields[3].equals("true");
 				// System.out.println("colorMode=" + colorMode);
 				break;
 			case "colorMode":
@@ -58,6 +64,11 @@ public class Main {
 			case "autoMode":
 				autoMode = fields[3].equals("true");
 				// System.out.println("auto=" + auto);
+				break;
+				// logging
+			case "logging":
+				logger.setHandler("syso");
+				// System.out.println("logging to System.out");
 				break;
 			case "deposit":
 				deposit += Integer.valueOf(fields[3]);
@@ -103,6 +114,7 @@ public class Main {
 		String buffer = "";
 
 		buffer += " gui: " + (guiMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
+		buffer += " sim: " + (simMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
 		buffer += " auto: " + (autoMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
 		buffer += " mode: " + (colorMode ? c_green() + "color" : c_red() + "mono") + c_reset();
 		if (deposit > 0)
@@ -123,8 +135,11 @@ public class Main {
 
 	}
 
+	// init logger
+	static Logger logger = new Logger();
+
 	// public global variables
-	public static boolean guiMode = true, colorMode = true, autoMode = false;
+	public static boolean guiMode = true, simMode = false, colorMode = true, autoMode = false;
 	public static int deposit = 0, betMax = 0, jetonLimite = 0, warning = 0, gainMax = 0, phaseMax = 0, tourMax = 0;
 
 	// local methods
@@ -140,7 +155,7 @@ public class Main {
 		// initiate getOpts class and parse args according to optionArray
 		if (!setOpts(args))
 			return;
-		System.out.println("options:" + optsToString());
+		logger.logging("options:" + optsToString());
 
 		if (guiMode) {
 			// force colorMode to false
@@ -155,14 +170,5 @@ public class Main {
 		}
 
 	}
-
-//	static String c_black_bold() { return (colorMode ? colorText.BLACK_BOLD : "[["); }
-//	static String c_red_bold() { return (colorMode ? colorText.RED_BOLD : "[["); }
-//	static String c_red_background() { return (colorMode ? colorText.RED_BACKGROUND + colorText.WHITE_BOLD : "[["); }
-//	static String c_green_bold() { return (colorMode ? colorText.GREEN_BOLD : "[["); }
-//	static String c_green_background() { return (colorMode ? colorText.GREEN_BACKGROUND + colorText.WHITE_BOLD : "[["); }
-//	static String c_blue_bold() { return (colorMode ? colorText.BLUE_BOLD : "[["); }
-//	static String c_blue_background() { return (colorMode ? colorText.BLUE_BACKGROUND + colorText.WHITE_BOLD : "[["); }
-//	static String c_purple_background() { return (colorMode ? colorText.CYAN_BACKGROUND + colorText.WHITE_BOLD : "[["); }
 
 }

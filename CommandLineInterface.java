@@ -155,22 +155,22 @@ class CommandLineInterface {
 
 		String gain_ = "";
 		if (pGain >= 0)
-			gain_ = "--> Gains: " + c_green_background() + String.format("%3s", pGain) + c_reset();
+			gain_ = c_green_background() + String.format("%3s", pGain) + c_reset();
 		else
-			gain_ = "--> Gains: " + c_red_background() + String.format("%3s", pGain) + c_reset();
+			gain_ = c_red_background() + String.format("%3s", pGain) + c_reset();
 
 		switch (pAlert) {
 		case "bet": // alert = bet
 			//System.out.println();
-			System.out.println("--> " + c_red_background() + "CAN'T BET THIS AMOUNT !!!!!" + c_reset());
-			System.out.println(gain_);
+			System.out.println("--> " + c_red_background() + "WALLET CAN'T BET THIS AMOUNT !!!!!" + c_reset());
+			System.out.println("--> Gains: " + gain_);
 			break;
 		case "limite": // alert = jeton
 			System.out.println("--> " + c_red_background() + "WALLET LIMITE REACHED !!!!!" + c_reset());
-			System.out.println(gain_);
+			System.out.println("--> Gains: " + gain_);
 			break;
 		default:
-			System.out.println();
+			//System.out.println();
 			System.out.println("--> " + c_black_bold() + "Game is over" + c_reset());
 		}
 	}
@@ -225,16 +225,17 @@ class CommandLineInterface {
 	}
 
 	// display GameOver Menu
-	String displayCycleMenu() {
+	String displayCycleMenu(boolean autoMode) {
 		String buffer = "";
 
-		System.out.println();
+		//System.out.println();
 		//System.out.print("--> Roulette [num|(CR|r)andom|(a)uto|(q)uit]: ");
 		//buffer = scan.nextLine();
-		buffer = ScanTools.scanMatchedBuffer("--> Roulette [num|(CR|r)andom|(a)uto|(q)uit]: ",".*");
-		if (buffer.matches("\\d+"))
+		String autoMode_ = "|(a)uto: " + (autoMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
+		buffer = ScanTools.scanMatchedBuffer("--> Roulette [(q)uit|num|(CR|r)andom|"+autoMode_+"]: ",".*");
+		if (buffer.matches("\\d+") && Integer.valueOf(buffer) < 36)
 			return buffer;
-		return (buffer.isEmpty() ? "r" : buffer.substring(0, 1));		
+		return (buffer.isEmpty() ? "r" : buffer.substring(0, 1)); // shorten to first letter
 	}
 	
 	void close() {

@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.LinkedHashSet;
 
 import javax.swing.AbstractAction;
@@ -19,6 +21,7 @@ import javax.swing.KeyStroke;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 
+import javaTools.Logger;
 import javaTools.Observer;
 
 import javax.swing.SwingConstants;
@@ -27,14 +30,16 @@ import javax.swing.UIManager;
 @SuppressWarnings("serial")
 public class GraphicUserInterface extends JFrame implements ActionListener {
 
+	// logger
+	Logger logger = Main.logger;
+
 	private JPanel container = new JPanel();
 	private JPanel labelPan = new JPanel();
 	private JLabel jetonLabel = new JLabel();
 	private JLabel gainLabel = new JLabel();
-	// private JPanel tablePan = new JPanel();
 	private JPanel storePan = new JPanel();
 	private JLabel storeLabel = new JLabel();
-	private JPanel betsPan = new JPanel();
+	private JPanel misePan = new JPanel();
 	private JLabel betsLabel = new JLabel();
 	private JLabel coefLabel = new JLabel();
 	private JLabel miseLabel = new JLabel();
@@ -45,35 +50,35 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		@Override
 		protected boolean processKeyBinding(KeyStroke ks, KeyEvent ke, int i, boolean bln) {
 			boolean b = super.processKeyBinding(ks, ke, i, bln);
-
-			if (b && ks.getKeyCode() == KeyEvent.VK_A) {
+			if (b && ks.getKeyCode() == KeyEvent.VK_A)
 				requestFocusInWindow();
-			}
-
 			return b;
 		}
 	};
-	private JButton menuButton = new JButton("Options") {
+	private JButton optionsButton = new JButton("Options") {
 		@Override
 		protected boolean processKeyBinding(KeyStroke ks, KeyEvent ke, int i, boolean bln) {
 			boolean b = super.processKeyBinding(ks, ke, i, bln);
-
-			if (b && ks.getKeyCode() == KeyEvent.VK_O) {
+			if (b && ks.getKeyCode() == KeyEvent.VK_O)
 				requestFocusInWindow();
-			}
-
 			return b;
 		}
 	};
-	private JButton betsButton = new JButton("Mise") {
+	private JButton miseButton = new JButton("Mise") {
 		@Override
 		protected boolean processKeyBinding(KeyStroke ks, KeyEvent ke, int i, boolean bln) {
 			boolean b = super.processKeyBinding(ks, ke, i, bln);
-
-			if (b && ks.getKeyCode() == KeyEvent.VK_M) {
+			if (b && ks.getKeyCode() == KeyEvent.VK_M)
 				requestFocusInWindow();
-			}
-
+			return b;
+		}
+	};
+	private JButton randButton = new JButton("Rand") {
+		@Override
+		protected boolean processKeyBinding(KeyStroke ks, KeyEvent ke, int i, boolean bln) {
+			boolean b = super.processKeyBinding(ks, ke, i, bln);
+			if (b && ks.getKeyCode() == KeyEvent.VK_R)
+				requestFocusInWindow();
 			return b;
 		}
 	};
@@ -81,23 +86,8 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		@Override
 		protected boolean processKeyBinding(KeyStroke ks, KeyEvent ke, int i, boolean bln) {
 			boolean b = super.processKeyBinding(ks, ke, i, bln);
-
-			if (b && ks.getKeyCode() == KeyEvent.VK_S) {
+			if (b && ks.getKeyCode() == KeyEvent.VK_S)
 				requestFocusInWindow();
-			}
-
-			return b;
-		}
-	};
-	private JButton rollButton = new JButton("Bille") {
-		@Override
-		protected boolean processKeyBinding(KeyStroke ks, KeyEvent ke, int i, boolean bln) {
-			boolean b = super.processKeyBinding(ks, ke, i, bln);
-
-			if (b && ks.getKeyCode() == KeyEvent.VK_B) {
-				requestFocusInWindow();
-			}
-
 			return b;
 		}
 	};
@@ -107,31 +97,44 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 
 	public GraphicUserInterface() {
 		// TODO Auto-generated constructor stub
+		logger.logging("GUI>>GraphicUserInterface()");
 
+        // Add window listener by implementing WindowAdapter class to
+        // the frame instance. To handle the close event we just need
+        // to implement the windowClosing() method.
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				logger.logging("GUI>>addWindowListener(WindowAdapter.windowClosing(" + e.getID() + "))");
+
+				// throw exit request to Core
+				if (!core.processAction("Quit"))
+					core.processExit();
+				// System.exit(0);
+			}
+		});
+
+		// catch keybinding and process associated action
 		AbstractAction keybindAction = new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				System.out.println("GUI>>keybindAction.actionPerformed(" + ae.getActionCommand() + ")");
+				logger.logging("GUI>>keybindAction.actionPerformed(" + ae.getActionCommand() + ")");
 				//String buttonTitle = "";
 				switch (ae.getActionCommand()) {
-				case "s":
-					//buttonTitle = "Spin";
+				case "r": //buttonTitle = "Rand";
+					randButton.doClick();
+					break;
+				case "s": //buttonTitle = "Spin";
 					spinButton.doClick();
 					break;
-				case "b":
-					//buttonTitle = "Bille";
-					rollButton.doClick();
-					break;
-				case "a":
+				case "a": //buttonTitle = "Auto";
 					autoButton.doClick();
 					break;
-				case "o":
-					//buttonTitle = "Options";
-					menuButton.doClick();
+				case "o": //buttonTitle = "Options";
+					optionsButton.doClick();
 					break;
-				case "m":
-					//buttonTitle = "Mise";
-					betsButton.doClick();
+				case "m": //buttonTitle = "Mise";
+					miseButton.doClick();
 					break;
 				default:
 					break;
@@ -143,10 +146,12 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		// On initialise la JFrame
 		this.setTitle("_666_");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setLocationRelativeTo(null);
-		this.setUndecorated(false);
-		this.setLocation(1000, 200);
 		this.setSize(400, 300);
+		this.setLocationRelativeTo(null); // set location to display Frame in middel of screen like :
+		//logger.logging(this.getX() +"-"+ this.getWidth() + "/2 = "  + (this.getX() - this.getWidth()/2));
+		//logger.logging(this.getY() +"-"+ this.getHeight() + "/2 = "  + (this.getY() - this.getHeight()/2));
+		//this.setLocation(this.getX() - this.getWidth()/2, this.getY() - this.getHeight() /2);
+		this.setUndecorated(false);
 		this.setResizable(false);
 		this.setAlwaysOnTop(false);
 
@@ -208,34 +213,34 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		autoButton.setSize(70, 30);
 		autoButton.setPreferredSize(new Dimension(70, 30));
 		autoButton.addActionListener(this);
-		autoButton.setVisible(true);
 		autoButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0), "a");
 		autoButton.getActionMap().put("a", keybindAction);
+		autoButton.setVisible(Main.simMode);
 
-		betsButton.setLocation(120, 140);
-		betsButton.setSize(70, 30);
-		betsButton.setPreferredSize(new Dimension(70, 30));
-		betsButton.addActionListener(this);
-		betsButton.setVisible(true);
-		betsButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_M, 0), "m");
-		betsButton.getActionMap().put("m", keybindAction);
+		miseButton.setLocation(120, 140);
+		miseButton.setSize(70, 30);
+		miseButton.setPreferredSize(new Dimension(70, 30));
+		miseButton.addActionListener(this);
+		miseButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_M, 0), "m");
+		miseButton.getActionMap().put("m", keybindAction);
+		miseButton.setVisible(true);
 
-		menuButton.setLocation(100, 130);
-		menuButton.setSize(90, 30);
-		menuButton.setPreferredSize(new Dimension(90, 30));
-		menuButton.addActionListener(this);
-		menuButton.setVisible(false);
-		menuButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_O, 0), "o");
-		menuButton.getActionMap().put("o", keybindAction);
+		optionsButton.setLocation(100, 130);
+		optionsButton.setSize(90, 30);
+		optionsButton.setPreferredSize(new Dimension(90, 30));
+		optionsButton.addActionListener(this);
+		optionsButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_O, 0), "o");
+		optionsButton.getActionMap().put("o", keybindAction);
+		optionsButton.setVisible(false);
 
-		betsPan.setPreferredSize(BetsDim);
-		betsPan.setLayout(null);
-		betsPan.add(betsLabel);
-		betsPan.add(coefLabel);
-		betsPan.add(miseLabel);
-		betsPan.add(menuButton);
-		betsPan.add(autoButton);
-		betsPan.add(betsButton);
+		misePan.setPreferredSize(BetsDim);
+		misePan.setLayout(null);
+		misePan.add(betsLabel);
+		misePan.add(coefLabel);
+		misePan.add(miseLabel);
+		misePan.add(optionsButton);
+		misePan.add(autoButton);
+		misePan.add(miseButton);
 
 		// table init
 		Dimension subStoreDim = new Dimension(180, 40);
@@ -251,10 +256,6 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		storePan.setPreferredSize(StoreDim);
 		storePan.setLayout(null);
 		storePan.add(storeLabel);
-		// tablePan.add(storePan);
-		// tablePan.setPreferredSize(BetsDim);
-		// tablePan.setLayout(null);
-		// tablePan.add(storePan);
 
 		// action Pan
 		Dimension subActionlDim = new Dimension(70, 30);
@@ -277,38 +278,43 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 		tourLabel.setText("");
 
 		// spinButton.setBounds(120, 10, 70, 30);
-		spinButton.setLocation(240, 10);
+		randButton.setLocation(240, 10);
+		randButton.setSize(70, 30);
+		randButton.setPreferredSize(subActionlDim);
+		randButton.addActionListener(this);
+		randButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0), "r");
+		randButton.getActionMap().put("r", keybindAction);
+		randButton.setVisible(Main.simMode);
+
+		// rollButton.setBounds(200, 10, 70, 30);
+		spinButton.setLocation(320, 10);
 		spinButton.setSize(70, 30);
 		spinButton.setPreferredSize(subActionlDim);
 		spinButton.addActionListener(this);
-		rollButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0), "s");
-		rollButton.getActionMap().put("s", keybindAction);
-
-		// rollButton.setBounds(200, 10, 70, 30);
-		rollButton.setLocation(320, 10);
-		rollButton.setSize(70, 30);
-		rollButton.setPreferredSize(subActionlDim);
-		rollButton.addActionListener(this);
-		rollButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_B, 0), "b");
-		rollButton.getActionMap().put("b", keybindAction);
+		spinButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0), "s");
+		spinButton.getActionMap().put("s", keybindAction);
+		spinButton.setVisible(true);
 
 		// actionPan.setSize(ActionDim);
 		actionPan.setPreferredSize(ActionDim);
 		actionPan.setLayout(null);
 		actionPan.add(cycleLabel);
 		actionPan.add(tourLabel);
+		actionPan.add(randButton);
 		actionPan.add(spinButton);
-		actionPan.add(rollButton);
 
 		// container panel of JFrame setup
 		container.setLayout(new BorderLayout());
 		// container.setBorder(new EmptyBorder(2, 2, 2, 2));
 		container.add(labelPan, BorderLayout.NORTH);
 		container.add(storePan, BorderLayout.WEST);
-		container.add(betsPan, BorderLayout.EAST);
+		container.add(misePan, BorderLayout.EAST);
 		container.add(actionPan, BorderLayout.SOUTH);
 		this.setContentPane(container);
-		this.getRootPane().setDefaultButton(spinButton);
+		if (randButton.isVisible())
+			this.getRootPane().setDefaultButton(randButton);
+		else
+			this.getRootPane().setDefaultButton(miseButton);
 		this.setVisible(true);
 
 		// Core instance
@@ -317,7 +323,9 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 			@Override
 			public void update(LinkedHashSet<String[]> pLHS) {
 				// TODO Auto-generated method stub
-				System.out.println("GUI>>update(pLHS)");
+				logger.logging("GUI>>update(pLHS)");
+
+				// default display
 				jetonLabel.setForeground(Color.black);
 				gainLabel.setForeground(Color.black);
 				betsLabel.setForeground(Color.black);
@@ -328,8 +336,10 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 				miseLabel.setText("");
 				storeLabel.setText("");
 				autoButton.setSelected(false);
+
+				// updating provided LHS
 				for (String[] item : pLHS) {
-					System.out.println("[" + item[0] + ":" + item[1] + "]");
+					logger.logging("[" + item[0] + ":" + item[1] + "]");
 					switch (item[0]) {
 					case "newMise":
 						betsLabel.setForeground(Color.blue);
@@ -377,10 +387,12 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 						break;
 					case "auto":
 						autoButton.setSelected(true);
+						break;
 					default:
 						break;
 					}
 				}
+				// redraw container ....
 				container.setVisible(false);
 				container.setVisible(true);
 				// this.setVisible(true);
@@ -389,17 +401,17 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 	}
 
 	public boolean run() {
+		logger.logging("GUI>>run()");
 		return core.run();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
-		System.out.print("GUI>>actionPerformed(");
+		String buttonTitle = arg0.getActionCommand();
+		logger.logging("GUI>>actionPerformed(" + buttonTitle + ")");
 		// JButton buttonHit= (JButton) arg0.getSource();
 		// String buttonTitle = buttonHit.getName();
-		String buttonTitle = arg0.getActionCommand();
-		System.out.println( buttonTitle + ")");
 		switch (buttonTitle) {
 		default:
 			core.processAction(buttonTitle);
