@@ -257,8 +257,8 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 
 		tableLabel.setBackground(Color.WHITE);
 		tableLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		tableLabel.setLocation(30, 50);
-		tableLabel.setSize(new Dimension(140, 100));
+		tableLabel.setLocation(45, 50);
+		tableLabel.setSize(new Dimension(110, 100));
 		//tableLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "table",
 		//		TitledBorder.LEADING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
 		tableLabel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
