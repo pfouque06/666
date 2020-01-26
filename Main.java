@@ -161,7 +161,7 @@ public class Main {
 			// force colorMode to false
 			colorMode = false;
 			// GUI instance and run
-			GraphicUserInterface frame = new GraphicUserInterface();
+			GUI frame = new GUI();
 			frame.run();
 		} else {
 			// Core instance and run

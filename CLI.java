@@ -3,7 +3,8 @@ package _666_;
 import javaTools.ColorText;
 import javaTools.ScanTools;
 
-class CommandLineInterface {
+// CLI : Command Line Interface Class
+class CLI {
 
 	String _phase_ = phaseToString(0, 0);
 	String _tours_ = tourToString(0, 0, 0);

@@ -19,7 +19,7 @@ public class Core implements Observed {
 	private LinkedHashSet<String[]> observerUpdateList = new LinkedHashSet<String[]>();
 
 	// CLI aggregation
-	CommandLineInterface cli = new CommandLineInterface();
+	CLI cli = new CLI();
 
 	// Core attributs
 	Table table = new Table();
@@ -169,6 +169,7 @@ public class Core implements Observed {
 
 	void processExit() {
 		logger.logging("Core>>processExit()");
+		logger.close();
 		//logger.logging("\nExiting...");
 		cli.close();
 	}

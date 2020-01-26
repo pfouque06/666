@@ -28,8 +28,9 @@ import javaTools.Observer;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
+// GUI : Graphic User Interface Class
 @SuppressWarnings("serial")
-public class GraphicUserInterface extends JFrame implements ActionListener {
+public class GUI extends JFrame implements ActionListener {
 
 	// logger
 	Logger logger = Main.logger;
@@ -97,7 +98,7 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 	// Core instance
 	private Core core;
 
-	public GraphicUserInterface() {
+	public GUI() {
 		// TODO Auto-generated constructor stub
 		logger.logging("GUI>>GraphicUserInterface()");
 
@@ -257,8 +258,8 @@ public class GraphicUserInterface extends JFrame implements ActionListener {
 
 		tableLabel.setBackground(Color.WHITE);
 		tableLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		tableLabel.setLocation(45, 50);
-		tableLabel.setSize(new Dimension(110, 100));
+		tableLabel.setLocation(40, 50);
+		tableLabel.setSize(new Dimension(120, 100));
 		//tableLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "table",
 		//		TitledBorder.LEADING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
 		tableLabel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
