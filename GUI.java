@@ -1,6 +1,5 @@
 package _666_;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -36,19 +35,15 @@ public class GUI extends JFrame implements ActionListener {
 	Logger logger = Main.logger;
 
 	private JPanel container = new JPanel();
-	private JPanel labelPan = new JPanel();
 	private JLabel jetonLabel = new JLabel();
 	private JLabel gainLabel = new JLabel();
-	private JPanel storePan = new JPanel();
 	private JLabel storeLabel = new JLabel();
 	private JLabel tableLabel = new JLabel();
-	private JPanel misePan = new JPanel();
 	private JLabel betsLabel = new JLabel();
 	private JLabel coefLabel = new JLabel();
 	private JLabel miseLabel = new JLabel();
 	private JLabel cycleLabel = new JLabel();
 	private JLabel tourLabel = new JLabel();
-	private JPanel actionPan = new JPanel();
 	private JToggleButton autoButton = new JToggleButton("Auto", Main.autoMode) {
 		@Override
 		protected boolean processKeyBinding(KeyStroke ks, KeyEvent ke, int i, boolean bln) {
@@ -158,9 +153,8 @@ public class GUI extends JFrame implements ActionListener {
 		this.setResizable(false);
 		this.setAlwaysOnTop(false);
 
-		// labelPan init
-		//Dimension subLabelDim = new Dimension(100, 40);
-		Dimension labelDim = new Dimension(400, 50);
+		// label pan : new Dimension(400, 50);
+
 		jetonLabel.setBackground(Color.WHITE);
 		jetonLabel.setHorizontalAlignment(SwingConstants.TRAILING);
 		jetonLabel.setLocation(10, 0);
@@ -176,21 +170,16 @@ public class GUI extends JFrame implements ActionListener {
 		gainLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "gains",
 				TitledBorder.TRAILING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
 		gainLabel.setText("0");
-		// labelPan.setSize(300, 50);
 
-		labelPan.setPreferredSize(labelDim);
-		labelPan.setLayout(null);
-		labelPan.add(jetonLabel);
-		labelPan.add(gainLabel);
-		// jetonPan.add(jetonLabel);
-		// gainPan.add(gainLabel);
+		container.add(jetonLabel);
+		container.add(gainLabel);
 
-		// betPan init
+		// betPan init : new Dimension(200, 100);
 		Dimension subBetsDim = new Dimension(180, 40);
-		Dimension BetsDim = new Dimension(200, 100);
+
 		betsLabel.setBackground(Color.WHITE);
 		betsLabel.setHorizontalAlignment(SwingConstants.TRAILING);
-		betsLabel.setLocation(10, 0);
+		betsLabel.setLocation(210, 50);
 		betsLabel.setSize(subBetsDim);
 		betsLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "à miser",
 				TitledBorder.TRAILING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
@@ -198,7 +187,7 @@ public class GUI extends JFrame implements ActionListener {
 
 		coefLabel.setBackground(Color.WHITE);
 		coefLabel.setHorizontalAlignment(SwingConstants.TRAILING);
-		coefLabel.setLocation(10, 50);
+		coefLabel.setLocation(210, 100);
 		coefLabel.setSize(new Dimension(60, 40));
 		coefLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "coef",
 				TitledBorder.TRAILING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
@@ -206,13 +195,13 @@ public class GUI extends JFrame implements ActionListener {
 
 		miseLabel.setBackground(Color.WHITE);
 		miseLabel.setHorizontalAlignment(SwingConstants.TRAILING);
-		miseLabel.setLocation(130, 50);
+		miseLabel.setLocation(330, 100);
 		miseLabel.setSize(new Dimension(60, 40));
 		miseLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "mises",
 				TitledBorder.TRAILING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
 		miseLabel.setText("");
 
-		autoButton.setLocation(40, 140);
+		autoButton.setLocation(240, 190);
 		autoButton.setSize(70, 30);
 		autoButton.setPreferredSize(new Dimension(70, 30));
 		autoButton.addActionListener(this);
@@ -220,7 +209,7 @@ public class GUI extends JFrame implements ActionListener {
 		autoButton.getActionMap().put("a", keybindAction);
 		autoButton.setVisible(Main.simMode);
 
-		miseButton.setLocation(120, 140);
+		miseButton.setLocation(320, 190);
 		miseButton.setSize(70, 30);
 		miseButton.setPreferredSize(new Dimension(70, 30));
 		miseButton.addActionListener(this);
@@ -228,7 +217,7 @@ public class GUI extends JFrame implements ActionListener {
 		miseButton.getActionMap().put("m", keybindAction);
 		miseButton.setVisible(true);
 
-		optionsButton.setLocation(100, 130);
+		optionsButton.setLocation(300, 150);
 		optionsButton.setSize(90, 30);
 		optionsButton.setPreferredSize(new Dimension(90, 30));
 		optionsButton.addActionListener(this);
@@ -236,21 +225,19 @@ public class GUI extends JFrame implements ActionListener {
 		optionsButton.getActionMap().put("o", keybindAction);
 		optionsButton.setVisible(false);
 
-		misePan.setPreferredSize(BetsDim);
-		misePan.setLayout(null);
-		misePan.add(betsLabel);
-		misePan.add(coefLabel);
-		misePan.add(miseLabel);
-		misePan.add(optionsButton);
-		misePan.add(autoButton);
-		misePan.add(miseButton);
+		container.add(betsLabel);
+		container.add(coefLabel);
+		container.add(miseLabel);
+		container.add(optionsButton);
+		container.add(autoButton);
+		container.add(miseButton);
 
-		// table init
+		// table init : new Dimension(200, 100);
 		Dimension subStoreDim = new Dimension(180, 40);
-		Dimension StoreDim = new Dimension(200, 100);
+
 		storeLabel.setBackground(Color.WHITE);
 		storeLabel.setHorizontalAlignment(SwingConstants.LEADING);
-		storeLabel.setLocation(10, 0);
+		storeLabel.setLocation(10, 50);
 		storeLabel.setSize(subStoreDim);
 		storeLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "store",
 				TitledBorder.LEADING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
@@ -258,7 +245,7 @@ public class GUI extends JFrame implements ActionListener {
 
 		tableLabel.setBackground(Color.WHITE);
 		tableLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		tableLabel.setLocation(40, 50);
+		tableLabel.setLocation(40, 100);
 		tableLabel.setSize(new Dimension(120, 100));
 		//tableLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "table",
 		//		TitledBorder.LEADING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
@@ -267,18 +254,18 @@ public class GUI extends JFrame implements ActionListener {
 		tableLabel.setFont(tFont);
 		tableLabel.setText("");
 
-		storePan.setPreferredSize(StoreDim);
-		storePan.setLayout(null);
-		storePan.add(storeLabel);
-		storePan.add(tableLabel);
+//		storePan.setPreferredSize(StoreDim);
+//		storePan.setLayout(null);
+		container.add(storeLabel);
+		container.add(tableLabel);
 
-		// action Pan
+		// action Pan : new Dimension(400, 50);
 		Dimension subActionlDim = new Dimension(70, 30);
-		Dimension ActionDim = new Dimension(400, 50);
+
 		// menuButton.setBounds(10, 10, 70, 30);
 		cycleLabel.setBackground(Color.WHITE);
 		cycleLabel.setHorizontalAlignment(SwingConstants.TRAILING);
-		cycleLabel.setLocation(10, 0);
+		cycleLabel.setLocation(10, 220);
 		cycleLabel.setSize(new Dimension(60, 40));
 		cycleLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "cycles",
 				TitledBorder.TRAILING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
@@ -286,14 +273,13 @@ public class GUI extends JFrame implements ActionListener {
 
 		tourLabel.setBackground(Color.WHITE);
 		tourLabel.setHorizontalAlignment(SwingConstants.TRAILING);
-		tourLabel.setLocation(80, 0);
+		tourLabel.setLocation(80, 220);
 		tourLabel.setSize(new Dimension(100, 40));
 		tourLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null), "tours",
 				TitledBorder.TRAILING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
 		tourLabel.setText("");
 
-		// spinButton.setBounds(120, 10, 70, 30);
-		randButton.setLocation(240, 10);
+		randButton.setLocation(240, 230);
 		randButton.setSize(70, 30);
 		randButton.setPreferredSize(subActionlDim);
 		randButton.addActionListener(this);
@@ -301,8 +287,7 @@ public class GUI extends JFrame implements ActionListener {
 		randButton.getActionMap().put("r", keybindAction);
 		randButton.setVisible(Main.simMode);
 
-		// rollButton.setBounds(200, 10, 70, 30);
-		spinButton.setLocation(320, 10);
+		spinButton.setLocation(320, 230);
 		spinButton.setSize(70, 30);
 		spinButton.setPreferredSize(subActionlDim);
 		spinButton.addActionListener(this);
@@ -310,21 +295,15 @@ public class GUI extends JFrame implements ActionListener {
 		spinButton.getActionMap().put("s", keybindAction);
 		spinButton.setVisible(true);
 
-		// actionPan.setSize(ActionDim);
-		actionPan.setPreferredSize(ActionDim);
-		actionPan.setLayout(null);
-		actionPan.add(cycleLabel);
-		actionPan.add(tourLabel);
-		actionPan.add(randButton);
-		actionPan.add(spinButton);
+		container.add(cycleLabel);
+		container.add(tourLabel);
+		container.add(randButton);
+		container.add(spinButton);
 
 		// container panel of JFrame setup
-		container.setLayout(new BorderLayout());
+		container.setLayout(null); // null = Absolute Layout
 		// container.setBorder(new EmptyBorder(2, 2, 2, 2));
-		container.add(labelPan, BorderLayout.NORTH);
-		container.add(storePan, BorderLayout.WEST);
-		container.add(misePan, BorderLayout.EAST);
-		container.add(actionPan, BorderLayout.SOUTH);
+
 		this.setContentPane(container);
 		if (randButton.isVisible())
 			this.getRootPane().setDefaultButton(randButton);
