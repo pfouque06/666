@@ -25,26 +25,14 @@ public class Main {
 			"V:t:tour:tourMax:int:set maximum total tours to quit game cycle:-:",
 			"V:g:gain:gainMax:int:set maximum total gain to quit game cycle:-:",
 			"V:b:bet:betMax:int:set maximum bets allowed per tour:-:", };
-	public static GetOpts options = new GetOpts(optionArray);
-
-	public static boolean setOpts(String[] pArgs) {
-		// System.out.println("optionTable=\n"+options.optionTable_toString());
-		// parse options pArgs
-		if (!options.setOptionList(pArgs)) {
-			System.out.println("Parsing error, please retry or use -h, --help to get usage ...");
-			return false;
-		}
-		//System.out.println("optionList=\n" + options.optionList_toString());
-		// set options
-		if (!setOpts(options.getOptionList())) {
-			options.getUsage(System.out); // use STDOUT when help is requested
-			return false;
-		}
-		//System.out.println("options:" + optsToString());
-		return true;
-	}
+	public static GetOpts options;
 
 	public static boolean setOpts(LinkedHashSet<String[]> pList) {
+
+		// option status before processing
+		if (! options.isEnabled())
+			return false;
+
 		// Loop on each options of pList
 		for (String[] fields : pList) {
 			// System.out.println("fields="+fields.toString() );
@@ -108,7 +96,6 @@ public class Main {
 			warning = deposit / 2;
 		return true;
 	}
-
 	public static String optsToString() {
 
 		String buffer = "";
@@ -151,16 +138,18 @@ public class Main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		// parse args :
-		// initiate getOpts class and parse args according to optionArray
-		if (!setOpts(args))
+		// initiate getOpts options and parse args :
+		options = new GetOpts(optionArray, args);
+		// check options status and set options according to args parsing
+		if ( ! setOpts(options.getOptionList()) ) {
+			System.out.println(options.getUsage()); // display usage is requested
 			return;
+		}
 		logger.logging("options:" + optsToString());
 
 		if (guiMode) {
-			// force colorMode to false
+			// force colorMode to false, instantiate GUI JFrame and run it
 			colorMode = false;
-			// GUI instance and run
 			GUI frame = new GUI();
 			frame.run();
 		} else {
