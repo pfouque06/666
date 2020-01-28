@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
 import javax.swing.JButton;
@@ -325,6 +326,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 				container.setVisible(true);
 				// this.setVisible(true);
 			}
+
 		});
 	}
 
@@ -412,5 +414,9 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 			// logger.logging(">> --> not binded");
 			break;
 		}
+
+		// keep requesting focus in order to listen to keyevent
+		this.setFocusable(true);
+		this.requestFocus();
 	}
 }

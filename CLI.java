@@ -213,8 +213,8 @@ class CLI {
 			int depositHold = Main.deposit;
 
 			// parse options args_ and set options
-			if (!Main.setOpts(args_))
-				System.out.println();;
+			if (Main.setOptions(args_))
+				System.out.println();
 
 			// return added jetons
 			newJeton = Main.deposit - depositHold;

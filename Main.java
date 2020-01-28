@@ -27,7 +27,8 @@ public class Main {
 			"V:b:bet:betMax:int:set maximum bets allowed per tour:-:", };
 	public static GetOpts options;
 
-	public static boolean setOpts(LinkedHashSet<String[]> pList) {
+	// set options values according to system args parsing
+	public static boolean setOptions(LinkedHashSet<String[]> pList) {
 
 		// option status before processing
 		if (! options.isEnabled())
@@ -96,8 +97,24 @@ public class Main {
 			warning = deposit / 2;
 		return true;
 	}
-	public static String optsToString() {
 
+	// provide artifact setOptions public method to CLI
+	public static boolean setOptions(String[] pArgs) {
+		// parse options pArgs
+		if (!options.setOptionList(pArgs)) {
+			logger.logging("getOpts Error : Parsing error, please retry or use -h, --help to get usage ...");
+			return false;
+		}
+		// check options status and set options according to args parsing
+		if ( ! setOptions(options.getOptionList()) ) {
+			System.out.println(options.getUsage()); // display usage is requested
+			return false;
+		}
+		return true;
+	}
+
+	// option value display
+	public static String optsToString() {
 		String buffer = "";
 
 		buffer += " gui: " + (guiMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
@@ -141,7 +158,7 @@ public class Main {
 		// initiate getOpts options and parse args :
 		options = new GetOpts(optionArray, args);
 		// check options status and set options according to args parsing
-		if ( ! setOpts(options.getOptionList()) ) {
+		if ( ! setOptions(options.getOptionList()) ) {
 			System.out.println(options.getUsage()); // display usage is requested
 			return;
 		}
