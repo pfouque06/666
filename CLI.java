@@ -3,7 +3,8 @@ package _666_;
 import javaTools.ColorText;
 import javaTools.ScanTools;
 
-class CommandLineInterface {
+// CLI : Command Line Interface Class
+class CLI {
 
 	String _phase_ = phaseToString(0, 0);
 	String _tours_ = tourToString(0, 0, 0);
@@ -212,8 +213,8 @@ class CommandLineInterface {
 			int depositHold = Main.deposit;
 
 			// parse options args_ and set options
-			if (!Main.setOpts(args_))
-				System.out.println();;
+			if (Main.setOptions(args_))
+				System.out.println();
 
 			// return added jetons
 			newJeton = Main.deposit - depositHold;

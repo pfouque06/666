@@ -25,26 +25,15 @@ public class Main {
 			"V:t:tour:tourMax:int:set maximum total tours to quit game cycle:-:",
 			"V:g:gain:gainMax:int:set maximum total gain to quit game cycle:-:",
 			"V:b:bet:betMax:int:set maximum bets allowed per tour:-:", };
-	public static GetOpts options = new GetOpts(optionArray);
+	public static GetOpts options;
 
-	public static boolean setOpts(String[] pArgs) {
-		// System.out.println("optionTable=\n"+options.optionTable_toString());
-		// parse options pArgs
-		if (!options.setOptionList(pArgs)) {
-			System.out.println("Parsing error, please retry or use -h, --help to get usage ...");
-			return false;
-		}
-		//System.out.println("optionList=\n" + options.optionList_toString());
-		// set options
-		if (!setOpts(options.getOptionList())) {
-			options.getUsage(System.out); // use STDOUT when help is requested
-			return false;
-		}
-		//System.out.println("options:" + optsToString());
-		return true;
-	}
+	// set options values according to system args parsing
+	public static boolean setOptions(LinkedHashSet<String[]> pList) {
 
-	public static boolean setOpts(LinkedHashSet<String[]> pList) {
+		// option status before processing
+		if (! options.isEnabled())
+			return false;
+
 		// Loop on each options of pList
 		for (String[] fields : pList) {
 			// System.out.println("fields="+fields.toString() );
@@ -109,8 +98,23 @@ public class Main {
 		return true;
 	}
 
-	public static String optsToString() {
+	// provide artifact setOptions public method to CLI
+	public static boolean setOptions(String[] pArgs) {
+		// parse options pArgs
+		if (!options.setOptionList(pArgs)) {
+			logger.logging("getOpts Error : Parsing error, please retry or use -h, --help to get usage ...");
+			return false;
+		}
+		// check options status and set options according to args parsing
+		if ( ! setOptions(options.getOptionList()) ) {
+			System.out.println(options.getUsage()); // display usage is requested
+			return false;
+		}
+		return true;
+	}
 
+	// option value display
+	public static String optsToString() {
 		String buffer = "";
 
 		buffer += " gui: " + (guiMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
@@ -151,17 +155,19 @@ public class Main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		// parse args :
-		// initiate getOpts class and parse args according to optionArray
-		if (!setOpts(args))
+		// initiate getOpts options and parse args :
+		options = new GetOpts(optionArray, args);
+		// check options status and set options according to args parsing
+		if ( ! setOptions(options.getOptionList()) ) {
+			System.out.println(options.getUsage()); // display usage is requested
 			return;
+		}
 		logger.logging("options:" + optsToString());
 
 		if (guiMode) {
-			// force colorMode to false
+			// force colorMode to false, instantiate GUI JFrame and run it
 			colorMode = false;
-			// GUI instance and run
-			GraphicUserInterface frame = new GraphicUserInterface();
+			GUI frame = new GUI();
 			frame.run();
 		} else {
 			// Core instance and run

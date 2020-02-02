@@ -322,7 +322,7 @@ public class Table {
 	}
 
 	// display
-	String getTable(boolean pToBet, boolean pColorMode) {
+	String getTable(boolean pToBet, boolean pDisplayOccurence) {
 		String str = "", value = "", onValue = "", offValue = "", betValue = "", occ_ = "";
 		int i = 0, occ;
 		while (i < 6) {
@@ -331,13 +331,13 @@ public class Table {
 				// value = format.format(table_value[i][j]);
 				value = String.format("%02d", tableValue[i][j]);
 
-				onValue = (pColorMode ? ColorText.RESET + value + ColorText.RESET : value);
+				onValue = (Main.colorMode ? ColorText.RESET + value + ColorText.RESET : value);
 				onValue = " " + onValue + " ";
 
-				offValue = (pColorMode ? ColorText.RED + value + ColorText.RESET : "--");
+				offValue = (Main.colorMode ? ColorText.RED + value + ColorText.RESET : "--");
 				offValue = " " + offValue + " ";
 
-				betValue = (pColorMode ? ColorText.GREEN_BOLD + value + ColorText.RESET : value);
+				betValue = (Main.colorMode ? ColorText.GREEN_BOLD + value + ColorText.RESET : value);
 				betValue = "[" + betValue + "]";
 
 				occ = tableOccurence[i][j];
@@ -351,8 +351,10 @@ public class Table {
 					str += (pToBet ? onValue : " -- ");
 					occ_ = "   ";
 				}
+				if (pDisplayOccurence)
+					str += occ_;
 
-				str += occ_ + (j == 5 ? "\n" : "\t");
+				str += (j == 5 ? "\n" : "\t");
 				j++;
 			}
 			i++;
@@ -360,19 +362,19 @@ public class Table {
 		return str;
 	}
 
-	public String toString(boolean pColor) {
-		return getTable(false, pColor); // bet OFF
+	public String toString(boolean pDisplayOccurence) {
+		return getTable(false, pDisplayOccurence); // bet OFF
 	}
 
 	public String toString() {
-		return getTable(false, true); // bet OFF / colorMode ON
+		return getTable(false, false); // bet OFF / displayOccurence OFF
 	}
 
-	public String betToString(boolean pColor) {
-		return getTable(true, pColor); // bet ON
+	public String betToString(boolean pDisplayOccurence) {
+		return getTable(true, pDisplayOccurence); // bet ON
 	}
 
 	public String betToString() {
-		return getTable(true, true); // bet ON / colorMode ON
+		return getTable(true, false); // bet ON / displayOccurence OFF
 	}
 }
