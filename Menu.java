@@ -119,7 +119,7 @@ public class Menu extends JDialog {
 		this.getContentPane().add(chckbxAutoSpin);
 		
 		btnOk = new JButton("OK");
-		btnOk.setBounds(232, 293, 60, 25);
+		btnOk.setBounds(228, 273, 60, 25);
 		this.getContentPane().add(btnOk);
 		
 		btnOk.addActionListener(new ActionListener() {
