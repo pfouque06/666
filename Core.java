@@ -203,6 +203,15 @@ public class Core implements Observed {
 		return true;
 	}
 
+	void processOptionsMenu() {
+		logger.logging("Core>>processOptionsMenu()");
+
+		if (Main.guiMode)
+			processOptionsMenuGUI();
+		else
+			processOptionsMenuCLI();
+	}
+	
 	void processOptionsMenuCLI() {
 		logger.logging("Core>>processOptionsMenuCLI()");
 
@@ -241,6 +250,14 @@ public class Core implements Observed {
 			System.out.println();
 	}
 
+	void processOptionsMenuGUI() {
+		logger.logging("Core>>processOptionsMenuGUI()");
+		
+		MenuDialog md = new MenuDialog(null, "Menu", true);
+		MenuInfo mi = md.showMenuInfo();
+		JOptionPane.showMessageDialog(null, mi.toArgOpts(), "Menu", JOptionPane.INFORMATION_MESSAGE);
+	}
+	
 	@Override
 	public void addObserver(Observer obs) {
 		// TODO Auto-generated method stub
@@ -289,8 +306,10 @@ public class Core implements Observed {
 			if (!operateSpin(expectSpin()))
 				return false;
 			break;
-		case "mIse":
 		case "Menu":
+			processOptionsMenu();
+			break;
+		case "mIse":
 			break;
 		default: // roulette value (integer) provided in CLI process
 			if (buttonTitle.matches("\\d+") && Integer.valueOf(buttonTitle) < 36)
@@ -565,7 +584,7 @@ public class Core implements Observed {
 				break;
 			case "o": // option menu requested
 				// display Options menu and get new jetons if any
-				processOptionsMenuCLI();
+				processOptionsMenu();
 				// Jump back to Menu
 				input = "";
 				break;

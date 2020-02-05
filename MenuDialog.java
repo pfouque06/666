@@ -12,18 +12,18 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
-public class Menu extends JDialog {
+public class MenuDialog extends JDialog {
 	
 	private MenuInfo info = new MenuInfo();
 	private boolean sendData;
 	private JPanel depositBorder, warningBorder, limiteBorder, gainBorder, phaseBorder, tourBorder, betBorder;
-	private JSpinner depositSpinner, warningSpinner, LimiteSpinner, gainSpinner, phaseSpinner, tourSpinner, betSpinner;
+	private JSpinner depositSpinner, warningSpinner, limiteSpinner, gainSpinner, phaseSpinner, tourSpinner, betSpinner;
 	private JCheckBox chckbxSimulation, chckbxAutoSpin;
 	private JButton btnOk;
 	
-	public Menu(JFrame parent, String title, boolean modal){
+	public MenuDialog(JFrame parent, String title, boolean modal){
 	    super(parent, title, modal);
-	    //this.setSize(310, 350); ??
+	    this.setSize(300, 330);
 	    this.setLocationRelativeTo(null);
 	    this.setResizable(false);
 	    this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
@@ -65,9 +65,9 @@ public class Menu extends JDialog {
 		limiteBorder.setBounds(12, 140, 147, 52);
 		this.getContentPane().add(limiteBorder);
 		
-		LimiteSpinner = new JSpinner();
-		LimiteSpinner.setBounds(5, 17, 130, 30);
-		limiteBorder.add(LimiteSpinner);
+		limiteSpinner = new JSpinner();
+		limiteSpinner.setBounds(5, 17, 130, 30);
+		limiteBorder.add(limiteSpinner);
 		
 		gainBorder = new JPanel();
 		gainBorder.setLayout(null);
@@ -82,7 +82,7 @@ public class Menu extends JDialog {
 		phaseBorder = new JPanel();
 		phaseBorder.setLayout(null);
 		phaseBorder.setBorder(new TitledBorder(null, "phase", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		phaseBorder.setBounds(197, 12, 95, 52);
+		phaseBorder.setBounds(189, 12, 95, 52);
 		this.getContentPane().add(phaseBorder);
 		
 		phaseSpinner = new JSpinner();
@@ -92,7 +92,7 @@ public class Menu extends JDialog {
 		tourBorder = new JPanel();
 		tourBorder.setLayout(null);
 		tourBorder.setBorder(new TitledBorder(null, "Tour", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		tourBorder.setBounds(197, 76, 95, 52);
+		tourBorder.setBounds(189, 76, 95, 52);
 		this.getContentPane().add(tourBorder);
 		
 		tourSpinner = new JSpinner();
@@ -102,7 +102,7 @@ public class Menu extends JDialog {
 		betBorder = new JPanel();
 		betBorder.setLayout(null);
 		betBorder.setBorder(new TitledBorder(null, "Bet", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		betBorder.setBounds(197, 140, 95, 52);
+		betBorder.setBounds(189, 140, 95, 52);
 		this.getContentPane().add(betBorder);
 		
 		betSpinner = new JSpinner();
@@ -111,15 +111,15 @@ public class Menu extends JDialog {
 		
 
 		chckbxSimulation = new JCheckBox("Simulation");
-		chckbxSimulation.setBounds(181, 202, 111, 23);
+		chckbxSimulation.setBounds(189, 204, 95, 23);
 		this.getContentPane().add(chckbxSimulation);
 		
 		chckbxAutoSpin = new JCheckBox("Auto Spin");
-		chckbxAutoSpin.setBounds(181, 231, 111, 23);
+		chckbxAutoSpin.setBounds(189, 233, 95, 23);
 		this.getContentPane().add(chckbxAutoSpin);
 		
 		btnOk = new JButton("OK");
-		btnOk.setBounds(228, 273, 60, 25);
+		btnOk.setBounds(224, 263, 60, 25);
 		this.getContentPane().add(btnOk);
 		
 		btnOk.addActionListener(new ActionListener() {
@@ -128,9 +128,9 @@ public class Menu extends JDialog {
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				info = new MenuInfo();
-				info.setDeposit(LimiteSpinner.getValue().toString());
-				info.setLimite(LimiteSpinner.getValue().toString());
+				info.setDeposit(depositSpinner.getValue().toString());
 				info.setWarning(warningSpinner.getValue().toString());
+				info.setLimite(limiteSpinner.getValue().toString());
 				info.setGain(gainSpinner.getValue().toString());
 				info.setPhase(phaseSpinner.getValue().toString());
 				info.setTour(tourSpinner.getValue().toString());

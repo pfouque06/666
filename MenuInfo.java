@@ -154,8 +154,8 @@ public class MenuInfo {
 	public String toString() {
 		return "MenuInfo :" + 
 				"\ndeposit=" + deposit + 
-				"\nlimite=" + limite + 
 				"\nwarning=" + warning + 
+				"\nlimite=" + limite + 
 				"\ngain=" + gain
 				+ "\nphase=" + phase + 
 				"\ntour=" + tour + 
@@ -164,4 +164,17 @@ public class MenuInfo {
 				"\nautoMode=" + autoMode;
 	}
 
+	public String toArgOpts() {
+		String args = "";
+		args += (deposit.equals("0") ? "" : " -d " + deposit);
+		args += (warning.equals("0") ? "" : " -w " + warning);
+		args += (limite.equals("0") ? "" : " -l " + limite);
+		args += (gain.equals("0") ? "" : " -g " + gain);
+		args += (phase.equals("0") ? "" : " -p " + phase);
+		args += (tour.equals("0") ? "" : " -t " + tour);
+		args += (bet.equals("0") ? "" : " -b " + bet);
+		args += (! simMode ? "" : " -S");
+		args += (! autoMode ? "" : " -a ");
+		return args;
+	}
 }
