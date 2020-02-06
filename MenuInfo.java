@@ -166,6 +166,8 @@ public class MenuInfo {
 
 	public String toArgOpts() {
 		String args = "";
+		args += (! simMode ? "" : " -S");
+		args += (! autoMode ? "" : " -a");
 		args += (deposit.equals("0") ? "" : " -d " + deposit);
 		args += (warning.equals("0") ? "" : " -w " + warning);
 		args += (limite.equals("0") ? "" : " -l " + limite);
@@ -173,8 +175,8 @@ public class MenuInfo {
 		args += (phase.equals("0") ? "" : " -p " + phase);
 		args += (tour.equals("0") ? "" : " -t " + tour);
 		args += (bet.equals("0") ? "" : " -b " + bet);
-		args += (! simMode ? "" : " -S");
-		args += (! autoMode ? "" : " -a ");
-		return args;
+		
+		// trim and reduce internal whitepaces and return result
+		return args.trim().replaceAll(" +", " ");
 	}
 }

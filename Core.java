@@ -1,6 +1,7 @@
 package _666_;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 
 import javax.swing.JOptionPane;
@@ -31,7 +32,7 @@ public class Core implements Observed {
 	int win = 0, gain = 0, gainTotal = 0, gainFull = 0, storeLineSize = 0;
 	int miseOrigin = 0, coefOrigin = 0;
 	boolean newBets = false, newCoef = false;
-	boolean gameOver = false, autoPlay = Main.autoMode;
+	boolean gameOver = false, autoPlay = Main.autoMode, viewModel = false;
 	String alert = "", input = "", betsOrigin = "";
 	// Main global variables :
 	// Main.betMax, Main.gainMax, Main.phaseMax, Main.tourMax, Main.jetonLimite
@@ -123,6 +124,8 @@ public class Core implements Observed {
 			observerUpdateList.add(new String[] { "newCoef", "" });
 		if (autoPlay)
 			observerUpdateList.add(new String[] { "auto", "" });
+		if (viewModel)
+			observerUpdateList.add(new String[] { "viewModel", "" });
 
 		// update Observers
 		// for(String[] item : observerUpdateList) logger.logging("["+item[0] + ":" +
@@ -231,6 +234,7 @@ public class Core implements Observed {
 				if (jetons >= nbrMise) {
 					System.out.println("--> " + cli.raise("wallet is up and alive again !!"));
 					input = "cycle back on";
+					gameOver = false;
 				}
 				break;
 			case "limite": // alert = jeton
@@ -239,23 +243,93 @@ public class Core implements Observed {
 				if (newJeton > Main.jetonLimite) {
 					System.out.println("--> " + cli.raise("wallet is up and alive again !!"));
 					input = "cycle back on";
+					gameOver = false;
 				}
+				break;
+			default:
+				// prepare jetons and display Global Status
+				cli.updateJetonString(jetons, jetonsTotal, jetonsMax);
+				cli.displayDashboardStatus();
 				break;
 			}
 
-			// prepare jetons and display Global Status
-			cli.updateJetonString(jetons, jetonsTotal, jetonsMax);
-			cli.displayDashboardStatus();
 		} else
 			System.out.println();
 	}
 
 	void processOptionsMenuGUI() {
 		logger.logging("Core>>processOptionsMenuGUI()");
+		//logger.logging("Core>> initial options:" + Main.optsToString());
 		
+		// call MenuDialog
 		MenuDialog md = new MenuDialog(null, "Menu", true);
-		MenuInfo mi = md.showMenuInfo();
-		JOptionPane.showMessageDialog(null, mi.toArgOpts(), "Menu", JOptionPane.INFORMATION_MESSAGE);
+		//MenuInfo mi = md.showMenuInfo();
+		// get new args
+		String args = md.getMenuInfo().toArgOpts();
+		//JOptionPane.showMessageDialog(null, args, "Menu", JOptionPane.INFORMATION_MESSAGE);
+		logger.logging("Core>> args: " + args);
+
+		// construct new args
+		String[] args_ = args.split(" ");
+		//logger.logging("Core>> args[] " + Arrays.toString(args_));
+
+		// store initial values and reset simulation and auto modes
+		int depositHold = Main.deposit;
+		boolean simHold = Main.simMode;
+		boolean autoHold = Main.autoMode;
+		Main.simMode = Main.autoMode = false;
+
+		// parse options args_ and set options
+		if ( ! Main.setOptions(args_)) {
+			logger.logging("Core>> getOpts Parsing error");
+			return;
+		}
+		logger.logging("Core>> final options:" + Main.optsToString());
+		
+		// check new jetons value if any, add them to deposit and check bet value again
+		int newJeton = Main.deposit - depositHold;
+		if (newJeton > 0) {
+			jetons += newJeton;
+			jetonsTotal += newJeton;
+			jetonsMax += newJeton;
+			deposit += newJeton;
+			
+			switch (alert) {
+			case "bet": // alert = bet
+				// Check Mise versus Jetons
+				if (jetons >= nbrMise) {
+					String message = "wallet is up and alive again !!\n We are back in business, dude !";
+					JOptionPane.showMessageDialog(null, message, "Back in business", JOptionPane.INFORMATION_MESSAGE);
+					input = "cycle back on";
+					gameOver = false;
+				}
+				break;
+			case "limite": // alert = jeton
+				// Check Jetons limites
+				// if ((deposit - jetons) < Main.jetonLimite) {
+				if (newJeton > Main.jetonLimite) {
+					String message = "wallet is up and alive again !! \\n We are back in business, dude !";
+					JOptionPane.showMessageDialog(null, message, "Back in business", JOptionPane.INFORMATION_MESSAGE);
+					input = "cycle back on";
+					gameOver = false;
+				}
+				break;
+			}
+		}
+		
+		// simulation view and auto mode update
+		viewModel= false;
+		if (Main.simMode != simHold) {
+			logger.logging("Core>> --> simMode updated : viewModel " + viewModel);
+			viewModel= true;
+		}
+		autoPlay = Main.autoMode;
+		if (autoPlay != autoHold)
+			logger.logging("Core>>--> AutoMode updated : " + autoPlay);
+
+		// prepare display dashboard & update OBSERVER
+		prepareDisplay();
+		updateObserver();
 	}
 	
 	@Override
@@ -585,17 +659,20 @@ public class Core implements Observed {
 			case "o": // option menu requested
 				// display Options menu and get new jetons if any
 				processOptionsMenu();
-				// Jump back to Menu
-				input = "";
+				// Jump back to Menu if game is still over
+				if (gameOver)
+					input = "";
 				break;
 			case "m": // toggle Main.colorMode
 				// logger.logging("Core>> - toggle Main.colorMode");
+				//Main.colorMode = ! Main.colorMode;
 				Main.colorMode = (Main.colorMode ? false : true);
 				// Jump back to Menu
 				input = "";
 				break;
 			case "a": // toggle Main.auto mode
 				// logger.logging("Core>> - toggle Main.autoMode");
+				//Main.autoMode = ! Main.autoMode;
 				Main.autoMode = (Main.autoMode ? false : true);
 				// Jump back to Menu
 				input = "";

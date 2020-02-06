@@ -123,7 +123,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 		autoButton.setSize(70, 30);
 		autoButton.setPreferredSize(new Dimension(70, 30));
 		autoButton.addActionListener(this);
-		autoButton.setVisible(Main.simMode);
+		//autoButton.setVisible(Main.simMode);
 
 		menuButton.setLocation(320, 190);
 		menuButton.setSize(70, 30);
@@ -197,7 +197,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 		randButton.setSize(70, 30);
 		randButton.setPreferredSize(subActionlDim);
 		randButton.addActionListener(this);
-		randButton.setVisible(Main.simMode);
+		//randButton.setVisible(Main.simMode);
 
 		spinButton.setLocation(320, 230);
 		spinButton.setSize(70, 30);
@@ -214,11 +214,8 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 		container.setLayout(null); // null = Absolute Layout
 		// container.setBorder(new EmptyBorder(2, 2, 2, 2));
 
+		setSimulationViewModel();
 		this.setContentPane(container);
-		if (randButton.isVisible())
-			this.getRootPane().setDefaultButton(randButton);
-		else
-			this.getRootPane().setDefaultButton(spinButton);
 		this.setVisible(true);
 
 		// request focus in order to listen to keyevent
@@ -317,6 +314,9 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 					case "auto":
 						autoButton.setSelected(true);
 						break;
+					case "viewModel":
+						setSimulationViewModel();
+						break;
 					default:
 						break;
 					}
@@ -330,6 +330,19 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 		});
 	}
 
+	public void setSimulationViewModel() {
+		
+		// define Simulation viw model
+		autoButton.setVisible(Main.simMode);
+		randButton.setVisible(Main.simMode);
+		
+		// update default Button acording to view model
+		if (randButton.isVisible())
+			this.getRootPane().setDefaultButton(randButton);
+		else
+			this.getRootPane().setDefaultButton(spinButton);
+	}
+	
 	public boolean run() {
 		logger.logging("GUI>>run()");
 		return core.run();

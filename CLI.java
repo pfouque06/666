@@ -207,7 +207,7 @@ class CLI {
 				break;
 
 			// construct new args
-			String[] args_ = buffer.split(" ");
+			String[] args_ = buffer.trim().replaceAll(" +", " ").split(" ");
 
 			// store initial Main.deposit value and reset Main.deposit
 			int depositHold = Main.deposit;

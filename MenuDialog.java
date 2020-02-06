@@ -3,6 +3,7 @@ package _666_;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import javax.swing.JCheckBox;
@@ -11,16 +12,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
 
 public class MenuDialog extends JDialog {
-	
+
 	private MenuInfo info = new MenuInfo();
 	private boolean sendData;
 	private JPanel depositBorder, warningBorder, limiteBorder, gainBorder, phaseBorder, tourBorder, betBorder;
 	private JSpinner depositSpinner, warningSpinner, limiteSpinner, gainSpinner, phaseSpinner, tourSpinner, betSpinner;
 	private JCheckBox chckbxSimulation, chckbxAutoSpin;
-	private JButton btnOk;
-	
+	private JButton okButton;
+
 	public MenuDialog(JFrame parent, String title, boolean modal){
 	    super(parent, title, modal);
 	    this.setSize(300, 330);
@@ -29,23 +32,25 @@ public class MenuDialog extends JDialog {
 	    this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 	    this.buildContent();
 	}
-	
-	public MenuInfo showMenuInfo(){
+
+	public MenuInfo getMenuInfo(){
 	    this.sendData = false;
 	    this.setVisible(true);      
-	    return this.info;      
+	    return this.info;
 	  }
-	
+
 	public void buildContent() {
 		this.getContentPane().setLayout(null);
+		SpinnerNumberModel spinModel;
 		
 		depositBorder = new JPanel();
 		depositBorder.setLayout(null);
-		depositBorder.setBorder(new TitledBorder(null, "Deposit", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		depositBorder.setBorder(new TitledBorder(null, "Deposit (inc)", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		depositBorder.setBounds(12, 12, 147, 52);
 		this.getContentPane().add(depositBorder);
 		
-		depositSpinner = new JSpinner();
+		spinModel = new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1);
+		depositSpinner = new JSpinner(spinModel);
 		depositSpinner.setBounds(5, 17, 130, 30);
 		depositBorder.add(depositSpinner);
 		
@@ -55,7 +60,8 @@ public class MenuDialog extends JDialog {
 		warningBorder.setBounds(12, 76, 147, 52);
 		this.getContentPane().add(warningBorder);
 		
-		warningSpinner = new JSpinner();
+		spinModel = new SpinnerNumberModel(Main.warning, 0, Integer.MAX_VALUE, 1);
+		warningSpinner = new JSpinner(spinModel);
 		warningSpinner.setBounds(5, 17, 130, 30);
 		warningBorder.add(warningSpinner);
 		
@@ -65,7 +71,8 @@ public class MenuDialog extends JDialog {
 		limiteBorder.setBounds(12, 140, 147, 52);
 		this.getContentPane().add(limiteBorder);
 		
-		limiteSpinner = new JSpinner();
+		spinModel = new SpinnerNumberModel(Main.jetonLimite, 0, Integer.MAX_VALUE, 1);
+		limiteSpinner = new JSpinner(spinModel);
 		limiteSpinner.setBounds(5, 17, 130, 30);
 		limiteBorder.add(limiteSpinner);
 		
@@ -75,7 +82,8 @@ public class MenuDialog extends JDialog {
 		gainBorder.setBounds(12, 204, 147, 52);
 		this.getContentPane().add(gainBorder);
 		
-		gainSpinner = new JSpinner();
+		spinModel = new SpinnerNumberModel(Main.gainMax, 0, Integer.MAX_VALUE, 1);
+		gainSpinner = new JSpinner(spinModel);
 		gainSpinner.setBounds(5, 17, 130, 30);
 		gainBorder.add(gainSpinner);
 
@@ -85,7 +93,8 @@ public class MenuDialog extends JDialog {
 		phaseBorder.setBounds(189, 12, 95, 52);
 		this.getContentPane().add(phaseBorder);
 		
-		phaseSpinner = new JSpinner();
+		spinModel = new SpinnerNumberModel(Main.phaseMax, 0, Integer.MAX_VALUE, 1);
+		phaseSpinner = new JSpinner(spinModel);
 		phaseSpinner.setBounds(5, 17, 80, 30);
 		phaseBorder.add(phaseSpinner);
 		
@@ -95,7 +104,8 @@ public class MenuDialog extends JDialog {
 		tourBorder.setBounds(189, 76, 95, 52);
 		this.getContentPane().add(tourBorder);
 		
-		tourSpinner = new JSpinner();
+		spinModel = new SpinnerNumberModel(Main.phaseMax, 0, Integer.MAX_VALUE, 1);
+		tourSpinner = new JSpinner(spinModel);
 		tourSpinner.setBounds(5, 17, 80, 30);
 		tourBorder.add(tourSpinner);
 		
@@ -105,24 +115,27 @@ public class MenuDialog extends JDialog {
 		betBorder.setBounds(189, 140, 95, 52);
 		this.getContentPane().add(betBorder);
 		
-		betSpinner = new JSpinner();
+		spinModel = new SpinnerNumberModel(Main.betMax, 0, Integer.MAX_VALUE, 1);
+		betSpinner = new JSpinner(spinModel);
 		betSpinner.setBounds(5, 17, 80, 30);
 		betBorder.add(betSpinner);
-		
 
-		chckbxSimulation = new JCheckBox("Simulation");
-		chckbxSimulation.setBounds(189, 204, 95, 23);
-		this.getContentPane().add(chckbxSimulation);
-		
 		chckbxAutoSpin = new JCheckBox("Auto Spin");
-		chckbxAutoSpin.setBounds(189, 233, 95, 23);
+		chckbxAutoSpin.setBounds(189, 204, 95, 23);
+		chckbxAutoSpin.setSelected(Main.autoMode);
 		this.getContentPane().add(chckbxAutoSpin);
 		
-		btnOk = new JButton("OK");
-		btnOk.setBounds(224, 263, 60, 25);
-		this.getContentPane().add(btnOk);
+		chckbxSimulation = new JCheckBox("Simulation");
+		chckbxSimulation.setBounds(189, 233, 95, 23);
+		chckbxSimulation.setSelected(Main.simMode);
+		this.getContentPane().add(chckbxSimulation);
 		
-		btnOk.addActionListener(new ActionListener() {
+		okButton = new JButton("OK");
+		okButton.setBounds(224, 263, 60, 25);
+		this.getContentPane().add(okButton);
+		this.getRootPane().setDefaultButton(okButton);
+		
+		okButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
