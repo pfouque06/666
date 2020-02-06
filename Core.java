@@ -266,6 +266,10 @@ public class Core implements Observed {
 		//MenuInfo mi = md.showMenuInfo();
 		// get new args
 		String args = md.getMenuInfo().toArgOpts();
+		if (args.isEmpty()) {
+			logger.logging("Core>> args: empty ... --> no change, cancelling operation");
+			return;
+		}
 		//JOptionPane.showMessageDialog(null, args, "Menu", JOptionPane.INFORMATION_MESSAGE);
 		logger.logging("Core>> args: " + args);
 
@@ -320,8 +324,8 @@ public class Core implements Observed {
 		// simulation view and auto mode update
 		viewModel= false;
 		if (Main.simMode != simHold) {
-			logger.logging("Core>> --> simMode updated : viewModel " + viewModel);
 			viewModel= true;
+			logger.logging("Core>> --> simMode updated : simMode " + Main.simMode);
 		}
 		autoPlay = Main.autoMode;
 		if (autoPlay != autoHold)

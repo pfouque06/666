@@ -5,7 +5,7 @@ public class MenuInfo {
 	private String deposit, limite, warning, gain;
 	private String phase, tour, bet;
 	private boolean simMode, autoMode;
-
+	
 	public MenuInfo() {
 		super();
 	}

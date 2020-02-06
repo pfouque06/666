@@ -23,7 +23,7 @@ public class MenuDialog extends JDialog {
 	private JSpinner depositSpinner, warningSpinner, limiteSpinner, gainSpinner, phaseSpinner, tourSpinner, betSpinner;
 	private JCheckBox chckbxSimulation, chckbxAutoSpin;
 	private JButton okButton;
-
+	
 	public MenuDialog(JFrame parent, String title, boolean modal){
 	    super(parent, title, modal);
 	    this.setSize(300, 330);

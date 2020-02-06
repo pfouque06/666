@@ -51,7 +51,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 
 	// Core instance
 	private Core core;
-
+	
 	public GUI() {
 		// TODO Auto-generated constructor stub
 		logger.logging("GUI>>GraphicUserInterface()");
