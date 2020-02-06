@@ -10,6 +10,8 @@ import javax.swing.JCheckBox;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.border.LineBorder;
@@ -29,7 +31,8 @@ public class MenuDialog extends JDialog {
 	    this.setSize(300, 330);
 	    this.setLocationRelativeTo(null);
 	    this.setResizable(false);
-	    this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+	    //this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+	    //this.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 	    this.buildContent();
 	}
 
@@ -155,6 +158,19 @@ public class MenuDialog extends JDialog {
 				
 			}
 		});
+		
+		// Add window listener by implementing WindowAdapter class to
+		// the frame instance. To handle the close event we just need
+		// to implement the windowClosing() method.
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+
+				info = new MenuInfo();		
+		        setVisible(false);
+			}
+		});
+		
 		
 	}
 }

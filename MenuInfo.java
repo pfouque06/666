@@ -8,8 +8,13 @@ public class MenuInfo {
 	
 	public MenuInfo() {
 		super();
+		deposit = limite = warning = gain = "";
+		phase = tour = bet = "";
+		simMode = Main.simMode;
+		autoMode = Main.autoMode;
 	}
 
+	
 	public MenuInfo(String deposit, String limite, String warning, String gain, String phase, String tour, String bet,
 			boolean simMode, boolean autoMode) {
 		super();
@@ -168,13 +173,13 @@ public class MenuInfo {
 		String args = "";
 		args += (! simMode ? "" : " -S");
 		args += (! autoMode ? "" : " -a");
-		args += (deposit.equals("0") ? "" : " -d " + deposit);
-		args += (warning.equals("0") ? "" : " -w " + warning);
-		args += (limite.equals("0") ? "" : " -l " + limite);
-		args += (gain.equals("0") ? "" : " -g " + gain);
-		args += (phase.equals("0") ? "" : " -p " + phase);
-		args += (tour.equals("0") ? "" : " -t " + tour);
-		args += (bet.equals("0") ? "" : " -b " + bet);
+		args += (deposit.equals("0") || deposit.isEmpty() ? "" : " -d " + deposit);
+		args += (warning.equals("0") || warning.isEmpty() ? "" : " -w " + warning);
+		args += (limite.equals("0") || limite.isEmpty() ? "" : " -l " + limite);
+		args += (gain.equals("0") || gain.isEmpty() ? "" : " -g " + gain);
+		args += (phase.equals("0") || phase.isEmpty() ? "" : " -p " + phase);
+		args += (tour.equals("0") || tour.isEmpty() ? "" : " -t " + tour);
+		args += (bet.equals("0") || bet.isEmpty() ? "" : " -b " + bet);
 		
 		// trim and reduce internal whitepaces and return result
 		return args.trim().replaceAll(" +", " ");
