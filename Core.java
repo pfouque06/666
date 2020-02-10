@@ -1,7 +1,6 @@
 package _666_;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 
 import javax.swing.JOptionPane;
@@ -92,13 +91,9 @@ public class Core implements Observed {
 	void updateGUI() {
 		logger.logging("Core>>updateGUI()");
 
-		// Prepare table and convert to html
-		String betTable = table.betToString().replaceAll("\n", "<br>").replaceAll("\t", "");
-		betTable = betTable.replaceAll("\\[", "<font color='lime'><b>").replaceAll("\\]", "</b></font>");
-		// betTable = betTable.replaceAll("--", "<font color='red'>00</font>");
-		betTable = betTable.replaceAll("--", "<b>...</b>");
-		betTable = "<html>" + betTable + "<html>";
-
+		// get betTable in HTML format for Jtable element
+		String betTable = table.betToHTML(true);
+		
 		// Prepare Observer update List
 		observerUpdateList.add(new String[] { "jeton", cli._jetons_ });
 		observerUpdateList.add(new String[] { "gain", cli._gains_ });
@@ -115,6 +110,8 @@ public class Core implements Observed {
 		if (!cli.mise.isEmpty()) // --> Convert to setText("") if not updated !!
 			observerUpdateList.add(new String[] { "mise", cli.mise });
 		if (win > 0)
+			observerUpdateList.add(new String[] { "win", "" });
+		if (Main.warning != 0 && ( Main.deposit - jetons ) >= Main.warning )
 			observerUpdateList.add(new String[] { "win", "" });
 		if (!alert.isEmpty())
 			observerUpdateList.add(new String[] { "alert", "" });
@@ -234,7 +231,7 @@ public class Core implements Observed {
 				if (jetons >= nbrMise) {
 					System.out.println("--> " + cli.raise("wallet is up and alive again !!"));
 					input = "cycle back on";
-					gameOver = false;
+					gameOver = false; alert = "";
 				}
 				break;
 			case "limite": // alert = jeton
@@ -243,7 +240,7 @@ public class Core implements Observed {
 				if (newJeton > Main.jetonLimite) {
 					System.out.println("--> " + cli.raise("wallet is up and alive again !!"));
 					input = "cycle back on";
-					gameOver = false;
+					gameOver = false; alert = "";
 				}
 				break;
 			default:
@@ -263,11 +260,18 @@ public class Core implements Observed {
 		
 		// call MenuDialog
 		MenuDialog md = new MenuDialog(null, "Menu", true);
-		//MenuInfo mi = md.showMenuInfo();
+		MenuInfo mi = md.getMenuInfo();
+		if (! mi.isDialogEnabled()) {
+			logger.logging("Core>> canceled operation");
+			logger.logging("Core>> final options:" + Main.optsToString());
+			return;
+		}
+		;
 		// get new args
-		String args = md.getMenuInfo().toArgOpts();
+		String args = mi.toArgOpts();
 		if (args.isEmpty()) {
 			logger.logging("Core>> args: empty ... --> no change, cancelling operation");
+			logger.logging("Core>> final options:" + Main.optsToString());
 			return;
 		}
 		//JOptionPane.showMessageDialog(null, args, "Menu", JOptionPane.INFORMATION_MESSAGE);
@@ -286,6 +290,7 @@ public class Core implements Observed {
 		// parse options args_ and set options
 		if ( ! Main.setOptions(args_)) {
 			logger.logging("Core>> getOpts Parsing error");
+			logger.logging("Core>> final options:" + Main.optsToString());
 			return;
 		}
 		logger.logging("Core>> final options:" + Main.optsToString());
@@ -305,7 +310,7 @@ public class Core implements Observed {
 					String message = "wallet is up and alive again !!\n We are back in business, dude !";
 					JOptionPane.showMessageDialog(null, message, "Back in business", JOptionPane.INFORMATION_MESSAGE);
 					input = "cycle back on";
-					gameOver = false;
+					gameOver = false; alert = "";
 				}
 				break;
 			case "limite": // alert = jeton
@@ -315,7 +320,7 @@ public class Core implements Observed {
 					String message = "wallet is up and alive again !! \\n We are back in business, dude !";
 					JOptionPane.showMessageDialog(null, message, "Back in business", JOptionPane.INFORMATION_MESSAGE);
 					input = "cycle back on";
-					gameOver = false;
+					gameOver = false; alert = "";
 				}
 				break;
 			}
@@ -325,11 +330,11 @@ public class Core implements Observed {
 		viewModel= false;
 		if (Main.simMode != simHold) {
 			viewModel= true;
-			logger.logging("Core>> --> simMode updated : simMode " + Main.simMode);
+			logger.logging("Core>> --> simMode updated : " + Main.simMode);
 		}
 		autoPlay = Main.autoMode;
 		if (autoPlay != autoHold)
-			logger.logging("Core>>--> AutoMode updated : " + autoPlay);
+			logger.logging("Core>>--> AutoMode updated : " + Main.autoMode);
 
 		// prepare display dashboard & update OBSERVER
 		prepareDisplay();

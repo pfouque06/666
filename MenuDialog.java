@@ -6,6 +6,9 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
+
+import javaTools.Logger;
+
 import javax.swing.JCheckBox;
 
 import java.awt.event.ActionEvent;
@@ -14,35 +17,39 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
-import javax.swing.border.LineBorder;
-import java.awt.Color;
 
 public class MenuDialog extends JDialog {
 
+	private static final long serialVersionUID = 1L;
+
+	// logger
+	Logger logger = Main.logger;
+
 	private MenuInfo info = new MenuInfo();
-	private boolean sendData;
 	private JPanel depositBorder, warningBorder, limiteBorder, gainBorder, phaseBorder, tourBorder, betBorder;
 	private JSpinner depositSpinner, warningSpinner, limiteSpinner, gainSpinner, phaseSpinner, tourSpinner, betSpinner;
 	private JCheckBox chckbxSimulation, chckbxAutoSpin;
 	private JButton okButton;
 	
 	public MenuDialog(JFrame parent, String title, boolean modal){
-	    super(parent, title, modal);
+		super(parent, title, modal);
 	    this.setSize(300, 330);
 	    this.setLocationRelativeTo(null);
 	    this.setResizable(false);
 	    //this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 	    //this.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+	    // Rather catch lose event in addWindowListener.windowClosing(WindowEvent e) method
 	    this.buildContent();
 	}
 
 	public MenuInfo getMenuInfo(){
-	    this.sendData = false;
+		logger.logging("MenuDialog>>getMenuInfo()");
 	    this.setVisible(true);      
 	    return this.info;
 	  }
 
 	public void buildContent() {
+		logger.logging("MenuDialog>>buildContent()");
 		this.getContentPane().setLayout(null);
 		SpinnerNumberModel spinModel;
 		
@@ -139,10 +146,10 @@ public class MenuDialog extends JDialog {
 		this.getRootPane().setDefaultButton(okButton);
 		
 		okButton.addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
+				logger.logging("MenuDialog>>okButton.addActionListener.actionPerformed()");
 				info = new MenuInfo();
 				info.setDeposit(depositSpinner.getValue().toString());
 				info.setWarning(warningSpinner.getValue().toString());
@@ -153,6 +160,7 @@ public class MenuDialog extends JDialog {
 				info.setBet(betSpinner.getValue().toString());
 				info.setSimMode(chckbxSimulation.isSelected());
 				info.setAutoMode(chckbxAutoSpin.isSelected());
+				info.setDialogEnabled(true);
 				
 		        setVisible(false);
 				
@@ -165,8 +173,11 @@ public class MenuDialog extends JDialog {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
+				logger.logging("MenuDialog>>addWindowListener.windowClosing()");
 
-				info = new MenuInfo();		
+				info = new MenuInfo();
+				info.setDialogEnabled(false);
+				
 		        setVisible(false);
 			}
 		});

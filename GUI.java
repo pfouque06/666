@@ -9,7 +9,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
 import javax.swing.JButton;
@@ -161,8 +160,8 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 
 		tableLabel.setBackground(Color.WHITE);
 		tableLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		tableLabel.setLocation(40, 100);
-		tableLabel.setSize(new Dimension(120, 100));
+		tableLabel.setLocation(35, 95);
+		tableLabel.setSize(new Dimension(130, 120));
 		// tableLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED,
 		// null, null, null, null), "table",
 		// TitledBorder.LEADING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
@@ -277,8 +276,8 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 						gainLabel.setForeground(Color.green);
 						break;
 					case "warning":
-						jetonLabel.setForeground(Color.blue);
-						gainLabel.setForeground(Color.blue);
+						jetonLabel.setForeground(Color.orange);
+						gainLabel.setForeground(Color.orange);
 						break;
 					case "alert":
 						jetonLabel.setForeground(Color.red);

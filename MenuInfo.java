@@ -1,11 +1,17 @@
 package _666_;
 
+import javaTools.Logger;
+
 public class MenuInfo {
+
+	// logger
+	Logger logger = Main.logger;
 
 	private String deposit, limite, warning, gain;
 	private String phase, tour, bet;
 	private boolean simMode, autoMode;
-	
+	private boolean dialogEnabled = false;
+
 	public MenuInfo() {
 		super();
 		deposit = limite = warning = gain = "";
@@ -14,7 +20,6 @@ public class MenuInfo {
 		autoMode = Main.autoMode;
 	}
 
-	
 	public MenuInfo(String deposit, String limite, String warning, String gain, String phase, String tour, String bet,
 			boolean simMode, boolean autoMode) {
 		super();
@@ -155,24 +160,40 @@ public class MenuInfo {
 		this.autoMode = autoMode;
 	}
 
+	public void setDialogEnabled(boolean status) {
+		this.dialogEnabled = status;
+	}
+
+	public boolean isDialogEnabled() {
+		return dialogEnabled;
+	}
+
 	@Override
 	public String toString() {
-		return "MenuInfo :" + 
+		logger.logging("MenuInfo>>toString()");
+		return "MenuInfo :" +
 				"\ndeposit=" + deposit + 
 				"\nwarning=" + warning + 
 				"\nlimite=" + limite + 
-				"\ngain=" + gain
-				+ "\nphase=" + phase + 
+				"\ngain=" + gain + 
+				"\nphase=" + phase + 
 				"\ntour=" + tour + 
 				"\nbet=" + bet + 
 				"\nsimMode=" + simMode + 
-				"\nautoMode=" + autoMode;
+				"\nautoMode=" + autoMode + 
+				"\ndialogEnabled=" + dialogEnabled;
 	}
 
 	public String toArgOpts() {
-		String args = "";
-		args += (! simMode ? "" : " -S");
-		args += (! autoMode ? "" : " -a");
+		logger.logging("MenuInfo>>toArgOpts()");
+		
+		if (!dialogEnabled)
+			return "";
+
+		// Build argOpts String
+		String args = "-G";
+		args += (!simMode ? "" : " -S");
+		args += (!autoMode ? "" : " -a");
 		args += (deposit.equals("0") || deposit.isEmpty() ? "" : " -d " + deposit);
 		args += (warning.equals("0") || warning.isEmpty() ? "" : " -w " + warning);
 		args += (limite.equals("0") || limite.isEmpty() ? "" : " -l " + limite);
@@ -180,7 +201,7 @@ public class MenuInfo {
 		args += (phase.equals("0") || phase.isEmpty() ? "" : " -p " + phase);
 		args += (tour.equals("0") || tour.isEmpty() ? "" : " -t " + tour);
 		args += (bet.equals("0") || bet.isEmpty() ? "" : " -b " + bet);
-		
+
 		// trim and reduce internal whitepaces and return result
 		return args.trim().replaceAll(" +", " ");
 	}
