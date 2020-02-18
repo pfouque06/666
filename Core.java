@@ -37,6 +37,7 @@ public class Core implements Observed {
 	// Main.betMax, Main.gainMax, Main.phaseMax, Main.tourMax, Main.jetonLimite
 
 	boolean run() {
+		logger.logging("Core>>run()");
 
 		if (Main.guiMode)
 			return runGUI();
@@ -49,7 +50,10 @@ public class Core implements Observed {
 
 		// GUI init
 		storeLineSize = 6;
-
+		Main.colorMode = false;
+		GUI frame = new GUI(this);
+		//frame.run();
+		
 		// prepare display dashboard & update OBSERVER
 		prepareDisplay();
 		updateObserver();
@@ -100,8 +104,14 @@ public class Core implements Observed {
 			input = "Quit";
 			break;
 		// return false;
-		case "r": // random Spin
-			input = "Rand";
+		case "r": // random Spin if simMode is ON
+			if (Main.simMode) input = "Rand";
+			break;
+		case "o": // option menu requested
+			input = "Menu";
+			break;
+		case "m": // toggle Main.colorMode
+			input = "colorMode";
 			break;
 		case "a": // auto mode
 			input = "Auto";
@@ -131,6 +141,9 @@ public class Core implements Observed {
 		// display Options menu and get new jetons if any
 		int newJeton = cli.displaySetOptionsMenu();
 
+		// update and validates toggles
+		autoPlay = Main.autoMode;
+		
 		// check new jetons value, add them to deposit and check bet value again
 		if (newJeton > 0) {
 			jetons += newJeton;
@@ -366,8 +379,16 @@ public class Core implements Observed {
 		switch (buttonTitle) {
 		case "Quit": // Exit requested
 			return false;
-		case "Auto":
-			// auto mode
+		case "colorMode" : // toggle Main.colorMode
+			// logger.logging("Core>> - toggle Main.colorMode");
+			//Main.colorMode = ! Main.colorMode;
+			Main.colorMode = (Main.colorMode ? false : true);
+			logger.logging("Core>>--> colorMode: " + Main.colorMode);
+			// prepare display dashboard & update OBSERVER
+			prepareDisplay();
+			updateObserver();
+			break;
+		case "Auto": // auto mode
 			autoPlay = !autoPlay;
 			logger.logging("Core>>--> AutoMode: " + autoPlay);
 			break;
@@ -383,6 +404,7 @@ public class Core implements Observed {
 				return false;
 			break;
 		case "Menu":
+			// display Options menu and get new jetons if any
 			processOptionsMenu();
 			break;
 		case "mIse":

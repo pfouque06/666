@@ -185,7 +185,7 @@ class CLI {
 		String prompt_ = "--> [(q)uit|(CR|r)estart|(p)urge store|(o)ptions" + colorMode_ + autoMode_ + "]: ";
 		//System.out.print("--> [(q)uit|(CR|r)estart|(p)urge store|(o)ptions" + colorMode_ + autoMode_ + "]: ");
 		//buffer = scan.nextLine();
-		buffer = ScanTools.scanMatchedBuffer(prompt_,".*");
+		buffer = ScanTools.scanMatchedBuffer(prompt_, ".*");
 		buffer = (buffer.isEmpty() ? "r" : buffer.substring(0, 1));
 		return buffer;
 	}
@@ -216,6 +216,13 @@ class CLI {
 			if (Main.setOptions(args_))
 				System.out.println();
 
+			// validate toggles
+			if (Main.guiMode) {
+				//logger.logging("CLI>> swith to GUI mode prohibited");
+				System.out.println("--> can't switch to GUI !");
+				Main.guiMode = false;
+			}
+			
 			// return added jetons
 			newJeton = Main.deposit - depositHold;
 
@@ -229,11 +236,17 @@ class CLI {
 	String displayCycleMenu(boolean autoMode) {
 		String buffer = "";
 
-		//System.out.println();
-		//System.out.print("--> Roulette [num|(CR|r)andom|(a)uto|(q)uit]: ");
-		//buffer = scan.nextLine();
+		// System.out.println();
+		// System.out.print("--> Roulette [num|(CR|r)andom|(a)uto|(q)uit]: ");
+		// buffer = scan.nextLine();
+		
+		String simMode_ = Main.simMode ? "|(CR|r)andom" : "";
+		String colorMode_ = "|(m)ode: " + (Main.colorMode ? c_green() + "color" : c_red() + "mono") + c_reset();
+		//String autoMode_ = "|(a)uto: " + (Main.autoMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
 		String autoMode_ = "|(a)uto: " + (autoMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
-		buffer = ScanTools.scanMatchedBuffer("--> Roulette [(q)uit|num|(CR|r)andom|"+autoMode_+"]: ",".*");
+		String prompt_ = "--> [(q)uit|roulette num" + simMode_ + "|(o)ptions" + colorMode_ + autoMode_ + "]: ";
+		// "OFF") + c_reset();
+		buffer = ScanTools.scanMatchedBuffer(prompt_, ".*");
 		if (buffer.matches("\\d+") && Integer.valueOf(buffer) < 36)
 			return buffer;
 		return (buffer.isEmpty() ? "r" : buffer.substring(0, 1)); // shorten to first letter
