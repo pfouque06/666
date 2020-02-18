@@ -13,8 +13,10 @@ public class Main {
 			"TYPE:KEY:KEYWORD:VALUENAME:VALUETYPE:DETAIL:ACTION:", "F:h:help:usage:-:prints this help message:true:",
 			"F:G:gui:guiMode:boolean:set GUI mode (default mode):true:",
 			"F:T:text:guiMode:boolean:set CLI mode (default is GUI mode):false:",
-			"F:S:sim:simMode:boolean:set simulation mode ON (default is oFF):true:",
-			"F:a:auto:autoMode:boolean:set auto mode with random roulette (default is OFF):true:",
+			"F:S:sim:simMode:boolean:set simulation mode ON (default is OFF):true:",
+			"F:R:real:simMode:boolean:set simulation mode OFF (default):false:",
+			"F:a:auto:autoMode:boolean:set auto mode with random roulette (default is step mode):true:",
+			"F:s:step:autoMode:boolean:set step by step mode with roulette (default):false:",
 			"F:c:color:colorMode:boolean:set color mode (default is color):true:",
 			"F:m:mono:colorMode:boolean:set monocolor mode (default is color):false:",
 			"F:L:log:logging:boolean:set logging mode (to console/terminal):true:",
@@ -164,17 +166,20 @@ public class Main {
 		}
 		logger.logging("options:" + optsToString());
 
-		if (guiMode) {
-			// force colorMode to false, instantiate GUI JFrame and run it
-			colorMode = false;
-			GUI frame = new GUI();
-			frame.run();
-		} else {
-			// Core instance and run
-			Core core = new Core();
-			core.run();
-		}
+//		if (guiMode) {
+//			// force colorMode to false, instantiate GUI JFrame and run it
+//			colorMode = false;
+//			GUI frame = new GUI();
+//			frame.run();
+//		} else {
+//			// Core instance and run
+//			Core core = new Core();
+//			core.run();
+//		}
 
+		// Core instance and run
+		Core core = new Core();
+		core.run();
 	}
 
 }

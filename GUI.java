@@ -51,9 +51,9 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 	// Core instance
 	private Core core;
 	
-	public GUI() {
+	public GUI(Core parent) {
 		// TODO Auto-generated constructor stub
-		logger.logging("GUI>>GraphicUserInterface()");
+		logger.logging("GUI>>GUI()");
 
 		// On initialise la JFrame
 		this.setTitle("_666_");
@@ -129,10 +129,11 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 		menuButton.setPreferredSize(new Dimension(70, 30));
 		menuButton.addActionListener(this);
 		menuButton.setVisible(true);
-		logger.logging(menuButton.getFont().getName() + " " + menuButton.getFont().getSize());
+		logger.logging("GUI>> menuButton: original font = " + menuButton.getFont().getName() + " " + menuButton.getFont().getSize());
 		Font menuButtonFont = menuButton.getFont();
 		menuButtonFont = new Font(menuButtonFont.getName(), menuButtonFont.getStyle(), menuButtonFont.getSize() - 1);
 		menuButton.setFont(menuButtonFont);
+		logger.logging("GUI>> menuButton: adapted font = " + menuButton.getFont().getName() + " " + menuButton.getFont().getSize());
 
 		miseButton.setLocation(300, 150);
 		miseButton.setSize(70, 30);
@@ -240,7 +241,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 		});
 
 		// Core instance
-		core = new Core();
+		core = parent;
 		core.addObserver(new Observer() {
 			@Override
 			public void update(LinkedHashSet<String[]> pLHS) {
@@ -342,10 +343,10 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 			this.getRootPane().setDefaultButton(spinButton);
 	}
 	
-	public boolean run() {
-		logger.logging("GUI>>run()");
-		return core.run();
-	}
+//	public boolean run() {
+//		logger.logging("GUI>>run()");
+//		return core.run();
+//	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
