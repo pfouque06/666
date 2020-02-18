@@ -185,51 +185,24 @@ class CLI {
 		String prompt_ = "--> [(q)uit|(CR|r)estart|(p)urge store|(o)ptions" + colorMode_ + autoMode_ + "]: ";
 		//System.out.print("--> [(q)uit|(CR|r)estart|(p)urge store|(o)ptions" + colorMode_ + autoMode_ + "]: ");
 		//buffer = scan.nextLine();
+		//System.out.println();
 		buffer = ScanTools.scanMatchedBuffer(prompt_, ".*");
 		buffer = (buffer.isEmpty() ? "r" : buffer.substring(0, 1));
 		return buffer;
 	}
 
 	// display set Option Menu
-	int displaySetOptionsMenu() {
+	String displaySetOptionsMenu() {
 		String buffer = "";
-		int newJeton = 0;
-
-		do {
-			// display actual options :
-			System.out.println("options:" + Main.optsToString());
-
-			// get new options args_
-			//System.out.print("--> new options (CR: exit): ");
-			//buffer = scan.nextLine();
-			buffer = ScanTools.scanMatchedBuffer("--> new options (CR: exit): ",".*");
-			if (buffer.isEmpty())
-				break;
-
-			// construct new args
-			String[] args_ = buffer.trim().replaceAll(" +", " ").split(" ");
-
-			// store initial Main.deposit value and reset Main.deposit
-			int depositHold = Main.deposit;
-
-			// parse options args_ and set options
-			if (Main.setOptions(args_))
-				System.out.println();
-
-			// validate toggles
-			if (Main.guiMode) {
-				//logger.logging("CLI>> swith to GUI mode prohibited");
-				System.out.println("--> can't switch to GUI !");
-				Main.guiMode = false;
-			}
-			
-			// return added jetons
-			newJeton = Main.deposit - depositHold;
-
-		} while (!buffer.isEmpty());
-
-		//scan.close();
-		return newJeton;
+		// display actual options :
+		//System.out.println("options:" + Main.optsToString());
+		String prompt_ = "--> options:" + Main.optsToString() + " | new options (CR: exit): ";
+		// get new options args_
+		//System.out.print("--> new options (CR: exit): ");
+		//buffer = scan.nextLine();
+		buffer = ScanTools.scanMatchedBuffer(prompt_, ".*");
+		return buffer;
+		
 	}
 
 	// display GameOver Menu
@@ -246,6 +219,7 @@ class CLI {
 		String autoMode_ = "|(a)uto: " + (autoMode ? c_green() + "ON" : c_red() + "OFF") + c_reset();
 		String prompt_ = "--> [(q)uit|roulette num" + simMode_ + "|(o)ptions" + colorMode_ + autoMode_ + "]: ";
 		// "OFF") + c_reset();
+		//System.out.println();
 		buffer = ScanTools.scanMatchedBuffer(prompt_, ".*");
 		if (buffer.matches("\\d+") && Integer.valueOf(buffer) < 36)
 			return buffer;
