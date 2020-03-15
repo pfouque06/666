@@ -31,12 +31,13 @@ public class Core implements Observed {
 	int win = 0, gain = 0, gainTotal = 0, gainFull = 0, storeLineSize = 0;
 	int miseOrigin = 0, coefOrigin = 0;
 	boolean newBets = false, newCoef = false;
-	boolean gameOver = false, autoPlay = Main.autoMode;
+	boolean gameOver = false, autoPlay = Main.autoMode, viewModel = false;
 	String alert = "", input = "", betsOrigin = "";
 	// Main global variables :
 	// Main.betMax, Main.gainMax, Main.phaseMax, Main.tourMax, Main.jetonLimite
 
 	boolean run() {
+		logger.logging("Core>>run()");
 
 		if (Main.guiMode)
 			return runGUI();
@@ -49,9 +50,11 @@ public class Core implements Observed {
 
 		// GUI init
 		storeLineSize = 6;
-
-		// prepare display dashboard & update OBSERVER
-		prepareDisplay();
+		Main.colorMode = false;
+		GUI frame = new GUI(this);
+		//frame.run();
+		
+		// update UI
 		updateObserver();
 		return true;
 	}
@@ -62,8 +65,7 @@ public class Core implements Observed {
 		// CLI init
 		storeLineSize = 20;
 
-		// prepare display and update CLI dahsboard
-		prepareDisplay();
+		// update UI
 		updateObserver();
 
 		// infinite loop
@@ -88,16 +90,246 @@ public class Core implements Observed {
 		cli.updateBets(table.getBets(), coef, nbrMise, newBets, newCoef);
 	}
 
+	boolean processCycleMenuCLI() {
+		logger.logging("Core>>processCycleMenuCLI()");
+
+		// process Cycle Menu
+		String input = cli.displayCycleMenu(autoPlay);
+
+		// commute input to normated action Value
+		switch (input) {
+		case "q": // exit ....
+			input = "Quit";
+			break;
+		// return false;
+		case "r": // random Spin if simMode is ON
+			if (Main.simMode) input = "Rand";
+			break;
+		case "o": // option menu requested
+			input = "Menu";
+			break;
+		case "m": // toggle Main.colorMode
+			input = "colorMode";
+			break;
+		case "a": // auto mode
+			input = "Auto";
+			break;
+		default: // Spin value
+			break;
+		}
+
+		// call common processAction switch
+		return processAction(input);
+	}
+
+	void processOptionsMenu() {
+		logger.logging("Core>>processOptionsMenu()");
+
+		if (Main.guiMode)
+			processOptionsMenuGUI();
+		else
+			processOptionsMenuCLI();
+	}
+	
+	void processOptionsMenuCLI() {
+		logger.logging("Core>>processOptionsMenuCLI()");
+		String buffer = "";
+		int newJeton = 0;
+
+		do {		
+			// update UI
+			updateObserver();
+
+			// display set Option Menu
+			buffer = cli.displaySetOptionsMenu();
+			if (buffer.isEmpty())
+				break;
+
+			// construct new args
+			String[] args_ = buffer.trim().replaceAll(" +", " ").split(" ");
+
+			// store initial Main.deposit value and reset Main.deposit
+			int depositHold = Main.deposit;
+
+			// parse options args_ and set options
+			if (Main.setOptions(args_))
+				System.out.println();
+
+			// validate toggles
+			if (Main.guiMode) {
+				//logger.logging("CLI>> swith to GUI mode prohibited");
+				System.out.println(cli.alert("--> can't switch to GUI !"));
+				Main.guiMode = false;
+			}
+			
+			// update and validates toggles
+			autoPlay = Main.autoMode;
+			
+			// return added jetons
+			newJeton = Main.deposit - depositHold;
+
+			// check new jetons value, add them to deposit and check bet value again
+			if (newJeton > 0) {
+				jetons += newJeton;
+				jetonsTotal += newJeton;
+				jetonsMax += newJeton;
+				deposit += newJeton;
+				
+				switch (alert) {
+				case "bet": // alert = bet
+					// Check Mise versus Jetons
+					if (jetons >= nbrMise) {
+						System.out.println("--> " + cli.raise("wallet is up and alive again !!"));
+						input = "cycle back on";
+						gameOver = false; alert = "";
+					}
+					break;
+				case "limite": // alert = jeton
+					// Check Jetons limites
+					// if ((deposit - jetons) < Main.jetonLimite) {
+					if (newJeton > Main.jetonLimite) {
+						System.out.println("--> " + cli.raise("wallet is up and alive again !!"));
+						input = "cycle back on";
+						gameOver = false; alert = "";
+					}
+					break;
+				default:
+					// prepare jetons and display Global Status
+					cli.updateJetonString(jetons, jetonsTotal, jetonsMax);
+					cli.displayDashboardStatus();
+					break;
+				}
+				
+			} else
+				System.out.println();
+
+		} while (!buffer.isEmpty());
+		
+		// update UI
+		updateObserver();
+	}
+
+	void processOptionsMenuGUI() {
+		logger.logging("Core>>processOptionsMenuGUI()");
+		//logger.logging("Core>> initial options:" + Main.optsToString());
+		
+		// call MenuDialog
+		MenuDialog md = new MenuDialog(null, "Menu", true);
+		MenuInfo mi = md.getMenuInfo();
+		if (! mi.isDialogEnabled()) {
+			logger.logging("Core>> canceled operation");
+			logger.logging("Core>> final options:" + Main.optsToString());
+			return;
+		}
+		;
+		// get new args
+		String args = mi.toArgOpts();
+		if (args.isEmpty()) {
+			logger.logging("Core>> args: empty ... --> no change, cancelling operation");
+			logger.logging("Core>> final options:" + Main.optsToString());
+			return;
+		}
+		//JOptionPane.showMessageDialog(null, args, "Menu", JOptionPane.INFORMATION_MESSAGE);
+		logger.logging("Core>> args: " + args);
+
+		// construct new args
+		String[] args_ = args.split(" ");
+		//logger.logging("Core>> args[] " + Arrays.toString(args_));
+
+		// store initial values and reset simulation and auto modes
+		int depositHold = Main.deposit;
+		boolean simHold = Main.simMode;
+		boolean autoHold = Main.autoMode;
+		Main.simMode = Main.autoMode = false;
+
+		// parse options args_ and set options
+		if ( ! Main.setOptions(args_)) {
+			logger.logging("Core>> getOpts Parsing error");
+			logger.logging("Core>> final options:" + Main.optsToString());
+			return;
+		}
+		logger.logging("Core>> final options:" + Main.optsToString());
+		
+		// check new jetons value if any, add them to deposit and check bet value again
+		int newJeton = Main.deposit - depositHold;
+		if (newJeton > 0) {
+			jetons += newJeton;
+			jetonsTotal += newJeton;
+			jetonsMax += newJeton;
+			deposit += newJeton;
+			
+			switch (alert) {
+			case "bet": // alert = bet
+				// Check Mise versus Jetons
+				if (jetons >= nbrMise) {
+					String message = "wallet is up and alive again !!\n We are back in business, dude !";
+					JOptionPane.showMessageDialog(null, message, "Back in business", JOptionPane.INFORMATION_MESSAGE);
+					input = "cycle back on";
+					gameOver = false; alert = "";
+				}
+				break;
+			case "limite": // alert = jeton
+				// Check Jetons limites
+				// if ((deposit - jetons) < Main.jetonLimite) {
+				if (newJeton > Main.jetonLimite) {
+					String message = "wallet is up and alive again !! \\n We are back in business, dude !";
+					JOptionPane.showMessageDialog(null, message, "Back in business", JOptionPane.INFORMATION_MESSAGE);
+					input = "cycle back on";
+					gameOver = false; alert = "";
+				}
+				break;
+			}
+		}
+		
+		// simulation view and auto mode update
+		viewModel= false;
+		if (Main.simMode != simHold) {
+			viewModel= true;
+			logger.logging("Core>> --> simMode updated : " + Main.simMode);
+		}
+		autoPlay = Main.autoMode;
+		if (autoPlay != autoHold)
+			logger.logging("Core>>--> AutoMode updated : " + Main.autoMode);
+
+		// update UI
+		updateObserver();
+	}
+	
+	@Override
+	public void addObserver(Observer obs) {
+		// TODO Auto-generated method stub
+		observers.add(obs);
+	}
+	
+	@Override
+	public void delObserver() {
+		// TODO Auto-generated method stub
+		logger.logging("Core>>delObserver()");
+		
+		observers = new ArrayList<Observer>();
+	}
+
+	@Override
+	public void updateObserver() {
+		// TODO Auto-generated method stub
+		logger.logging("Core>>updateObserver()");
+
+		// prepare display dashboard
+		prepareDisplay();
+		
+		// update OBSERVER or CLI dahsboard
+		if (Main.guiMode)
+			updateGUI();
+		else
+			updateCLI();
+	}
+
 	void updateGUI() {
 		logger.logging("Core>>updateGUI()");
 
-		// Prepare table and convert to html
-		String betTable = table.betToString().replaceAll("\n", "<br>").replaceAll("\t", "");
-		betTable = betTable.replaceAll("\\[", "<font color='lime'><b>").replaceAll("\\]", "</b></font>");
-		// betTable = betTable.replaceAll("--", "<font color='red'>00</font>");
-		betTable = betTable.replaceAll("--", "<b>...</b>");
-		betTable = "<html>" + betTable + "<html>";
-
+		// get betTable in HTML format for Jtable element
+		String betTable = table.betToHTML(true);
+		
 		// Prepare Observer update List
 		observerUpdateList.add(new String[] { "jeton", cli._jetons_ });
 		observerUpdateList.add(new String[] { "gain", cli._gains_ });
@@ -115,6 +347,8 @@ public class Core implements Observed {
 			observerUpdateList.add(new String[] { "mise", cli.mise });
 		if (win > 0)
 			observerUpdateList.add(new String[] { "win", "" });
+		if (Main.warning != 0 && ( Main.deposit - jetons ) >= Main.warning )
+			observerUpdateList.add(new String[] { "win", "" });
 		if (!alert.isEmpty())
 			observerUpdateList.add(new String[] { "alert", "" });
 		if (newBets)
@@ -123,6 +357,8 @@ public class Core implements Observed {
 			observerUpdateList.add(new String[] { "newCoef", "" });
 		if (autoPlay)
 			observerUpdateList.add(new String[] { "auto", "" });
+		if (viewModel)
+			observerUpdateList.add(new String[] { "viewModel", "" });
 
 		// update Observers
 		// for(String[] item : observerUpdateList) logger.logging("["+item[0] + ":" +
@@ -158,112 +394,15 @@ public class Core implements Observed {
 		if (win > 0) {
 			// CLI : display win information
 			String message = new String();
-			message += cli.raise("--> you got a Win !!! " + String.format("win : %d (36x%d)", win, (int) win / 36));
-			message += cli.raise(String.format("\n--> gain/gain total : %3d/%3d", gain, gainTotal));
+			message += cli.raise("--> you got a Win !!! ");
+			message += cli.raise(String.format("win : %d (36x%d)", win, (int) win / 36));
+			message += cli.raise(String.format(" --> gain/gain total : %3d/%3d", gain, gainTotal));
 			System.out.println(message);
 
 			// reset tours and win value
 			tours = win = 0;
 		} else
 			System.out.println();
-	}
-
-	void processExit() {
-		logger.logging("Core>>processExit()");
-		logger.close();
-		// logger.logging("\nExiting...");
-		cli.close();
-	}
-
-	boolean processCycleMenuCLI() {
-		logger.logging("Core>>processCycleMenuCLI()");
-
-		// process Cycle Menu
-		String input = cli.displayCycleMenu(autoPlay);
-
-		// commute input to normated action Value
-		switch (input) {
-		case "q": // exit ....
-			input = "Quit";
-			break;
-		// return false;
-		case "r": // random Spin
-			input = "Rand";
-			break;
-		case "a": // auto mode
-			input = "Auto";
-			break;
-		default: // Spin value
-			break;
-		}
-
-		// call common processAction switch
-		if (!processAction(input))
-			return false;
-		return true;
-	}
-
-	void processOptionsMenuCLI() {
-		logger.logging("Core>>processOptionsMenuCLI()");
-
-		// display Options menu and get new jetons if any
-		int newJeton = cli.displaySetOptionsMenu();
-
-		// check new jetons value, add them to deposit and check bet value again
-		if (newJeton > 0) {
-			jetons += newJeton;
-			jetonsTotal += newJeton;
-			jetonsMax += newJeton;
-			deposit += newJeton;
-
-			switch (alert) {
-			case "bet": // alert = bet
-				// Check Mise versus Jetons
-				if (jetons >= nbrMise) {
-					System.out.println("--> " + cli.raise("wallet is up and alive again !!"));
-					input = "cycle back on";
-				}
-				break;
-			case "limite": // alert = jeton
-				// Check Jetons limites
-				// if ((deposit - jetons) < Main.jetonLimite) {
-				if (newJeton > Main.jetonLimite) {
-					System.out.println("--> " + cli.raise("wallet is up and alive again !!"));
-					input = "cycle back on";
-				}
-				break;
-			}
-
-			// prepare jetons and display Global Status
-			cli.updateJetonString(jetons, jetonsTotal, jetonsMax);
-			cli.displayDashboardStatus();
-		} else
-			System.out.println();
-	}
-
-	@Override
-	public void addObserver(Observer obs) {
-		// TODO Auto-generated method stub
-		observers.add(obs);
-	}
-
-	@Override
-	public void updateObserver() {
-		// TODO Auto-generated method stub
-		logger.logging("Core>>updateObserver()");
-
-		if (Main.guiMode)
-			updateGUI();
-		else
-			updateCLI();
-	}
-
-	@Override
-	public void delObserver() {
-		// TODO Auto-generated method stub
-		logger.logging("Core>>delObserver()");
-
-		observers = new ArrayList<Observer>();
 	}
 
 	public boolean processAction(String buttonTitle) {
@@ -273,31 +412,53 @@ public class Core implements Observed {
 		switch (buttonTitle) {
 		case "Quit": // Exit requested
 			return false;
-		case "Auto":
-			// auto mode
+			
+		case "colorMode" : // toggle Main.colorMode
+			Main.colorMode = ! Main.colorMode;
+			logger.logging("Core>>--> colorMode: " + Main.colorMode);
+			
+			// update UI
+			updateObserver();
+			break;
+			
+		case "Auto": // toggle auto mode
 			autoPlay = !autoPlay;
 			logger.logging("Core>>--> AutoMode: " + autoPlay);
+			
+			// update UI
+			updateObserver();
 			break;
-		case "Rand":
+			
+		case "Menu": // display Options menu and get new jetons if any
+			processOptionsMenu();
+			break;
+			
+		case "mIse": // future bet input
+			break;
+
+		case "Rand": // Random Spin
 			do {
 				if (!operateSpin(randomSpin()))
 					return false;
 				// repeat if autoMode is TRUE and game is NOT over
 			} while (autoPlay && !gameOver && (tours != 0));
 			break;
-		case "Spin":
+
+		case "Spin": // expect spin Dialog provided in GUI process
 			if (!operateSpin(expectSpin()))
 				return false;
 			break;
-		case "mIse":
-		case "Menu":
-			break;
-		default: // roulette value (integer) provided in CLI process
-			if (buttonTitle.matches("\\d+") && Integer.valueOf(buttonTitle) < 36)
+
+		default: // validate roulette value (integer) provided in CLI process
+			if (buttonTitle.matches("\\d+") && Integer.valueOf(buttonTitle) < 36) {
 				if (!operateSpin(buttonTitle))
 					return false;
+			} else
+				// update UI
+				updateObserver();
 			break;
 		}
+
 		return true;
 	}
 
@@ -344,23 +505,17 @@ public class Core implements Observed {
 		jetonsMax = (jetons < jetonsMax ? jetons : jetonsMax);
 	}
 
-	boolean processWin() {
-		logger.logging("Core>>processWin()");
+	void processToursCycleUpdate() {
+		logger.logging("Core>>processCycle()");
 
-		// process win
-		win = 0;
-		if (table.betsContains(roulette)) {
-			win = 36 * coef;
-			jetons += win;
-			gain = jetons - deposit;
-			gainTotal += gain;
-			gainFull += gain;
-
-			// update deposit value
-			deposit = (jetons > deposit) ? jetons : deposit;
-			return true;
+		// increments phase, counters and set display
+		if (tours == 0) {
+			phase++;
+			phaseFull++;
 		}
-		return false;
+		tours++;
+		toursTotal++;
+		toursFull++;
 	}
 
 	void processBetsSuggestion() {
@@ -386,6 +541,25 @@ public class Core implements Observed {
 		// store next Origin values
 		betsOrigin = table.getBets(); // betsOrigin = cli.bets;
 		coefOrigin = coef;
+	}
+
+	boolean processWin() {
+		logger.logging("Core>>processWin()");
+
+		// process win
+		win = 0;
+		if (table.betsContains(roulette)) {
+			win = 36 * coef;
+			jetons += win;
+			gain = jetons - deposit;
+			gainTotal += gain;
+			gainFull += gain;
+
+			// update deposit value
+			deposit = (jetons > deposit) ? jetons : deposit;
+			return true;
+		}
+		return false;
 	}
 
 	boolean checkGameOverConditions() {
@@ -419,19 +593,6 @@ public class Core implements Observed {
 		return result;
 	}
 
-	void processToursCycleUpdate() {
-		logger.logging("Core>>processCycle()");
-
-		// increments phase, counters and set display
-		if (tours == 0) {
-			phase++;
-			phaseFull++;
-		}
-		tours++;
-		toursTotal++;
-		toursFull++;
-	}
-
 	int gameOverDialog() {
 		logger.logging("Core>>gameOverDialog()");
 
@@ -460,47 +621,6 @@ public class Core implements Observed {
 		if (index >= 0)
 			logger.logging("--> action[" + index + "]: " + optionButtons[index]);
 		return index;
-	}
-
-	boolean processPurge() {
-		logger.logging("Core>>processPurge()");
-
-		// process Purge
-		logger.logging("--> purge process");
-		String message = "";
-		if (!alert.isEmpty()) {
-			message = "Alert is raised... Can't purge store, sorry !";
-		} else if (!table.reduceStore()) {
-			message = "Store is empty... Can't purge store, sorry !";
-		}
-		if (!message.isEmpty()) {
-			if (Main.guiMode) // GUI mode
-				JOptionPane.showMessageDialog(null, message, "Alert", JOptionPane.WARNING_MESSAGE);
-			else // CLI mode
-				logger.logging(cli.alert(message));
-			return false;
-		}
-		// autoPlay = Main.autoMode;
-		gameOver = false;
-		alert = "";
-		return true;
-	}
-
-	void processRestart() {
-		logger.logging("Core>>processRestart()");
-
-		// process Restart
-		table.resetTable();
-		roulette = phase = tours = toursTotal = gain = gainTotal = coef = nbrMise = win = 0;
-		if (!alert.isEmpty()) {
-			gainFull -= deposit - jetons;
-		}
-		deposit = Main.deposit;
-		jetons = Main.deposit;
-		jetonsTotal = Main.deposit;
-		autoPlay = Main.autoMode;
-		gameOver = false;
-		alert = "";
 	}
 
 	boolean processGameOverMenu() {
@@ -565,18 +685,21 @@ public class Core implements Observed {
 				break;
 			case "o": // option menu requested
 				// display Options menu and get new jetons if any
-				processOptionsMenuCLI();
-				// Jump back to Menu
-				input = "";
+				processOptionsMenu();
+				// Jump back to Menu if game is still over
+				if (gameOver)
+					input = "";
 				break;
 			case "m": // toggle Main.colorMode
 				// logger.logging("Core>> - toggle Main.colorMode");
+				//Main.colorMode = ! Main.colorMode;
 				Main.colorMode = (Main.colorMode ? false : true);
 				// Jump back to Menu
 				input = "";
 				break;
 			case "a": // toggle Main.auto mode
 				// logger.logging("Core>> - toggle Main.autoMode");
+				//Main.autoMode = ! Main.autoMode;
 				Main.autoMode = (Main.autoMode ? false : true);
 				// Jump back to Menu
 				input = "";
@@ -616,8 +739,7 @@ public class Core implements Observed {
 			// GameOver check
 			gameOver = checkGameOverConditions();
 
-			// prepare display dashboard & update OBSERVER
-			prepareDisplay();
+			// update UI
 			updateObserver(); // and finally update tours
 		}
 
@@ -631,11 +753,58 @@ public class Core implements Observed {
 			// get Bets suggestions
 			processBetsSuggestion();
 
-			// prepare display dashboard & update OBSERVER
-			prepareDisplay();
+			// update UI
 			updateObserver();
 		}
 		return true;
+	}
+
+	boolean processPurge() {
+		logger.logging("Core>>processPurge()");
+
+		// process Purge
+		logger.logging("--> purge process");
+		String message = "";
+		if (!alert.isEmpty()) {
+			message = "Alert is raised... Can't purge store, sorry !";
+		} else if (!table.reduceStore()) {
+			message = "Store is empty... Can't purge store, sorry !";
+		}
+		if (!message.isEmpty()) {
+			if (Main.guiMode) // GUI mode
+				JOptionPane.showMessageDialog(null, message, "Alert", JOptionPane.WARNING_MESSAGE);
+			else // CLI mode
+				logger.logging(cli.alert(message));
+			return false;
+		}
+		// autoPlay = Main.autoMode;
+		gameOver = false;
+		alert = "";
+		return true;
+	}
+
+	void processRestart() {
+		logger.logging("Core>>processRestart()");
+
+		// process Restart
+		table.resetTable();
+		roulette = phase = tours = toursTotal = gain = gainTotal = coef = nbrMise = win = 0;
+		if (!alert.isEmpty()) {
+			gainFull -= deposit - jetons;
+		}
+		deposit = Main.deposit;
+		jetons = Main.deposit;
+		jetonsTotal = Main.deposit;
+		autoPlay = Main.autoMode;
+		gameOver = false;
+		alert = "";
+	}
+	
+	void processExit() {
+		logger.logging("Core>>processExit()");
+		logger.close();
+		// logger.logging("\nExiting...");
+		cli.close();
 	}
 
 }

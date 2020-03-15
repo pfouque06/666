@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import _666_.TableNode;
 import javaTools.ColorText;
 
 public class Table {
@@ -354,7 +355,7 @@ public class Table {
 				if (pDisplayOccurence)
 					str += occ_;
 
-				str += (j == 5 ? "\n" : "\t");
+				str += (j == 5 ? (i==5 ? "" : "\n") : "\t");
 				j++;
 			}
 			i++;
@@ -376,5 +377,44 @@ public class Table {
 
 	public String betToString() {
 		return getTable(true, false); // bet ON / displayOccurence OFF
+	}
+	
+	public String betToHTML(boolean pToBet) {
+		String str = "", value = "", onValue = "", offValue = "", betValue = "";
+		int i = 0, occ;
+		while (i < 6) {
+			int j = 0;
+			str += "<tr>";
+			while (j < 6) {
+				// value = format.format(table_value[i][j]);
+				value = String.format("%02d", tableValue[i][j]);
+
+				onValue = value;
+
+				offValue = "<font color='red'>" + value + "</font>";
+				//offValue = "<b>" + offValue + "</b>";
+
+				//betValue = "<font color='LightGreen'>" + value + "</font>";
+				betValue = "<font color='lime'>" + value + "</font>";
+				//betValue = "<b>" + betValue + "</b>";
+
+				// define value display based on its occurence
+				occ = tableOccurence[i][j];
+				if (occ > 0)
+					value = (pToBet ? offValue : onValue);
+				else if (occ < 0)
+					value = betValue;
+				else
+					value = (pToBet ? onValue : offValue);
+
+				// surround bye row balises
+				str += "<td>" + value + "</td>";
+				j++;
+			}
+			str += "</tr>";
+			i++;
+		}
+		str = "<html><table border='0' cellpadding='1'>" + str + "</table></html>";
+		return str;
 	}
 }

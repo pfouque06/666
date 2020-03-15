@@ -9,7 +9,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
 import javax.swing.JButton;
@@ -51,10 +50,10 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 
 	// Core instance
 	private Core core;
-
-	public GUI() {
+	
+	public GUI(Core parent) {
 		// TODO Auto-generated constructor stub
-		logger.logging("GUI>>GraphicUserInterface()");
+		logger.logging("GUI>>GUI()");
 
 		// On initialise la JFrame
 		this.setTitle("_666_");
@@ -123,17 +122,18 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 		autoButton.setSize(70, 30);
 		autoButton.setPreferredSize(new Dimension(70, 30));
 		autoButton.addActionListener(this);
-		autoButton.setVisible(Main.simMode);
+		//autoButton.setVisible(Main.simMode);
 
 		menuButton.setLocation(320, 190);
 		menuButton.setSize(70, 30);
 		menuButton.setPreferredSize(new Dimension(70, 30));
 		menuButton.addActionListener(this);
 		menuButton.setVisible(true);
-		logger.logging(menuButton.getFont().getName() + " " + menuButton.getFont().getSize());
+		logger.logging("GUI>> menuButton: original font = " + menuButton.getFont().getName() + " " + menuButton.getFont().getSize());
 		Font menuButtonFont = menuButton.getFont();
 		menuButtonFont = new Font(menuButtonFont.getName(), menuButtonFont.getStyle(), menuButtonFont.getSize() - 1);
 		menuButton.setFont(menuButtonFont);
+		logger.logging("GUI>> menuButton: adapted font = " + menuButton.getFont().getName() + " " + menuButton.getFont().getSize());
 
 		miseButton.setLocation(300, 150);
 		miseButton.setSize(70, 30);
@@ -161,8 +161,8 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 
 		tableLabel.setBackground(Color.WHITE);
 		tableLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		tableLabel.setLocation(40, 100);
-		tableLabel.setSize(new Dimension(120, 100));
+		tableLabel.setLocation(35, 95);
+		tableLabel.setSize(new Dimension(130, 120));
 		// tableLabel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.LOWERED,
 		// null, null, null, null), "table",
 		// TitledBorder.LEADING, TitledBorder.ABOVE_TOP, null, new Color(51, 51, 51)));
@@ -197,7 +197,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 		randButton.setSize(70, 30);
 		randButton.setPreferredSize(subActionlDim);
 		randButton.addActionListener(this);
-		randButton.setVisible(Main.simMode);
+		//randButton.setVisible(Main.simMode);
 
 		spinButton.setLocation(320, 230);
 		spinButton.setSize(70, 30);
@@ -214,11 +214,8 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 		container.setLayout(null); // null = Absolute Layout
 		// container.setBorder(new EmptyBorder(2, 2, 2, 2));
 
+		setSimulationViewModel();
 		this.setContentPane(container);
-		if (randButton.isVisible())
-			this.getRootPane().setDefaultButton(randButton);
-		else
-			this.getRootPane().setDefaultButton(spinButton);
 		this.setVisible(true);
 
 		// request focus in order to listen to keyevent
@@ -244,7 +241,7 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 		});
 
 		// Core instance
-		core = new Core();
+		core = parent;
 		core.addObserver(new Observer() {
 			@Override
 			public void update(LinkedHashSet<String[]> pLHS) {
@@ -280,8 +277,8 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 						gainLabel.setForeground(Color.green);
 						break;
 					case "warning":
-						jetonLabel.setForeground(Color.blue);
-						gainLabel.setForeground(Color.blue);
+						jetonLabel.setForeground(Color.orange);
+						gainLabel.setForeground(Color.orange);
 						break;
 					case "alert":
 						jetonLabel.setForeground(Color.red);
@@ -317,6 +314,9 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 					case "auto":
 						autoButton.setSelected(true);
 						break;
+					case "viewModel":
+						setSimulationViewModel();
+						break;
 					default:
 						break;
 					}
@@ -330,10 +330,23 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 		});
 	}
 
-	public boolean run() {
-		logger.logging("GUI>>run()");
-		return core.run();
+	public void setSimulationViewModel() {
+		
+		// define Simulation viw model
+		autoButton.setVisible(Main.simMode);
+		randButton.setVisible(Main.simMode);
+		
+		// update default Button acording to view model
+		if (randButton.isVisible())
+			this.getRootPane().setDefaultButton(randButton);
+		else
+			this.getRootPane().setDefaultButton(spinButton);
 	}
+	
+//	public boolean run() {
+//		logger.logging("GUI>>run()");
+//		return core.run();
+//	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
