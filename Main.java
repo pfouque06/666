@@ -155,7 +155,6 @@ public class Main {
 	static String c_reset() { return (colorMode ? ColorText.RESET : "]]"); }
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 		// initiate getOpts options and parse args :
 		options = new GetOpts(optionArray, args);

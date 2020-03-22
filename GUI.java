@@ -52,7 +52,6 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 	private Core core;
 	
 	public GUI(Core parent) {
-		// TODO Auto-generated constructor stub
 		logger.logging("GUI>>GUI()");
 
 		// On initialise la JFrame
@@ -245,7 +244,6 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 		core.addObserver(new Observer() {
 			@Override
 			public void update(LinkedHashSet<String[]> pLHS) {
-				// TODO Auto-generated method stub
 				logger.logging("GUI>>update(pLHS)");
 
 				// default display
@@ -350,7 +348,6 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
 		String buttonTitle = arg0.getActionCommand();
 		logger.logging("GUI>>actionPerformed(" + buttonTitle + ")");
 		// JButton buttonHit= (JButton) arg0.getSource();

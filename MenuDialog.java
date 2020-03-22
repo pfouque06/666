@@ -148,7 +148,6 @@ public class MenuDialog extends JDialog {
 		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
 				logger.logging("MenuDialog>>okButton.addActionListener.actionPerformed()");
 				info = new MenuInfo();
 				info.setDeposit(depositSpinner.getValue().toString());

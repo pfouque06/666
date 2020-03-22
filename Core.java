@@ -297,13 +297,11 @@ public class Core implements Observed {
 	
 	@Override
 	public void addObserver(Observer obs) {
-		// TODO Auto-generated method stub
 		observers.add(obs);
 	}
 	
 	@Override
 	public void delObserver() {
-		// TODO Auto-generated method stub
 		logger.logging("Core>>delObserver()");
 		
 		observers = new ArrayList<Observer>();
@@ -311,7 +309,6 @@ public class Core implements Observed {
 
 	@Override
 	public void updateObserver() {
-		// TODO Auto-generated method stub
 		logger.logging("Core>>updateObserver()");
 
 		// prepare display dashboard
@@ -406,7 +403,6 @@ public class Core implements Observed {
 	}
 
 	public boolean processAction(String buttonTitle) {
-		// TODO Auto-generated method stub
 		logger.logging("Core>>processAction(" + buttonTitle + ")");
 
 		switch (buttonTitle) {
