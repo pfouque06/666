@@ -407,6 +407,7 @@ public class Core implements Observed {
 
 		switch (buttonTitle) {
 		case "Quit": // Exit requested
+			processExit();
 			return false;
 			
 		case "colorMode" : // toggle Main.colorMode
@@ -597,7 +598,7 @@ public class Core implements Observed {
 		String message = "";
 		String gain_ = "--> Gains: " + String.format("%3s", (jetons - Main.deposit));
 		// String[] optionButtons = { "Quit", "Purge", "Restart" };
-		String[] optionButtons = { "Purge", "Restart" };
+		String[] optionButtons = { "Purge", "Restart", "Quit" };
 		switch (alert) {
 		case "bet": // alert = bet
 			message = "--> CAN'T BET THIS AMOUNT !!!!!";
@@ -651,6 +652,10 @@ public class Core implements Observed {
 			// process Restart
 			processRestart();
 			break;
+		case 2:
+			// case 3:
+			// process Exit : processExit();
+			return false;
 		}
 		return true;
 	}
@@ -798,9 +803,9 @@ public class Core implements Observed {
 	
 	void processExit() {
 		logger.logging("Core>>processExit()");
-		logger.close();
-		// logger.logging("\nExiting...");
+		logger.logging("Core>> exiting...");
 		cli.close();
+		logger.close();
 	}
 
 }

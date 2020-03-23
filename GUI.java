@@ -231,10 +231,9 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				logger.logging("GUI>>addWindowListener(WindowAdapter.windowClosing(" + e.getID() + "))");
-
+				logger.logging("GUI>> disposing ...");
 				// throw exit request to Core
-				if (!core.processAction("Quit"))
-					core.processExit();
+				core.processAction("Quit");
 				// System.exit(0);
 			}
 		});
@@ -354,7 +353,11 @@ public class GUI extends JFrame implements ActionListener, KeyListener {
 		// String buttonTitle = buttonHit.getName();
 		switch (buttonTitle) {
 		default:
-			core.processAction(buttonTitle);
+			if (!core.processAction(buttonTitle)) {
+				// dispatch a closing event to the Jrame
+				logger.logging("GUI>> dispatching closing event to myself ;-)");
+				this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+			}
 			break;
 		}
 	}
